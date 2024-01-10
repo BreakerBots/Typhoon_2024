@@ -10,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 
@@ -42,7 +43,50 @@ public class Shooter extends SubsystemBase {
     
   }
 
-  public static class 
+  public static ShooterState getTargetState() {
+
+  }
+
+  public static ShooterState getCurrentState() {
+    
+  }
+
+  public static boolean isAtTargetState() {
+
+  }
+
+  public static Command SetShooterStateCommand(ShooterState targetShooterState, boolean waitForSuccess) {
+    return 
+  }
+
+  public static void SetShooterState(ShooterState targetShooterState) {
+
+  }
+
+  public static class ShooterState {
+    public static final ShooterState 
+    public ShooterState(FeederState feederState, Rotation2d shooterAngle, double flywheelRPS) {
+
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+  }
+
+  public static enum FeederState {
+    PULL_FROM_INTAKE(0.0),
+    PUSH_TO_INTAKE(0.0),
+    PULL_FROM_AMP_MECH(0.0),
+    PUSH_TO_AMP_MECH(0.0),
+    FEED_FLYWHEEL(0.0),
+    NEUTRAL(0.0);
+    private double dutyCycle;
+    private FeederState(double dutyCycle) {
+      this.dutyCycle = dutyCycle;
+    }
+  }
 
 
 

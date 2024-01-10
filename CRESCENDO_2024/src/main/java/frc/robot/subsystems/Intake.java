@@ -32,7 +32,7 @@ public class Intake extends SubsystemBase {
 
   public Command setStateCommand(IntakeState stateToSet, boolean waitForSuccess) {
     return new InstantCommand(() -> setState(stateToSet), this)
-    .alongWith(
+    .andThen(
       new WaitUntilCommand(this::isAtTargetState)
       .raceWith(
         new WaitCommand(0.0)
