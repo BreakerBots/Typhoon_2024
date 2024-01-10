@@ -16,6 +16,7 @@ import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   private TalonFX piviot;
+  private TalonFX flywheelTop, flywheelBottom;
   private CANcoder encoder;
   private BreakerBeamBreak beamBreak;
   public Shooter() {
@@ -40,6 +41,8 @@ public class Shooter extends SubsystemBase {
 
     
   }
+
+  public static class 
 
 
 
