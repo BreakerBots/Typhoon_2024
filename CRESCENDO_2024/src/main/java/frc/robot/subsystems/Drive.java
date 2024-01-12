@@ -1,0 +1,108 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.subsystems;
+
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
+import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveAzimuthEncoder;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerProTalonFXSwerveModuleDriveMotor.ProTalonFXControlOutputUnits;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerTalonFXSwerveModuleDriveMotor.TalonFXControlOutputUnits;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
+
+import static frc.robot.Constants.DriveConstants.*;
+import static frc.robot.Constants.MiscConstants.CANIVORE_1;
+import static frc.robot.Constants.PoseEstimationConstants.*;
+
+import org.littletonrobotics.junction.LogTable;
+import org.littletonrobotics.junction.Logger;
+
+/** Add your docs here. */
+public class Drive extends BreakerSwerveDrive {
+
+    private BreakerPigeon2 pigeon;
+
+    private static TalonFX driveFL = new TalonFX(FL_DRIVE_ID, CANIVORE_1);
+    private static TalonFX turnFL = new TalonFX(FL_TURN_ID, CANIVORE_1);
+    private static BreakerSwerveAzimuthEncoder encoderFL = new BreakerSwerveCANcoder(new CANcoder(FL_ENCODER_ID, CANIVORE_1));
+
+    private static TalonFX driveFR = new TalonFX(FR_DRIVE_ID, CANIVORE_1);
+    private static TalonFX turnFR = new TalonFX(FR_TURN_ID, CANIVORE_1);
+    private static BreakerSwerveAzimuthEncoder encoderFR =  new BreakerSwerveCANcoder(new CANcoder(FR_ENCODER_ID, CANIVORE_1));
+
+    private static TalonFX driveBL = new TalonFX(BL_DRIVE_ID, CANIVORE_1);
+    private static TalonFX turnBL = new TalonFX(BL_TURN_ID, CANIVORE_1);
+    private static BreakerSwerveAzimuthEncoder encoderBL =  new BreakerSwerveCANcoder(new CANcoder(BL_ENCODER_ID, CANIVORE_1));
+
+    private static TalonFX driveBR = new TalonFX(BR_DRIVE_ID, CANIVORE_1);
+    private static TalonFX turnBR = new TalonFX(BR_TURN_ID, CANIVORE_1);
+    private static BreakerSwerveAzimuthEncoder encoderBR =  new BreakerSwerveCANcoder(new CANcoder(BR_ENCODER_ID, CANIVORE_1));
+
+    private static BreakerSwerveModule frontLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
+        .withProTalonFXAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
+        .withProTalonFXDriveMotor(driveFL, ProTalonFXControlOutputUnits.VOLTAGE, true)
+        .createSwerveModule(FL_TRANSLATION);
+
+    private static BreakerSwerveModule frontRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
+        .withProTalonFXAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
+        .withProTalonFXDriveMotor(driveFR, ProTalonFXControlOutputUnits.VOLTAGE, false)
+        .createSwerveModule(FR_TRANSLATION);
+
+    private static BreakerSwerveModule backLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
+        .withProTalonFXAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
+        .withProTalonFXDriveMotor(driveBL, ProTalonFXControlOutputUnits.VOLTAGE, true)
+        .createSwerveModule(BL_TRANSLATION);
+
+    private static BreakerSwerveModule backRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
+        .withProTalonFXAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
+        .withProTalonFXDriveMotor(driveBR, ProTalonFXControlOutputUnits.VOLTAGE, false)
+        .createSwerveModule(BR_TRANSLATION);
+
+    private static Field2d field = new Field2d();
+    
+
+    public Drive(BreakerPigeon2 pigeon, Vision vision) {
+        super(DRIVE_CONFIG, AUTO_CONFIG, new BreakerSwerveOdometryConfig(vision, ENCODER_ODOMETRY_STANDARD_DEVATIONS, VISION_ODOMETRY_STANDARD_DEVATIONS), pigeon, frontLeftModule, frontRightModule, backLeftModule, backRightModule);
+        this.vision = vision;
+        BreakerDashboard.getMainTab().add(field);
+        
+        frontLeftModule.setDeviceName(" FL_Module ");
+        frontRightModule.setDeviceName(" FR_Module ");
+        backLeftModule.setDeviceName(" BL_Module ");
+        backRightModule.setDeviceName(" BR_Module ");
+
+        BreakerDashboard.getDiagnosticsTab().add("FL Module", frontLeftModule);
+        BreakerDashboard.getDiagnosticsTab().add("FR Module", frontRightModule);
+        BreakerDashboard.getDiagnosticsTab().add("BL Module", backLeftModule);
+        BreakerDashboard.getDiagnosticsTab().add("BR Module", backRightModule);
+
+        BreakerLog.registerLogable("Drive", this);
+
+        this.pigeon = pigeon;
+    }
+
+    @Override
+    public void periodic() {
+
+    }
+
+    @Override
+    public void toLog(LogTable table) {
+        // TODO Auto-generated method stub
+        super.toLog(table);
+        table.put("IMUPitchDeg", pigeon.getPitch());
+        table.put("IMURollDeg", pigeon.getRoll());
+        table.put("hbuhyguyg", BreakerLogUtil.formatPose2dForLog(getOdometryPoseMeters()));
+    }
+}

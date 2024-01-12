@@ -20,7 +20,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Threads;
 import edu.wpi.first.wpilibj.Timer;
-import frc.robot.BreakerLib.control.statespace.BreakerFlywheelStateSpace;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerOdometryThread;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPose;
@@ -41,15 +40,14 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
     protected BreakerSwerveDrive drivetrain;
     protected double odometeryPeriod;
     protected ChassisSpeeds robotRelSpeeds, fieldRelSpeeds;
-    protected Pose2d prevPose;
-    protected double prevUpdateTimestamp;
     public BreakerSwerveOdometryThread(BreakerSwerveDrive drivetrain, double odometeryPeriod, Matrix<N3, N1> stateStdDevs, Matrix<N3, N1> defaultVisionStdDevs, PoseOrigin poseOrigin, Pose2d initialPoseMeters, int threadPriority) {
         super(threadPriority);
-        poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null, null, null);
+        this.drivetrain = drivetrain;
+        poseEstimator = new SwerveDrivePoseEstimator(drivetrain.getKinematics(), drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getSwerveModulePositions(), initialPoseMeters, stateStdDevs, defaultVisionStdDevs);
         robotRelSpeeds = new ChassisSpeeds();
         fieldRelSpeeds = new ChassisSpeeds();
-        prevPose = initialPoseMeters;
-        prevUpdateTimestamp = Timer.getFPGATimestamp();
+        defaultVisionDevs = defaultVisionStdDevs;
+        
     }
 
     public Matrix<N3, N1> getDefaultVisionStdDevs() {
