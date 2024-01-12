@@ -19,6 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveWheelPositions;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Threads;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.BreakerLib.control.statespace.BreakerFlywheelStateSpace;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerOdometryThread;
@@ -27,6 +28,7 @@ import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceP
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseCordinateSystem;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
+import frc.robot.BreakerLib.util.math.BreakerMath;
 
 /** Add your docs here. */
 public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
@@ -38,9 +40,16 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
     protected boolean visionSeeded;
     protected BreakerSwerveDrive drivetrain;
     protected double odometeryPeriod;
+    protected ChassisSpeeds robotRelSpeeds, fieldRelSpeeds;
+    protected Pose2d prevPose;
+    protected double prevUpdateTimestamp;
     public BreakerSwerveOdometryThread(BreakerSwerveDrive drivetrain, double odometeryPeriod, Matrix<N3, N1> stateStdDevs, Matrix<N3, N1> defaultVisionStdDevs, PoseOrigin poseOrigin, Pose2d initialPoseMeters, int threadPriority) {
         super(threadPriority);
         poseEstimator = new SwerveDrivePoseEstimator(null, null, null, null, null, null);
+        robotRelSpeeds = new ChassisSpeeds();
+        fieldRelSpeeds = new ChassisSpeeds();
+        prevPose = initialPoseMeters;
+        prevUpdateTimestamp = Timer.getFPGATimestamp();
     }
 
     public Matrix<N3, N1> getDefaultVisionStdDevs() {
@@ -90,7 +99,11 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
     }
 
     public boolean hasBeenVisionSeeded() {
-        return visionSeeded;
+        boolean safeBool = false;
+        odometryLock.lock();
+        safeBool = visionSeeded;
+        odometryLock.unlock();
+        return safeBool;
     }
 
     protected void checkRegisteredPoseSources() {
@@ -104,17 +117,24 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
 
     /** @return Odometery pose in meters. */
   public Pose2d getOdometryPoseMeters() {
-
+    Pose2d safePose = new Pose2d();
+    odometryLock.lock();
+    safePose = poseEstimator.getEstimatedPosition();
+    odometryLock.unlock();
+    return safePose;
   }
 
   /** @return Movement state of object. */
   public BreakerMovementState2d getMovementState() {
-
+   // TODO
+    return new BreakerMovementState2d();
   }
 
     @Override
     public void setOdometryPosition(Pose2d newPose) {
-        
+        odometryLock.lock();
+        poseEstimator.resetPosition(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getSwerveModulePositions(), newPose);
+        odometryLock.unlock();
     }
 
     @Override
@@ -137,18 +157,19 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
 
     @Override
     protected void update() {
-        poseEstimator.update(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getSwerveModulePositions());
+        checkRegisteredPoseSources();
+        Pose2d newPose = poseEstimator.update(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getSwerveModulePositions());
+        robotRelSpeeds = drivetrain.getKinematics().toChassisSpeeds(drivetrain.getSwerveModuleStates());
+        fieldRelSpeeds = BreakerMath.fromRobotRelativeSpeeds(getRobotRelativeChassisSpeeds(), newPose.getRotation());
     }
 
     @Override
     public ChassisSpeeds getRobotRelativeChassisSpeeds() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getRobotRelativeChassisSpeeds'");
+        return robotRelSpeeds;
     }
 
     @Override
     public ChassisSpeeds getFieldRelativeChassisSpeeds() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getFieldRelativeChassisSpeeds'");
+        return fieldRelSpeeds;
     }
 }

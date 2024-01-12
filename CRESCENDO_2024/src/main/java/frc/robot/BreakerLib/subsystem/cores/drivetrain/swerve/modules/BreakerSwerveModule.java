@@ -120,4 +120,10 @@ public class BreakerSwerveModule extends BreakerGenericSwerveModule {
             this.kF = kF;
         }
     }
+
+    @Override
+    public void setStatusUpdatePeriod(double period) {
+        // TODO Auto-generated method stub
+        throw ;
+    }
 }
