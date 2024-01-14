@@ -152,7 +152,7 @@ public class SelfTest extends SubsystemBase {
       lastCheckPassed = true;
     }
     lastSystemCheck = work.toString();
-    BreakerLog.getInstance().logMessage(lastSystemCheck);
+    BreakerLog.logMessage(lastSystemCheck);
   }
 
   @Override

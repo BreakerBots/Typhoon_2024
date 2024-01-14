@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.JsonSerializable.Base;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.BreakerLib.devices.BreakerBaseStatusValue;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 
@@ -71,7 +70,7 @@ public class BreakerPhoenix6Util {
       new FaultCase(pigeon2.getFault_Undervoltage().getValue(),  DeviceHealth.FAULT, " device_supply_voltage_below_6.5v "),
       new FaultCase(pigeon2.getFault_DataAcquiredLate().getValue(),  DeviceHealth.FAULT, " motion_stack_data_acquisition_slower_than_expected "),
       new FaultCase(pigeon2.getFault_LoopTimeSlow().getValue(),  DeviceHealth.FAULT, " motion_stack_loop_time_slower_than_expected "),
-      new FaultCase(pigeon2.getFault_SaturatedAccelometer().getValue(),  DeviceHealth.FAULT, " accelometer_values_saturated "),
+      new FaultCase(pigeon2.getFault_SaturatedAccelerometer().getValue(),  DeviceHealth.FAULT, " accelometer_values_saturated "),
       new FaultCase(pigeon2.getFault_SaturatedMagnetometer().getValue(), DeviceHealth.FAULT, " magnetometer_values_satureted "),
       new FaultCase(pigeon2.getFault_SaturatedGyroscope().getValue(), DeviceHealth.FAULT, " gyroscope_values_saturated"),
       new FaultCase(pigeon2.getFault_BootDuringEnable().getValue(),  DeviceHealth.FAULT, " device_boot_or_reset_while_robot_enabled "),

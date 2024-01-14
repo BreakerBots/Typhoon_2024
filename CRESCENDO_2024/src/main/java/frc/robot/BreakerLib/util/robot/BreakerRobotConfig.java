@@ -5,7 +5,7 @@
 package frc.robot.BreakerLib.util.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
-import frc.robot.BreakerLib.auto.trajectory.management.BreakerAutoPath;
+import frc.robot.BreakerLib.auto.BreakerAutoPath;
 import frc.robot.BreakerLib.devices.cosmetic.music.BreakerFalconOrchestra;
 import frc.robot.BreakerLib.util.power.BreakerPowerDistribution;
 

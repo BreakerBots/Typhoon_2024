@@ -73,7 +73,6 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
         camera = bestCam;
     }
 
-    @Override
     public AprilTag getBaseApriltag() {
         return aprilTag;
     }
@@ -182,5 +181,20 @@ public class BreakerFiducialPhotonTarget extends SubsystemBase implements Breake
     @Override
     public void periodic() {
         findAssignedFiducial();
+    }
+
+    @Override
+    public double getTimestamp() {
+        return getTargetDataTimestamp();
+    }
+
+    @Override
+    public Transform3d getCameraToTargetTransform() {
+        return assignedTarget.getBestCameraToTarget();
+    }
+
+    @Override
+    public Transform3d getRobotToTargetTransform() {
+        return assignedTarget.getBestCameraToTarget().plus(camera.get3dCamPositionRelativeToRobot().inverse());
     }
 }

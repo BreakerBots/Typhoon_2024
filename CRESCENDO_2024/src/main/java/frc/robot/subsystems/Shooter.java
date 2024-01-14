@@ -5,6 +5,10 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -20,6 +24,11 @@ public class Shooter extends SubsystemBase {
   private TalonFX flywheelTop, flywheelBottom;
   private CANcoder encoder;
   private BreakerBeamBreak beamBreak;
+
+
+  private VelocityVoltage flywheelVelocityControl;
+  private MotionMagicVoltage shooterPitchControl;
+
   public Shooter() {
     TalonFXConfiguration piviotMotorConfigs = new TalonFXConfiguration();
 

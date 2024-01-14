@@ -228,13 +228,13 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
 
     @Override
     public BreakerEstimatedPoseSource getEstimatedPoseSource(AprilTagFieldLayout apriltagFieldLayout) {
-        return new BreakerPhotonVisionPoseEstimator(apriltagFieldLayout, Optional.empty());
+        return new BreakerPhotonVisionPoseEstimator(apriltagFieldLayout, true, Optional.empty());
     }
 
     @Override
     public BreakerEstimatedPoseSource getEstimatedPoseSource(AprilTagFieldLayout apriltagFieldLayout,
             Function<BreakerEstimatedPose, Matrix<N3, N1>> stdDevCalculation) {
-        return new BreakerPhotonVisionPoseEstimator(apriltagFieldLayout, Optional.of(stdDevCalculation));
+        return new BreakerPhotonVisionPoseEstimator(apriltagFieldLayout, true, Optional.of(stdDevCalculation));
     }
 
 }

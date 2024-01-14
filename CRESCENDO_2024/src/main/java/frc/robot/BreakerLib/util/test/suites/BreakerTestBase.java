@@ -20,13 +20,13 @@ public class BreakerTestBase extends Command {
     }
 
     public void logStart() {
-        BreakerLog.getInstance().logEvent(startString);
+        BreakerLog.logEvent(startString);
     }
 
     public void logEnd(String results) {
-        BreakerLog.getInstance().logEvent("TEST ( " + testName + " ) ENDED AT: (T+) " + Timer.getFPGATimestamp());
+        BreakerLog.logEvent("TEST ( " + testName + " ) ENDED AT: (T+) " + Timer.getFPGATimestamp());
         if (logType != BreakerTestSuiteDataLogType.NONE) {
-            BreakerLog.getInstance().logMessage("RESULTS FOR ( " + testName + " ): " + results);
+            BreakerLog.logMessage("RESULTS FOR ( " + testName + " ): " + results);
         }
     }
 

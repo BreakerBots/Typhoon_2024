@@ -14,22 +14,19 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Fiducial marker target. Use if using AprilTags w/ 3D calibrated camera. */
-public class BreakerFiducialTarget { 
+public interface BreakerGenericFiducialTarget {
 
     public double getTimestamp();
 
-    public Transform3d getCameraToTargetTransform() {
+    public Transform3d getCameraToTargetTransform();
 
-    }
-
-    public Transform3d getRobotToTargetTransform() {
-
-    }
+    public Transform3d getRobotToTargetTransform();
 
     /** @return ID of fiducial target */
     public int getFiducialID();

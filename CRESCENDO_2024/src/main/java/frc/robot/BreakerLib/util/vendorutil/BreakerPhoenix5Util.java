@@ -46,7 +46,7 @@ public class BreakerPhoenix5Util {
    */
   public static void checkError(ErrorCode error, String message) {
     if (error != ErrorCode.OK) {
-      BreakerLog.getInstance().logError(error + " - " + message);
+      BreakerLog.logError(error + " - " + message);
     }
   }
 
@@ -116,37 +116,6 @@ public class BreakerPhoenix5Util {
     }
     return new Pair<DeviceHealth, String>(retHealth, retStr);
   }
-
-  /**
-   * Get CANCoder faults and device health.
-   * 
-   * @param encoderFaults CANCoder faults.
-   * @return CANCoder device health and error type (if any).
-   */
-  public static Pair<DeviceHealth, String> getCANCoderHealthAndFaults(CANCoderFaults encoderFaults) {
-    HashMap<Integer, Pair<DeviceHealth, String>> map = new HashMap<>();
-    map.put(0, new Pair<DeviceHealth, String>(DeviceHealth.INOPERABLE, " hardware_failure "));
-    map.put(4, new Pair<DeviceHealth, String>(DeviceHealth.INOPERABLE, " magnet_too_weak "));
-    return BreakerVendorUtil.getDeviceHealthAndFaults(encoderFaults.toBitfield(), map);
-  }
-
-  /**
-   * @param canCoder
-   * @return Pair<DeviceHealth, String>
-   */
-  public static Pair<DeviceHealth, String> checkCANCoderFaultsAndConnection(CANCoder canCoder) {
-    CANCoderFaults canCoderFaults = new CANCoderFaults();
-    canCoder.getFaults(canCoderFaults);
-    Pair<DeviceHealth, String> pair = getCANCoderHealthAndFaults(canCoderFaults);
-    String retStr = pair.getSecond();
-    DeviceHealth retHealth = pair.getFirst();
-    if (canCoder.getFirmwareVersion() == -1) {
-      retStr += " device_disconnected ";
-      retHealth = DeviceHealth.INOPERABLE;
-    }
-    return new Pair<DeviceHealth, String>(retHealth, retStr);
-  }
-
   /**
    * Get CANdle faults and device health.
    * 

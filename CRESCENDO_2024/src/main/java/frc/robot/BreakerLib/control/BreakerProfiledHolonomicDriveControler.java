@@ -65,9 +65,9 @@ public class BreakerProfiledHolonomicDriveControler {
     }
 
     public boolean atTargetPose() {
-        return  BreakerMath.epsilonEquals(tgtPose.getX(), curPose.getX(), tolerences.getX()) &&
-                BreakerMath.epsilonEquals(tgtPose.getY(), curPose.getY(), tolerences.getY()) &&
-                BreakerMath.epsilonEquals(tgtPose.getRotation().getRadians(), curPose.getRotation().getRadians(), tolerences.getRotation().getRadians()) &&
+        return  MathUtil.isNear(tgtPose.getX(), curPose.getX(), tolerences.getX()) &&
+                MathUtil.isNear(tgtPose.getY(), curPose.getY(), tolerences.getY()) &&
+                MathUtil.isNear(tgtPose.getRotation().getRadians(), curPose.getRotation().getRadians(), tolerences.getRotation().getRadians()) &&
                 calculateHasBeenRun;
     }
 

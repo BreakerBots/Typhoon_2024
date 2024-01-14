@@ -8,8 +8,8 @@ import java.util.HashMap;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
-import com.revrobotics.CANSparkMax.FaultID;
-import com.revrobotics.CANSparkMax.IdleMode;
+import com.revrobotics.CANSparkBase.FaultID;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.Pair;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
@@ -39,7 +39,7 @@ public class BreakerREVUtil {
    */
   public static void checkError(REVLibError error, String message) {
     if (error != REVLibError.kOk) {
-      BreakerLog.getInstance().logError(error + " - " + message);
+      BreakerLog.logError(error + " - " + message);
     }
   }
 

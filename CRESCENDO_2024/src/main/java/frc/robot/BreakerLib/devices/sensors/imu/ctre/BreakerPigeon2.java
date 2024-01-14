@@ -274,9 +274,9 @@ public class BreakerPigeon2 extends BreakerGenericIMU implements BreakerGenericM
         rawYaw = pigeon.getYaw();
         rawPitch = pigeon.getPitch();
         rawRoll = pigeon.getRoll();
-        rawYawRate = pigeon.getAngularVelocityZ();
-        rawPitchRate = pigeon.getAngularVelocityX();
-        rawRollRate = pigeon.getAngularVelocityY();
+        rawYawRate = pigeon.getAngularVelocityXWorld();
+        rawPitchRate = pigeon.getAngularVelocityXWorld();
+        rawRollRate = pigeon.getAngularVelocityYWorld();
       }
 
       public double getYaw() {
@@ -314,6 +314,20 @@ public class BreakerPigeon2 extends BreakerGenericIMU implements BreakerGenericM
       public double getRawYawRate() {
           return rawYawRate.refresh().getValue();
       }
+
+      public void setStatusUpdatePeriod(double period) {
+        BaseStatusSignal.setUpdateFrequencyForAll(1.0/period, rawPitch, rawRoll, rawYaw, rawPitchRate, rawYawRate, rawRollRate);
+      }
+  }
+
+  @Override
+  public Object getBaseGyro() {
+    return pigeon;
+  }
+
+  @Override
+  public void setStatusUpdatePeriod(double period) {
+    periodicIO.setStatusUpdatePeriod(period);
   }
 
 }
