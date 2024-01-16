@@ -4,8 +4,9 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors;
 
+import org.littletonrobotics.junction.LogTable;
+
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
-import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 
 /** Add your docs here. */
@@ -19,5 +20,7 @@ public abstract class BreakerGenericSwerveModuleMotor extends BreakerSelfTestabl
         table.put("MotorOutput", getMotorOutput());
         table.put("DeviceHealth", getHealth().toString());
     }
+
+    
 
 }

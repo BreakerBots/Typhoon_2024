@@ -50,5 +50,11 @@ public class BreakerSwerveSupplierEncoder implements BreakerSwerveAzimuthEncoder
     public Object getBaseEncoder() {
         return relativeSupplier;
     }
+
+    @Override
+    public void setStatusUpdatePeriod(double period) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setStatusUpdatePeriod'");
+    }
     
 }

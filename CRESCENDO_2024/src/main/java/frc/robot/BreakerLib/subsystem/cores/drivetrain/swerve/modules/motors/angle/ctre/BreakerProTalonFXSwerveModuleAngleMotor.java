@@ -157,4 +157,9 @@ public class BreakerProTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerv
       return encoder;
     }
 
+    @Override
+    public void setStatusUpdatePeriod(double period) {
+        encoder.setStatusUpdatePeriod(period);
+    }
+
 }
