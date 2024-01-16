@@ -57,4 +57,10 @@ public class BreakerSwervePWMDutyCycleEncoder implements BreakerSwerveAzimuthEnc
     public Object getBaseEncoder() {
         return dcEncoder;
     }
+
+    @Override
+    public void setStatusUpdatePeriod(double period) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setStatusUpdatePeriod'");
+    }
 }

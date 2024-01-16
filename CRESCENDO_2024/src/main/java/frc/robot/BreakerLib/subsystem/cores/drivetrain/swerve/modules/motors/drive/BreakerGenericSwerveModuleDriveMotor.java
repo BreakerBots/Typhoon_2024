@@ -6,12 +6,13 @@ package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.dr
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.LogTable;
+
 import edu.wpi.first.math.system.plant.DCMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.BreakerGenericSwerveModuleMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
-import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 
 /** Add your docs here. */
@@ -22,6 +23,7 @@ public abstract class BreakerGenericSwerveModuleDriveMotor extends BreakerGeneri
     public abstract void resetDistance();
     public abstract void setBrakeMode(boolean isEnabled);
     public abstract double getTargetVelocity();
+    public abstract void setStatusUpdatePeriod(double period);
     public abstract BreakerSwerveModuleDriveMotorConfig getConfig();
     @Override
     public void toLog(LogTable table) {
@@ -31,10 +33,10 @@ public abstract class BreakerGenericSwerveModuleDriveMotor extends BreakerGeneri
         table.put("WheelDistanceMeters", getDistance());
     }
 
-    public static class BreakerSwerveModuleDriveMotorSim {
-        public DCMotor dcMotorSim;
-        public 
-    }
+    // public static class BreakerSwerveModuleDriveMotorSim {
+    //     public DCMotor dcMotorSim;
+    //     public 
+    // }
 
     public static class BreakerSwerveModuleDriveMotorConfig {
         private double driveGearRatio;

@@ -43,12 +43,12 @@ public class BreakerTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerveMo
         this.motor = motor;
         this.encoder = encoder;
         this.config = config;
-        positionRequest = new PositionVoltage(0.0, 0.0, false, 0.0, 0, false);
-        rawVoltageRequest = new VoltageOut(0.0, false, false);
+        positionRequest = new PositionVoltage(0.0, 0.0, false, 0.0, 0, false, false, false);
+        rawVoltageRequest = new VoltageOut(0.0, false, false, false, false);
         encoder.config(false, encoderAbsoluteAngleOffsetDegrees);
         azimuthControler = null;
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
-        if (encoder.getBaseEncoderType() == CANcoder.class) {
+        if (encoder.getBaseEncoder() instanceof CANcoder) {
             CANcoder cancoder = (CANcoder) encoder.getBaseEncoder();
             if (cancoder.getNetwork().equals(motor.getNetwork())) {
                 turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
@@ -139,6 +139,16 @@ public class BreakerTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerveMo
     @Override
     public BreakerSwerveModuleAngleMotorConfig getConfig() {
         return config;
+    }
+
+    @Override
+    public BreakerSwerveAzimuthEncoder getEncoder() {
+       return encoder;
+    }
+
+    @Override
+    public void setStatusUpdatePeriod(double period) {
+       encoder.setStatusUpdatePeriod(period);
     }
 
 }

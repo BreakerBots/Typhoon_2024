@@ -6,6 +6,8 @@ package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.an
 
 import java.util.Optional;
 
+import org.littletonrobotics.junction.LogTable;
+
 import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.ClosedLoopRampsConfigs;
 
@@ -13,8 +15,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveAzimuthEncoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.BreakerGenericSwerveModuleMotor;
-import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
-import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 
 /** Add your docs here. */
 public abstract class BreakerGenericSwerveModuleAngleMotor extends BreakerGenericSwerveModuleMotor {
@@ -24,6 +24,7 @@ public abstract class BreakerGenericSwerveModuleAngleMotor extends BreakerGeneri
     public abstract void setBrakeMode(boolean isEnabled);
     public abstract Rotation2d getTargetAngle();
     public abstract BreakerSwerveAzimuthEncoder getEncoder();
+    public abstract void setStatusUpdatePeriod(double period);
     public abstract BreakerSwerveModuleAngleMotorConfig getConfig();
     @Override
     public void toLog(LogTable table) {
@@ -32,10 +33,6 @@ public abstract class BreakerGenericSwerveModuleAngleMotor extends BreakerGeneri
         table.put("AbsoluteTargetAngleDeg", getTargetAngle().getDegrees());
         table.put("RelativeAngleDeg", getRelativeAngle().getDegrees());
         
-    }
-
-    public static interface BreakerSwerveModuleAngleMotorHardwareDependentInterface {
-        public abstract Optional<StatusSignal<Double>> get
     }
 
     public static class BreakerSwerveModuleAngleMotorConfig {

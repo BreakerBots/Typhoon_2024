@@ -24,14 +24,14 @@ public class BreakerSwerveCANcoder implements BreakerSwerveAzimuthEncoder {
     private BreakerSwerveAzimuthEncoderSimIO simIO;
     public BreakerSwerveCANcoder(CANcoder encoder) {
         this.encoder = encoder;
-        CANcoderSimState simState = encoder.getSimState();
+        //CANcoderSimState simState = encoder.getSimState();
          
-        simIO = new BreakerSwerveAzimuthEncoderSimIO(
-            simState::setRawPosition,
-            simState::setVelocity,
-            simState::setRawPosition,
-            (boolean invert) -> {simState.Orientation = invert ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;}
-        );
+        // simIO = new BreakerSwerveAzimuthEncoderSimIO(
+        //     simState::setRawPosition,
+        //     simState::setVelocity,
+        //     simState::setRawPosition,
+        //     (boolean invert) -> {simState.Orientation = invert ? ChassisReference.Clockwise_Positive : ChassisReference.CounterClockwise_Positive;}
+        // );
     }
 
     @Override
@@ -54,10 +54,10 @@ public class BreakerSwerveCANcoder implements BreakerSwerveAzimuthEncoder {
         return encoder;
     }
 
-    @Override
-    public BreakerSwerveAzimuthEncoderSimIO getSimIO() {
-        return simIO;
-    }
+    // @Override
+    // public BreakerSwerveAzimuthEncoderSimIO getSimIO() {
+    //     return simIO;
+    // }
 
     @Override
     public void config(boolean invertEncoder, double offset) {
@@ -66,6 +66,11 @@ public class BreakerSwerveCANcoder implements BreakerSwerveAzimuthEncoder {
         simIO.setSimAngleVel(0.0);
         simIO.setInverted(invertEncoder);
         simIO.setSimSupplyVoltage(12.0);
+    }
+
+    @Override
+    public void setStatusUpdatePeriod(double period) {
+        BaseStatusSignal.setUpdateFrequencyForAll(1.0/period, encoder.getAbsolutePosition(), encoder.getPosition(), encoder.getVelocity());
     }
 
 }

@@ -14,7 +14,6 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.function.BooleanConsumer;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLoggable;
-import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 
@@ -39,7 +38,9 @@ public interface BreakerSwerveAzimuthEncoder {
 
     public abstract Object getBaseEncoder();
 
-    public abstract BreakerSwerveAzimuthEncoderSimIO getSimIO();
+    public abstract void setStatusUpdatePeriod(double period);
+
+    //public abstract BreakerSwerveAzimuthEncoderSimIO getSimIO();
 
     public static interface BreakerSwerveAzimuthEncoderSimIO {
 
@@ -49,7 +50,8 @@ public interface BreakerSwerveAzimuthEncoder {
 
         public abstract void setSimSupplyVoltage(double supplyVoltage);
 
-        public abstract void setInverted(boolean isInverted)
+        public abstract void setInverted(boolean isInverted);
+        
     };
 
 

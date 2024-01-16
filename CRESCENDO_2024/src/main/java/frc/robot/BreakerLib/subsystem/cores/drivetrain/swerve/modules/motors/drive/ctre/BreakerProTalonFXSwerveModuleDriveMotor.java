@@ -55,10 +55,10 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
         this.maxAttainableWheelSpeed = config.getMaxAttainableWheelSpeed();
         wheelCircumfrenceMeters = wheelDiameter*Math.PI;
         targetVelocity = 0.0;
-        velocityDutyCycleRequest = new VelocityDutyCycle(0.0, 0.0, true, 0.0, 1, false);
-        velocityVoltageRequest = new VelocityVoltage(0.0, 0.0, true, 0.0, 1, false);
-        velocityTorqueCurrentRequest = new VelocityTorqueCurrentFOC(0.0, 0.0, 1, 0, false);
-        openLoopDutyCycleRequest = new DutyCycleOut(0.0, true, false);
+        velocityDutyCycleRequest = new VelocityDutyCycle(0.0, 0.0, true, 0.0, 1, false, false, false);
+        velocityVoltageRequest = new VelocityVoltage(0.0, 0.0, true, 0.0, 1, false, false, false);
+        velocityTorqueCurrentRequest = new VelocityTorqueCurrentFOC(0.0, 0.0, 1, 0, false, false, false);
+        openLoopDutyCycleRequest = new DutyCycleOut(0.0, true, false, false, false);
         this.controlOutputUnits = controlOutputUnits;
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
         driveConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
@@ -133,7 +133,7 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
 
     @Override
     public double getVelocity() {
-        return motor.getVelocity().getValue() * wheelCircumfrenceMeters;
+        return BaseStatusSignal.getLatencyCompensatedValue(motor.getVelocity(), motor.getAcceleration()) * wheelCircumfrenceMeters;
     }
 
     @Override
@@ -180,5 +180,10 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
     @Override
     public BreakerSwerveModuleDriveMotorConfig getConfig() {
         return config;
+    }
+
+    @Override
+    public void setStatusUpdatePeriod(double period) {
+        BaseStatusSignal.setUpdateFrequencyForAll(1.0/period, motor.getPosition(), motor.getVelocity(), motor.getAcceleration());
     }
 }

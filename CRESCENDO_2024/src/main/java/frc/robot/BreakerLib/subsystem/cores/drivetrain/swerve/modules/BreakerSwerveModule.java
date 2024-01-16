@@ -123,7 +123,7 @@ public class BreakerSwerveModule extends BreakerGenericSwerveModule {
 
     @Override
     public void setStatusUpdatePeriod(double period) {
-        // TODO Auto-generated method stub
-        throw ;
+        driveMotor.setStatusUpdatePeriod(period);
+        angleMotor.setStatusUpdatePeriod(period);
     }
 }

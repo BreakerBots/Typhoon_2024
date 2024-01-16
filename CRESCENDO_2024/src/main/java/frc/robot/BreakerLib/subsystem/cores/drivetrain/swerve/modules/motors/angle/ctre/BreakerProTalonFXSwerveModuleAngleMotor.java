@@ -40,17 +40,17 @@ public class BreakerProTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerv
     private BreakerSwerveAzimuthControler azimuthControler;
     private BreakerSwerveModuleAngleMotorConfig config;
     private final PositionVoltage positionRequest;
-    private final DCMotorSim motorSim;
+    //private final DCMotorSim motorSim;
     public BreakerProTalonFXSwerveModuleAngleMotor(TalonFX motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetDegrees, boolean isMotorInverted, BreakerSwerveModuleAngleMotorConfig config) {
         this.motor = motor;
         this.encoder = encoder;
         this.config = config; 
-        positionRequest = new PositionVoltage(0.0, 0.0, true, 0.0, 0, false);
+        positionRequest = new PositionVoltage(0.0, 0.0, true, 0.0, 0, false, false, false);
 
         encoder.config(false, encoderAbsoluteAngleOffsetDegrees);
         azimuthControler = null;
         TalonFXConfiguration turnConfig = new TalonFXConfiguration();
-        if (encoder.getBaseEncoderType() == CANcoder.class) {
+        if (encoder.getBaseEncoder() instanceof CANcoder) {
             CANcoder cancoder = (CANcoder) encoder.getBaseEncoder();
             if (cancoder.getNetwork().equals(motor.getNetwork())) {
                 turnConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
@@ -90,15 +90,15 @@ public class BreakerProTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerv
     public void setTargetAngle(Rotation2d targetAngle) {
         azimuthControler.setTargetAngle(targetAngle);
         this.targetAngle = targetAngle;
-        if (RobotBase.isSimulation()) {
-            TalonFXSimState motorSimState = motor.getSimState();
-            motorSim.setInputVoltage(motorSimState.getMotorVoltage());
-            motorSim.update(0.0);
+        // if (RobotBase.isSimulation()) {
+        //     TalonFXSimState motorSimState = motor.getSimState();
+        //     motorSim.setInputVoltage(motorSimState.getMotorVoltage());
+        //     motorSim.update(0.0);
 
-            motorSimState.setRawRotorPosition(motorSim.getAngularPositionRotations());
-            motorSimState.setRotorVelocity(motorSim.getAngularVelocityRPM() / 60.0);
+        //     motorSimState.setRawRotorPosition(motorSim.getAngularPositionRotations());
+        //     motorSimState.setRotorVelocity(motorSim.getAngularVelocityRPM() / 60.0);
             
-        }
+        // }
     }
 
     @Override
@@ -150,6 +150,11 @@ public class BreakerProTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerv
     @Override
     public BreakerSwerveModuleAngleMotorConfig getConfig() {
         return config;
+    }
+
+    @Override
+    public BreakerSwerveAzimuthEncoder getEncoder() {
+      return encoder;
     }
 
 }
