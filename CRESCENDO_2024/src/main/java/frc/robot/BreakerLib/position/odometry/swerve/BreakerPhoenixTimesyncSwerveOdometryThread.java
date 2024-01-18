@@ -36,7 +36,7 @@ public class BreakerPhoenixTimesyncSwerveOdometryThread extends BreakerSwerveOdo
             statSigArrList.add(swerveModSigs.turnPosAbs);
             statSigArrList.add(swerveModSigs.turnVel);
         }
-        statSigArrList.toArray(new StatusSignal<Double>[statSigArrList.size()]));
+        Arrays.copy
         
     }
 
