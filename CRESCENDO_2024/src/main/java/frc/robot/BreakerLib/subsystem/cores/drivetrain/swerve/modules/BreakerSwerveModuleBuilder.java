@@ -15,14 +15,14 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.ang
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.BreakerGenericSwerveModuleAngleMotor.BreakerSwerveModuleAngleMotorConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.ctre.BreakerTalonFXSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.ctre.BreakerProTalonFXSwerveModuleAngleMotor;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.rev.BreakerBrushlessSparkMaxSwerveModuleAngleMotor;
+// import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.angle.rev.BreakerBrushlessSparkMaxSwerveModuleAngleMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.BreakerGenericSwerveModuleDriveMotor.BreakerSwerveModuleDriveMotorConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerProTalonFXSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerTalonFXSwerveModuleDriveMotor.TalonFXControlOutputUnits;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerProTalonFXSwerveModuleDriveMotor.ProTalonFXControlOutputUnits;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerTalonFXSwerveModuleDriveMotor;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.rev.BreakerBrushlessSparkMaxSwerveModuleDriveMotor;
+// import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.rev.BreakerBrushlessSparkMaxSwerveModuleDriveMotor;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
 
 /** Add your docs here. */
@@ -90,30 +90,30 @@ public class BreakerSwerveModuleBuilder {
     }
 
     
-    /** Sets the module's angle motor to a REV Spark MAX powering a NEO BLDC motor
-     * 
-     * @param motor The CANSparkMax object to use
-     * @param encoder The {@link BreakerSwerveAzimuthEncoder} to use for anguler positioning
-     * @param encoderAbsoluteAngleOffsetRotations The offset of the positioning encoder's native reading such that 0rot is forward and the same for all modules 
-     * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
-     * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
-     */
-    public BreakerSwerveModuleBuilder withBrushlessSparkMaxAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetRotations, boolean isMotorInverted) {
-        angleMotor = new BreakerBrushlessSparkMaxSwerveModuleAngleMotor(motor, encoder, encoderAbsoluteAngleOffsetRotations, isMotorInverted, config.getAngleMotorConfig());
-        return this;
-    }
+    // /** Sets the module's angle motor to a REV Spark MAX powering a NEO BLDC motor
+    //  * 
+    //  * @param motor The CANSparkMax object to use
+    //  * @param encoder The {@link BreakerSwerveAzimuthEncoder} to use for anguler positioning
+    //  * @param encoderAbsoluteAngleOffsetRotations The offset of the positioning encoder's native reading such that 0rot is forward and the same for all modules 
+    //  * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
+    //  * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
+    //  */
+    // public BreakerSwerveModuleBuilder withBrushlessSparkMaxAngleMotor(CANSparkMax motor, BreakerSwerveAzimuthEncoder encoder, double encoderAbsoluteAngleOffsetRotations, boolean isMotorInverted) {
+    //     angleMotor = new BreakerBrushlessSparkMaxSwerveModuleAngleMotor(motor, encoder, encoderAbsoluteAngleOffsetRotations, isMotorInverted, config.getAngleMotorConfig());
+    //     return this;
+    // }
 
     
-    /** Sets the module's drive motor to a REV Spark MAX powering a NEO BLDC motor
-     * 
-     * @param motor The CANSparkMax object to use
-     * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
-     * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
-     */
-    public BreakerSwerveModuleBuilder withBrushlessSparkMaxDriveMotor(CANSparkMax motor, boolean isMotorInverted) {
-        driveMotor = new BreakerBrushlessSparkMaxSwerveModuleDriveMotor(motor, isMotorInverted, config.getDriveMotorConfig());
-        return this;
-    }
+    // /** Sets the module's drive motor to a REV Spark MAX powering a NEO BLDC motor
+    //  * 
+    //  * @param motor The CANSparkMax object to use
+    //  * @param isMotorInverted Polarity of motor output, used to match motor output to encoder reading
+    //  * @return This {@link BreakerSwerveModuleBuilder} so that config calls can be chained
+    //  */
+    // public BreakerSwerveModuleBuilder withBrushlessSparkMaxDriveMotor(CANSparkMax motor, boolean isMotorInverted) {
+    //     driveMotor = new BreakerBrushlessSparkMaxSwerveModuleDriveMotor(motor, isMotorInverted, config.getDriveMotorConfig());
+    //     return this;
+    // }
 
     /** Creates
      * 

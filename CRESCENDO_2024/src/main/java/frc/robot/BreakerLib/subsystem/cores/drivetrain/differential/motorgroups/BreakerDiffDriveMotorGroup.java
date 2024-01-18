@@ -9,7 +9,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import frc.robot.BreakerLib.devices.encoders.BreakerGenericEncoder;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.BreakerSelfTestableBase;
 

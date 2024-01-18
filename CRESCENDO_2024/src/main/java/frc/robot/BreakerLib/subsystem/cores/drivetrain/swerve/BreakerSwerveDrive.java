@@ -31,12 +31,11 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveDriveFusedVisionPoseEstimator;
-import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometer;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerGenericSwerveModule;
@@ -48,10 +47,9 @@ import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.test.suites.BreakerGenericTestSuiteImplementation;
-import frc.robot.BreakerLib.util.test.suites.drivetrain.swerve.BreakerSwerveDriveTestSuite;
 
 /** Add your docs here. */
-public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements BreakerGenericTestSuiteImplementation<BreakerSwerveDriveTestSuite> {
+public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements BreakerGenericTestSuiteImplementation<BreakerSwerveDriveTestSuite>*/ {
     private Rotation2d lastSetHeading;
     /**
    * The current {@link SwerveModuleState} each of this drivetrain's swerve
@@ -316,10 +314,10 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
     }
   }
 
-  @Override
-  public BreakerSwerveDriveTestSuite getTestSuite() {
-    return new BreakerSwerveDriveTestSuite(this, swerveModules);
-  }
+  // @Override
+  // public BreakerSwerveDriveTestSuite getTestSuite() {
+  //   return new BreakerSwerveDriveTestSuite(this, swerveModules);
+  // }
 
 
   @Override
@@ -407,21 +405,31 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
       private double dt;
       private ReplanningConfig replanningConfig;
       private PIDConstants linearPIDConstants, rotationalPIDConstants;
+      private boolean mirrorPathToAlliance;
       private final BreakerSwerveVelocityRequest autoRequest;
       public BreakerPathplannerStandardSwerveAutoConfig(PIDConstants linearPIDConstants, PIDConstants rotationalPIDConstants) {
-        this(linearPIDConstants, rotationalPIDConstants, new ReplanningConfig(), 0.02);
+        this(linearPIDConstants, rotationalPIDConstants, new ReplanningConfig(), 0.02, true);
       }
 
-      public  BreakerPathplannerStandardSwerveAutoConfig(PIDConstants linearPIDConstants, PIDConstants rotationalPIDConstants, ReplanningConfig replanningConfig, double dt) {
+      public BreakerPathplannerStandardSwerveAutoConfig(PIDConstants linearPIDConstants, PIDConstants rotationalPIDConstants, ReplanningConfig replanningConfig, double dt, boolean mirrorPathToAlliance) {
         this.dt = dt;
         this.replanningConfig = replanningConfig;
         this.rotationalPIDConstants = rotationalPIDConstants;
         this.linearPIDConstants = linearPIDConstants;
+        this.mirrorPathToAlliance = mirrorPathToAlliance;
         autoRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d(), dt, false, false);
       }
 
       public BreakerSwerveVelocityRequest getAutoRequest() {
           return autoRequest;
+      }
+
+      private boolean mirrorPathSupplyer() {
+        Optional<Alliance> ally = DriverStation.getAlliance(); 
+        if (ally.isPresent() && mirrorPathToAlliance) {
+          return ally.get() == Alliance.Red;
+        }
+        return false;
       }
 
       @Override
@@ -439,6 +447,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain implements Brea
             replanningConfig, 
             dt
           ),
+          this::mirrorPathSupplyer,
           drivetrain
         );
       }

@@ -37,6 +37,7 @@ public abstract class BreakerOdometryThread extends Thread implements BreakerGen
         lowPass = LinearFilter.movingAverage(50);
         lastThreadPriority = threadPriority;
         threadPriorityToSet = threadPriority;
+        start();
     }
 
     public void setThreadPriority(int priority) {

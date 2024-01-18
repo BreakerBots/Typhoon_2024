@@ -4,11 +4,12 @@
 
 package frc.robot.BreakerLib.subsystem.cores.drivetrain;
 
+import org.littletonrobotics.junction.LogTable;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.BreakerLib.devices.BreakerGenericLoopedDevice;
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
-import frc.robot.BreakerLib.util.logging.advantagekit.LogTable;
 
 /** Contianer class for methods common to all drivetrain types */
 public abstract class BreakerGenericDrivetrain extends BreakerGenericLoopedDevice implements BreakerGenericOdometer {
