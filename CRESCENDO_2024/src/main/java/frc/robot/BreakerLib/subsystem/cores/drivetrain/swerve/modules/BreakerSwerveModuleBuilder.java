@@ -5,7 +5,6 @@
 package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules;
 
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.math.geometry.Translation2d;
 

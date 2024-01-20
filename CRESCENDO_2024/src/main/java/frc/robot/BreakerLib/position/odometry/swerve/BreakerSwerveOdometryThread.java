@@ -176,5 +176,9 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
     /**
      * InnerBreakerSwerveOdometryThread
      */
-    public record BreakerSwerveOdometryConfig(double odometeryPeriod, Matrix<N3, N1> stateStdDevs, Matrix<N3, N1> defaultVisionStdDevs, PoseOrigin poseOrigin, Pose2d initialPoseMeters, int threadPriority) {}
+    public record BreakerSwerveOdometryConfig(double odometeryPeriod, Matrix<N3, N1> stateStdDevs, Matrix<N3, N1> defaultVisionStdDevs, PoseOrigin poseOrigin, Pose2d initialPoseMeters, int threadPriority) {
+        public BreakerSwerveOdometryConfig() {
+            this(1.0/200.0,  VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.9, 0.9, 0.9), PoseOrigin.ofGlobal(), new Pose2d(), 1);
+        }
+    }
 }

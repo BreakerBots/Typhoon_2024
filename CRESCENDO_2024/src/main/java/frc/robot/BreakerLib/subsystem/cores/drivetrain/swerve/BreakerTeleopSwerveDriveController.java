@@ -11,7 +11,6 @@ import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.AllianceManager;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;

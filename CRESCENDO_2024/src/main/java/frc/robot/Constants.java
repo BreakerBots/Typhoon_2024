@@ -18,8 +18,9 @@ import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTre
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-  public static class OperatorConstants {
-    public static final int kDriverControllerPort = 0;
+  public static class IntakeConstants {
+    public static final int ROLLER_MOTOR_ID = 0; // TODO
+    public static final int PIVOT_MOTOR_ID = 0; // TODO
   }
 
   public static class ShooterConstants {

@@ -36,6 +36,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.BreakerLib.devices.sensors.gyro.BreakerGenericGyro;
 import frc.robot.BreakerLib.position.movement.BreakerMovementState2d;
 import frc.robot.BreakerLib.position.odometry.BreakerGenericOdometer;
+import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerGenericSwerveModule;
@@ -84,18 +85,11 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
 
   private double lowestMaxAttainableModuleWheelSpeed;
   private double furthestModuleDistanceFromRobotCenter;
-    public BreakerSwerveDrive(
-            BreakerSwerveDriveConfig config, 
-            BreakerPathplannerSwerveAutoConfig autoConfig,
-            BreakerGenericGyro gyro,
-            BreakerGenericSwerveModule... swerveModules) {
-        this(config, autoConfig, new BreakerSwerveOdometryConfig(), gyro, swerveModules);
-    }
 
     public BreakerSwerveDrive(
             BreakerSwerveDriveConfig config,  
             BreakerPathplannerSwerveAutoConfig autoConfig,
-            BreakerSwerveOdometryConfig odometryConfig, 
+            BreakerSwerveOdometryThread odometryThread, 
             BreakerGenericGyro gyro, 
             BreakerGenericSwerveModule... swerveModules) {
         this.config = config;
@@ -114,7 +108,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
           furthestModuleDistanceFromRobotCenter = i < 1 ? modDist : Math.max(modDist, furthestModuleDistanceFromRobotCenter);
         }
         kinematics = new SwerveDriveKinematics(wheelPositions);
-        odometer = odometryConfig.getOdometer(this);
+        odometer = odometryThread;
         stopRequest = new BreakerSwerveStopRequest();
         autoConfig.configureAuto(this);
     }
