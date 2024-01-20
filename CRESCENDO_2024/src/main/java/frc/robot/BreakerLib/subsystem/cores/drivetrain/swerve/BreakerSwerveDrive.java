@@ -73,7 +73,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
    * The {@link BreakerGenericOdometer} object this drivetrain uses for its internal
    * odometry.
    */
-  private BreakerGenericOdometer odometer;
+  private BreakerSwerveOdometryThread odometryThread;
 
   private BreakerSwerveDriveConfig config;
 
@@ -108,7 +108,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
           furthestModuleDistanceFromRobotCenter = i < 1 ? modDist : Math.max(modDist, furthestModuleDistanceFromRobotCenter);
         }
         kinematics = new SwerveDriveKinematics(wheelPositions);
-        odometer = odometryThread;
+        odometryThread = odometryThread;
         stopRequest = new BreakerSwerveStopRequest();
         autoConfig.configureAuto(this);
     }
@@ -211,18 +211,18 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
         return config;
     }
 
-    public void setOdometer(BreakerGenericOdometer odometer) {
-        this.odometer = odometer;
+    public void setOdometryThread(BreakerSwerveOdometryThread odometer) {
+        this.odometryThread = odometer;
         lastSetHeading = getOdometryPoseMeters().getRotation();
     }
 
-    public BreakerGenericOdometer getOdometer() {
-        return odometer;
+    public BreakerSwerveOdometryThread getOdometryThread() {
+        return odometryThread;
     }
 
     @Override
     public void setOdometryPosition(Pose2d newPose) {
-        odometer.setOdometryPosition(newPose);
+        odometryThread.setOdometryPosition(newPose);
         lastSetHeading = newPose.getRotation();
     }
 
@@ -270,22 +270,22 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
 
   @Override
   public Pose2d getOdometryPoseMeters() {
-    return odometer.getOdometryPoseMeters();
+    return odometryThread.getOdometryPoseMeters();
   }
 
   @Override
   public BreakerMovementState2d getMovementState() {
-    return odometer.getMovementState();
+    return odometryThread.getMovementState();
   }
 
   @Override
   public ChassisSpeeds getRobotRelativeChassisSpeeds() {
-    return odometer.getRobotRelativeChassisSpeeds();
+    return odometryThread.getRobotRelativeChassisSpeeds();
   }
 
   @Override
   public ChassisSpeeds getFieldRelativeChassisSpeeds() {
-    return odometer.getFieldRelativeChassisSpeeds();
+    return odometryThread.getFieldRelativeChassisSpeeds();
   }
 
   public void setStatusUpdatePeriod(double period) {
@@ -348,7 +348,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
   @Override
   public String toString() {
     return String.format("BreakerSwerveDrive(Health: %s, Movement_State: %s, Swerve_Modules: %s)", health.toString(),
-        odometer.getMovementState().toString(), Arrays.toString(swerveModules));
+        odometryThread.getMovementState().toString(), Arrays.toString(swerveModules));
   }
 
   public ChassisSpeeds getTargetChassisSpeeds() {
@@ -364,7 +364,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
     table.put("DeviceHealth", getHealth().toString());
     table.put("RealModuleStates", getSwerveModuleStates());
     table.put("TargetModuleStates", targetModuleStates);
-    odometer.toLog(table.getSubtable("Odometry"));
+    odometryThread.toLog(table.getSubtable("Odometry"));
     LogTable moduleTable = table.getSubtable("Modules");
     for (BreakerGenericSwerveModule module: swerveModules) {
       module.toLog(moduleTable.getSubtable(module.getDeviceName()));

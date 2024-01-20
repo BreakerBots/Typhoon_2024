@@ -4,7 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
@@ -25,13 +28,34 @@ public final class Constants {
 
   public static class ShooterConstants {
     public static final BreakerInterpolatingTreeMap<Double, BreakerVector2> FIREING_MAP = getFireingMap();
-    public static final double FLYWHEEL_IDLE_RPS = 2000;
 
     private static BreakerInterpolatingTreeMap<Double, BreakerVector2> getFireingMap() {
       BreakerInterpolatingTreeMap<Double, BreakerVector2> fm = new BreakerInterpolatingTreeMap<>();
       fm.put(1.0, new BreakerVector2(Rotation2d.fromDegrees(0.0), 0000));
       return fm;
     } 
+  }
+
+  public static class VisionConstants {
+    public static final String FRONT_CAMERA_NAME = "frontCam";
+    public static final Transform3d FRONT_CAMERA_TRANS = new Transform3d();
+
+    public static final String LEFT_CAMERA_NAME = "leftCam";
+    public static final Transform3d LEFT_CAMERA_TRANS = new Transform3d();
+
+
+    public static final String RIGHT_CAMERA_NAME = "rightCam";
+    public static final Transform3d RIGHT_CAMERA_TRANS = new Transform3d();
+
+
+    public static final String BACK_CAMERA_NAME = "backCam";
+    public static final Transform3d BACK_CAMERA_TRANS = new Transform3d();
+
+    public static final String LIMELIGHT_NAME = "limelight";
+    public static final Transform3d LIMELIGHT_TRANS = new Transform3d();
+
+    public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
+
   }
 
   public static class ClimbConstants {
