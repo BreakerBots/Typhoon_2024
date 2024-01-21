@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 
 public class ShooterCarrage extends SubsystemBase {
   /** Creates a new PizzaBox. */
@@ -20,8 +21,16 @@ public class ShooterCarrage extends SubsystemBase {
   private WPI_TalonSRX hopperMotor;
   private Rotation2d targetPitch;
   private CarrageHopperState hopperState;
+  private static final BreakerBeamBreak beamBreak = new BreakerBeamBreak(0, true);
   public ShooterCarrage() {
 
+  }
+
+
+  
+
+  public static boolean hasNote() {
+    return beamBreak.isBroken();
   }
 
   public boolean isAtTargetState() {

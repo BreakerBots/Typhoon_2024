@@ -10,6 +10,12 @@ import frc.robot.subsystems.Drive;
 
 /** Add your docs here. */
 public class ShooterTarget {
+    public static final ShooterTarget SPEAKER = new ShooterTarget();
+
+
+
+
+
     private Drive drivetrain;
 
     public Rotation2d getYawAim() {
@@ -28,5 +34,7 @@ public class ShooterTarget {
 
     }
 
-    public 
+    public double getRequiredFlywheelVelocity() {
+        return 
+    }
 }
