@@ -12,20 +12,6 @@ import frc.robot.subsystems.Drive;
 public class ShooterTarget {
     public static final ShooterTarget SPEAKER = new ShooterTarget();
 
-
-
-
-
-    private Drive drivetrain;
-
-    public Rotation2d getYawAim() {
-
-    }
-
-    public Rotation2d getPitchAim() {
-
-    }
-
     public double getDistance2d() {
 
     }
@@ -34,7 +20,13 @@ public class ShooterTarget {
 
     }
 
-    public double getRequiredFlywheelVelocity() {
-        return 
+    public FireingSolution getFireingSolution() {
+        
+    }
+
+    public static class FireingSolution {
+        public FireingSolution(Rotation2d pitch, Rotation2d yaw, double flywheelVelocityRPS) {
+
+        }
     }
 }

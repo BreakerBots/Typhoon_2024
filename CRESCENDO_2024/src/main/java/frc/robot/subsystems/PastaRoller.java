@@ -9,17 +9,23 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 
 public class PastaRoller extends SubsystemBase {
   /** Creates a new PastaRoller. */
   private WPI_TalonSRX innerRollerMotor, outerRollerMotor;
-  private PastaRollerState curState;
+  private BreakerBeamBreak beamBreak;
   public PastaRoller() {
+    
+  }
 
+  public boolean hasNote() {
+    return beamBreak.isBroken();
   }
 
   public void setState(PastaRollerState state) {
-    curState = state;
+    innerRollerMotor.set(state.getInnerRollerDutyCycle());
+    outerRollerMotor.set(state.getOuterRollerDutyCycle());
   }
 
   public InstantCommand setStateCommand(PastaRollerState state) {
@@ -47,7 +53,6 @@ public class PastaRoller extends SubsystemBase {
   }
   @Override
   public void periodic() {
-    innerRollerMotor.set(curState.getInnerRollerDutyCycle());
-    outerRollerMotor.set(curState.getOuterRollerDutyCycle());
+    
   }
 }

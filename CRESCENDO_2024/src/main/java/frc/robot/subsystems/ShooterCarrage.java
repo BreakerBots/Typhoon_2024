@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.Optional;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -20,8 +22,9 @@ public class ShooterCarrage extends SubsystemBase {
   private TalonFX pitchMotor;
   private WPI_TalonSRX hopperMotor;
   private Rotation2d targetPitch;
+  private CarragePitchMode pitchMode;
   private CarrageHopperState hopperState;
-  private static final BreakerBeamBreak beamBreak = new BreakerBeamBreak(0, true);
+  private final BreakerBeamBreak beamBreak = new BreakerBeamBreak(0, true);
   public ShooterCarrage() {
 
   }
@@ -29,7 +32,7 @@ public class ShooterCarrage extends SubsystemBase {
 
   
 
-  public static boolean hasNote() {
+  public boolean hasNote() {
     return beamBreak.isBroken();
   }
 
@@ -37,32 +40,17 @@ public class ShooterCarrage extends SubsystemBase {
     return true;
   }
 
-  public void setCarragePitchTarget(Rotation2d target) {
+  public void setPitchMode(CarragePitchMode pitchMode) {
 
   }
 
-  public void setHopperState(CarrageHopperState state) {
-
+  public void setHopperState(CarrageHopperState hopperState) {
+    
   }
 
-  public Command setCarragePitchTargetCommand(Rotation2d target, boolean waitForSuccess) {
-    return new FunctionalCommand(() -> {setCarragePitchTarget(target);}, () -> {}, (Boolean interupted) -> {}, () -> {return !waitForSuccess || isAtTargetState();}, this);
-  }
-
-  public InstantCommand setHopperStateCommand(CarrageHopperState state) {
-    return new InstantCommand(() -> {setHopperState(state);});
-  }
-
-  public ParallelCommandGroup setCarrageStateCommand(Rotation2d pitchTarget, CarrageHopperState newHopperState, boolean waitForSuccess) {
-    return setCarragePitchTargetCommand(targetPitch, waitForSuccess).alongWith(setHopperStateCommand(newHopperState));
-  }
-  
-
-  public static class CarragePitchPresets {
-    public static final Rotation2d STOW = Rotation2d.fromDegrees(0.0);
-    public static final Rotation2d PASTA_ROLLER_HANDOFF = Rotation2d.fromDegrees(90.0);
-    public static final Rotation2d INTAKE_FROM_HUMAN_PLAYER = Rotation2d.fromDegrees(55.0);
-    public static final Rotation2d EJECT_NOTE = Rotation2d.fromDegrees(45.0);
+   @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
   }
 
   public static enum CarrageHopperState {
@@ -71,9 +59,28 @@ public class ShooterCarrage extends SubsystemBase {
     NEUTRAL;
   }
 
+  public static enum CarragePitchMode {
+    STOW(Rotation2d.fromDegrees(0.0)),
+    PASTA_ROLLER_HANDOFF(Rotation2d.fromDegrees(90.0)),
+    INTAKE_FROM_HUMAN_PLAYER(Rotation2d.fromDegrees(55.0)),
+    EJECT_NOTE(Rotation2d.fromDegrees(45.0)),
+    HOLD_ARBITRARY,
+    SHOOT_SPEAKER;
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
+    private CarragePitchMode(Optional<Rotation2d> targetAngleOptional) {
+      
+    }
+
+    private CarragePitchMode(Rotation2d targetAngle) {
+      this(Optional.of(targetAngle));
+    }
+
+    private CarragePitchMode() {
+      this(Optional.empty());
+    }
+
+    public Optional<Rotation2d> getTargetAngle() {
+
+    }
   }
 }

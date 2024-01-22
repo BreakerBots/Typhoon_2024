@@ -36,44 +36,22 @@ public class Flywheel extends SubsystemBase {
     
   }
 
-  public void setVelocity(double velocityRotationsPerSecond) {
+  public void setMode(FlywheelMode mode) {
 
-  }
-
-  public Command setVelocityCommand(double velocityRotationsPerSecond, FlywheelPresisionType presisionType) {
-    return new FunctionalCommand(() -> {setVelocity(velocityRotationsPerSecond);}, () -> {}, (Boolean interupted) -> {}, () -> {return isAtTargetVelocity(presisionType);}, this);
-  }
-
-  private InstantCommand setFlywheelToIdleSpeed() {
-    return new InstantCommand(() -> {setVelocity(ShooterTarget.SPEAKER.getRequiredFlywheelVelocity() * 0.6);})
-  }
-
-  public Command stopFlywheel(FlywheelPresisionType presisionType) {
-    return setVelocityCommand(0.0, presisionType);
-  }
-
-  public ConditionalCommand conditionalIdleFlywheel() {
-    return new ConditionalCommand(setFlywheelToIdleSpeed(), stopFlywheel(FlywheelPresisionType.NONE), ShooterCarrage::hasNote);
   }
 
   public static enum FlywheelPresisionType {
     COARSE,
     FINE,
     NONE
-
-
   }
 
-  public static class FlywheelPresets {
-    public static final double NEUTRAL = 0.0;
-    public static final double HANDOFF_FROM_INTAKE = dutyCycleToRPS(0.3);
-    public static final double HANDOFF_TO_PASTA_ROLLER = dutyCycleToRPS(0.6);
-    public static final double EJECT_NOTE = dutyCycleToRPS(0.6);
-    public static final double MAX_SPEED = 6000;
-
-    private static double dutyCycleToRPS(double dutyCycle) {
-      return (dutyCycle * 6380.0)/60.0;
-    }
+  public static enum FlywheelMode {
+    NEUTRAL,
+    INTAKE,
+    PASTA_ROLLER_HANDOFF,
+    EJECT_NOTE,
+    SHOOT_SPEAKER
   }
 
   @Override

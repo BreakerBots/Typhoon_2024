@@ -19,6 +19,7 @@ import com.ctre.phoenix6.signals.ReverseLimitValue;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -84,16 +85,12 @@ public class Intake extends SubsystemBase {
   public void setState(IntakeState stateToSet) {
     targetState = stateToSet;
   }
-  
-  public Command setStateCommand(IntakeState stateToSet, boolean waitForSuccess) {
-    return new FunctionalCommand(() -> {setState(stateToSet);}, () -> {}, (Boolean interupted) -> {}, () -> {return !waitForSuccess || isAtTargetState();}, this);
-  }
 
   public static enum IntakeState {
     EXTENDED_INTAKEING(IntakePivotState.EXTENDED, IntakeRollerState.INTAKEING),
-    EXTENDED_EXTAKEING(IntakePivotState.EXTENDED, IntakeRollerState.EXTAKEING),
     EXTENDED_NEUTRAL(IntakePivotState.EXTENDED, IntakeRollerState.NEUTRAL),
-    RETRACTED_NEUTRAL(IntakePivotState.RETRACTED, IntakeRollerState.NEUTRAL);
+    RETRACTED_NEUTRAL(IntakePivotState.RETRACTED, IntakeRollerState.NEUTRAL),
+    NEUTRAL(IntakePivotState.NEUTRAL, IntakeRollerState.NEUTRAL);
     
     private IntakePivotState pivotState;
     private IntakeRollerState rollerState;
@@ -113,7 +110,8 @@ public class Intake extends SubsystemBase {
 
   public static enum IntakePivotState {
     EXTENDED(0.6),
-    RETRACTED(-0.6);
+    RETRACTED(-0.6),
+    NEUTRAL(0.0);
     private double motorDutyCycle;
     private IntakePivotState(double motorDutyCycle) {
       this.motorDutyCycle = motorDutyCycle;
