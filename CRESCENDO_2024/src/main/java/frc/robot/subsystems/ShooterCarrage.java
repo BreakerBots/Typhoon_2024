@@ -22,7 +22,6 @@ public class ShooterCarrage extends SubsystemBase {
   private TalonFX pitchMotor;
   private WPI_TalonSRX hopperMotor;
   private Rotation2d targetPitch;
-  private CarragePitchMode pitchMode;
   private CarrageHopperState hopperState;
   private final BreakerBeamBreak beamBreak = new BreakerBeamBreak(0, true);
   public ShooterCarrage() {
@@ -32,6 +31,10 @@ public class ShooterCarrage extends SubsystemBase {
 
   
 
+
+  public Rotation2d getPitch() {
+    return new Rotation2d();
+  }
   public boolean hasNote() {
     return beamBreak.isBroken();
   }
@@ -40,8 +43,8 @@ public class ShooterCarrage extends SubsystemBase {
     return true;
   }
 
-  public void setPitchMode(CarragePitchMode pitchMode) {
-
+  public void setTargetPitch(Rotation2d targetPitch) {
+    
   }
 
   public void setHopperState(CarrageHopperState hopperState) {
@@ -67,8 +70,9 @@ public class ShooterCarrage extends SubsystemBase {
     HOLD_ARBITRARY,
     SHOOT_SPEAKER;
 
+    private Optional<Rotation2d> targetAngleOptional;
     private CarragePitchMode(Optional<Rotation2d> targetAngleOptional) {
-      
+      this.targetAngleOptional = targetAngleOptional;
     }
 
     private CarragePitchMode(Rotation2d targetAngle) {
@@ -80,7 +84,7 @@ public class ShooterCarrage extends SubsystemBase {
     }
 
     public Optional<Rotation2d> getTargetAngle() {
-
+      return targetAngleOptional;
     }
   }
 }

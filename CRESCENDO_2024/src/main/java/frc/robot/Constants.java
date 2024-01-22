@@ -6,10 +6,21 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveConfig;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder.BreakerSwerveModuleConfig;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
+import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
+import frc.robot.BreakerLib.util.math.BreakerUnits;
 import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
 
 /**
@@ -21,6 +32,10 @@ import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTre
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class FieldConstants {
+    public static final double FIELD_WIDTH = 16.4846;
+  }
+
   public static class IntakeConstants {
     public static final int ROLLER_MOTOR_ID = 0; // TODO
     public static final int PIVOT_MOTOR_ID = 0; // TODO
@@ -58,6 +73,18 @@ public final class Constants {
 
   }
 
+  public static class FlywheelConstants {
+    public static final double MAX_SPEED = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(6380.0);
+    public static final double COARSE_VELOCITY_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(150.0);
+    public static final double COARSE_ACCELERATION_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(80.0);
+    public static final double FINE_VELOCITY_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(5.0);
+    public static final double FINE_ACCELERATION_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(1.0);
+    public static final double CONTACT_WHEEL_CIRCUMFRENCE = Units.inchesToMeters(Math.PI*4.0);
+    public static final double MOTOR_TO_FLYWHEEL_GEARING = 1.0;
+    public static final double METERS_PER_SEC_PER_MOTOR_ROT = (1.0 / MOTOR_TO_FLYWHEEL_GEARING) * CONTACT_WHEEL_CIRCUMFRENCE;
+
+  }
+
   public static class ClimbConstants {
     
   }
@@ -82,15 +109,86 @@ public final class Constants {
     public static final int BR_ENCODER_ID = 23;
 
     //Azimuth encoder angle offets
-      public static final double FL_ENCODER_OFFSET = -0.0;
-      public static final double FR_ENCODER_OFFSET = -0.238037;
-      public static final double BL_ENCODER_OFFSET = 0.11865234375;
-      public static final double BR_ENCODER_OFFSET = 0.33837890625;
+    public static final double FL_ENCODER_OFFSET = 0.0;
+    public static final double FR_ENCODER_OFFSET = 0.0;
+    public static final double BL_ENCODER_OFFSET = 0.0;
+    public static final double BR_ENCODER_OFFSET = 0.0;
 
-      //Module wheel centerpoint locations relative to robot origin (center)
-      public static final Translation2d FL_TRANSLATION = new Translation2d(0.314325, 0.314325);
-      public static final Translation2d FR_TRANSLATION = new Translation2d(0.314325, -0.314325);
-      public static final Translation2d BL_TRANSLATION = new Translation2d(-0.314325, 0.314325);
-      public static final Translation2d BR_TRANSLATION = new Translation2d(-0.314325, -0.314325);
+    //Module wheel centerpoint locations relative to robot origin (center)
+    public static final Translation2d FL_TRANSLATION = new Translation2d(0.314325, 0.314325);
+    public static final Translation2d FR_TRANSLATION = new Translation2d(0.314325, -0.314325);
+    public static final Translation2d BL_TRANSLATION = new Translation2d(-0.314325, 0.314325);
+    public static final Translation2d BR_TRANSLATION = new Translation2d(-0.314325, -0.314325);
+
+    //Module Azimuth PIDF constants
+    public static final double MODULE_AZIMUTH_KP = 20.419941348973605;
+    public static final double MODULE_AZIMUTH_KI = 0.0;
+    public static final double MODULE_AZIMUTH_KD = 0.0;
+    public static final double MODULE_AZIMUTH_KF = 0.0;
+    public static final BreakerSwerveMotorPIDConfig MODULE_ANGLE_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_AZIMUTH_KP, MODULE_AZIMUTH_KI, MODULE_AZIMUTH_KD, MODULE_AZIMUTH_KF);
+
+    //Module Drive Velocity PIDF constants
+    public static final double MODULE_VELOCITY_KP = -0.10810557184750733;
+    public static final double MODULE_VELOCITY_KI = 0.0;
+    public static final double MODULE_VELOCITY_KD = 0.0;
+    public static final double MODULE_VELOCITY_KF = 0.0;
+    public static final BreakerSwerveMotorPIDConfig MODULE_VELOCITY_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_VELOCITY_KP, MODULE_VELOCITY_KI, MODULE_VELOCITY_KD, MODULE_VELOCITY_KF);
+
+    //Module Drive Arbitrary FeedForward
+    public static final double FF_STATIC_FRICTION_COEFFICIENT = 0.3;
+    public static final double FF_VELOCITY_COEFFICIENT = 2.82;
+    public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT);
+
+    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.0;
+    public static final double DRIVE_MOTOR_GEAR_RATIO_TO_ONE = 6.12;
+    public static final double AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE = 1.0;
+    public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);
+    public static final double MODULE_WHEEL_SPEED_DEADBAND = 0.001;
+    public static final double AZIMUTH_MOTOR_SUPPLY_CURRENT_LIMIT = 40.0;
+    public static final double DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT = 80.0;
+    public static final BreakerSwerveModuleConfig MODULE_CONFIG = new BreakerSwerveModuleConfig(
+      DRIVE_MOTOR_GEAR_RATIO_TO_ONE, AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE, 
+      WHEEL_DIAMETER, 
+      MAX_ATTAINABLE_MODULE_WHEEL_SPEED,  
+      AZIMUTH_MOTOR_SUPPLY_CURRENT_LIMIT, DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT,
+      MODULE_ANGLE_PID_CONFIG, MODULE_VELOCITY_PID_CONFIG, 
+      MODULE_VELOCITY_FF
+    );
+
+      //Theta-axis positional PID
+      public static final double HEADING_COMPENSATION_PID_KP = 3.5;
+      public static final double HEADING_COMPENSATION_PID_KI = 0.0;
+      public static final double HEADING_COMPENSATION_PID_KD = 0.0;
+      public static final PIDController HEADING_COMPENSATION_PID = new PIDController(HEADING_COMPENSATION_PID_KP, HEADING_COMPENSATION_PID_KI, HEADING_COMPENSATION_PID_KD);
+
+    //Slow mode constants
+    public static final double SLOW_MODE_LINEAR_MULTIPLIER = 0.5;
+    public static final double SLOW_MODE_TURN_MULTIPLIER = 0.5;
+
+    //Physical Robot Constants
+    public static final double MAX_ANGULAR_VEL = ((FL_TRANSLATION.getNorm() * 2.0 * Math.PI) / MAX_ATTAINABLE_MODULE_WHEEL_SPEED) * (2.0 * Math.PI); 
+    public static final double MAX_LINEAR_VEL = 5.0;
+    public static final double HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND = 0.005;
+    public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.01;
+    public static final BreakerSwerveDriveConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveConfig(
+    MAX_LINEAR_VEL, MAX_ANGULAR_VEL, MODULE_WHEEL_SPEED_DEADBAND)
+    .withHeadingCompensation(HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND, HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL, HEADING_COMPENSATION_PID)
+    .withSlowModeMultipliers(SLOW_MODE_LINEAR_MULTIPLIER, SLOW_MODE_TURN_MULTIPLIER);
+
+    public static final double X_PID_KP = 4.5;
+    public static final double X_PID_KI = 0.0;
+    public static final double X_PID_KD = 0.0;
+
+    //Y-axis positional PID
+    public static final double Y_PID_KP = 4.5;
+    public static final double Y_PID_KI = 0.0;
+    public static final double Y_PID_KD = 0.0;
+
+    //Theta-axis positional PID
+    public static final double THETA_PID_KP = 3.5;
+    public static final double THETA_PID_KI = 0.0;
+    public static final double THETA_PID_KD = 0.0;
+    
+    public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);
   }
 }

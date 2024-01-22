@@ -116,4 +116,12 @@ public class BreakerUnits {
     public static double degreesToCANCoderNativeUnits(double degrees) {
         return degrees / 0.087890625;
     }
+
+    public static double rotationsPerMinuteToRotationsPerSecond(double rpm) {
+        return rpm / 60.0;
+    }
+
+    public static double rotationsPerSecondToRotationsPerMinute(double rps) {
+        return rps * 60.0;
+    }
 }

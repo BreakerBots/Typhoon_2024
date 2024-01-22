@@ -4,10 +4,13 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.hardware.TalonFX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climb extends SubsystemBase {
   /** Creates a new Climb. */
+  private TalonFX leftClimb, rightClimb;
   public Climb() {}
 
   @Override
