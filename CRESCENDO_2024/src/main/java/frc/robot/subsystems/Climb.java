@@ -13,6 +13,10 @@ public class Climb extends SubsystemBase {
   private TalonFX leftClimb, rightClimb;
   public Climb() {}
 
+  public void setLeftPosition() {
+    
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

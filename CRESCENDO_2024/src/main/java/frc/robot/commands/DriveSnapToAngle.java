@@ -4,13 +4,17 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Drive;
 
 public class DriveSnapToAngle extends Command {
   /** Creates a new DriveSnapToAngle. */
-  public DriveSnapToAngle() {
+  public DriveSnapToAngle(Drive drivetrain, Rotation2d snapAngle, double allowablePositionError, double allowableVelocityError, TrapezoidProfile.Constraints snapConstraints) {
     // Use addRequirements() here to declare subsystem dependencies.
   }
+
 
   // Called when the command is initially scheduled.
   @Override

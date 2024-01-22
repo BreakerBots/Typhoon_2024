@@ -24,6 +24,7 @@ public enum SuperstructureState {
 
     HANDOFF_TO_PASTA_ROLLER_PREP(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.INTAKE, CarragePitchMode.PASTA_ROLLER_HANDOFF, CarrageHopperState.NEUTRAL, FlywheelState.PASTA_ROLLER_HANDOFF),
     HANDOFF_TO_PASTA_ROLLER(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.INTAKE, CarragePitchMode.PASTA_ROLLER_HANDOFF, CarrageHopperState.EXTAKE, FlywheelState.PASTA_ROLLER_HANDOFF),
+    HANDBACK_FROM_PASTA_ROLLER(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.EXTAKE_REVERSE, CarragePitchMode.PASTA_ROLLER_HANDOFF, CarrageHopperState.INTAKE, FlywheelState.INTAKE),
     EXTAKE_FROM_PASTA_ROLLER(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.EXTAKE, CarragePitchMode.STOW, CarrageHopperState.INTAKE, FlywheelState.INTAKE),
 
     SHOOT_INTO_SPEAKER_PREP(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.SHOOT_SPEAKER, CarrageHopperState.NEUTRAL, FlywheelState.SHOOT_SPEAKER),
