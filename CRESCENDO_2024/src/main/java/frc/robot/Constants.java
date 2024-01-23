@@ -141,7 +141,7 @@ public final class Constants {
 
     public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.0;
     public static final double DRIVE_MOTOR_GEAR_RATIO_TO_ONE = 6.12;
-    public static final double AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE = 1.0;
+    public static final double AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE = 21.4285714286;
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);
     public static final double MODULE_WHEEL_SPEED_DEADBAND = 0.001;
     public static final double AZIMUTH_MOTOR_SUPPLY_CURRENT_LIMIT = 40.0;

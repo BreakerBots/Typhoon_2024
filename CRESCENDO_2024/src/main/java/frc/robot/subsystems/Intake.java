@@ -40,7 +40,7 @@ public class Intake extends SubsystemBase {
   public Intake() {
     rollerMotor = new WPI_TalonSRX(ROLLER_MOTOR_ID);
     pivotMotor = new TalonFX(PIVOT_MOTOR_ID);
-
+    
     TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     pivotConfig.CurrentLimits.SupplyCurrentLimit = 30;

@@ -22,7 +22,7 @@ public class ShooterTarget {
     public ShooterTarget(Drive drivetrain, Translation3d targetPoint, BreakerInterpolatingTreeMap<Double, BreakerVector2> fireingTable) {
         this.targetPoint = targetPoint;
         this.drivetrain = drivetrain;
-        this.fireingTable = fireingTable;
+        this.fireingTable = fireingTabl;
     }
 
     public double getDistance2d() {
