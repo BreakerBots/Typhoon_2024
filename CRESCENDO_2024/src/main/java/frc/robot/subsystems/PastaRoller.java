@@ -23,6 +23,10 @@ public class PastaRoller extends SubsystemBase {
     return beamBreak.isBroken();
   }
 
+  public boolean doesNotHaveNote() {
+    return !beamBreak.isBroken();
+  }
+
   public void setState(PastaRollerState state) {
     innerRollerMotor.set(state.getInnerRollerDutyCycle());
     outerRollerMotor.set(state.getOuterRollerDutyCycle());

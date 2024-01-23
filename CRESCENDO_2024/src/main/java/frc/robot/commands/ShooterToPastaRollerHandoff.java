@@ -5,15 +5,23 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.SuperstructureState;
+import frc.robot.subsystems.PastaRoller;
+import frc.robot.subsystems.Superstructure;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShooterToPastaRollerHandoff extends SequentialCommandGroup {
   /** Creates a new ShooterToPastaRollerHandoff. */
-  public ShooterToPastaRollerHandoff() {
+  public ShooterToPastaRollerHandoff(Superstructure superstructure, PastaRoller pastaRoller) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands();
+    addCommands(
+      new SetSuperstructureState(superstructure, SuperstructureState.HANDOFF_TO_PASTA_ROLLER_PREP, true),
+      new SetSuperstructureState(superstructure, SuperstructureState.HANDOFF_TO_PASTA_ROLLER, false),
+      new WaitUntilCommndWithFallingEdgeDelayAndTimeout(pastaRoller::hasNote, 1.0, 3.5),
+      new SetSuperstructureState(superstructure, SuperstructureState.PASTA_ROLLER_TRANSITION_NEUTRAL, false)
+    );
   }
 }

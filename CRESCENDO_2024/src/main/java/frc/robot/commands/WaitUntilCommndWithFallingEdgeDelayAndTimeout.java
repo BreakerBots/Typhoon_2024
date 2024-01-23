@@ -7,29 +7,20 @@ package frc.robot.commands;
 import java.util.function.BooleanSupplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.SuperstructureState;
-import frc.robot.subsystems.Superstructure;
 
-public class SetSuperstructureState extends Command {
-  /** Creates a new SetSuperstructureState. */
-  private Superstructure superstructure;
-  private SuperstructureState state;
-  private boolean waitForSuccess;
-  public SetSuperstructureState(Superstructure superstructure, SuperstructureState state, boolean waitForSuccess) {
-    addRequirements(superstructure);
+public class WaitUntilCommndWithFallingEdgeDelayAndTimeout extends Command {
+  /** Creates a new WaitUntilCommndWithFallingEdgeDelayAndTimeout. */
+  public WaitUntilCommndWithFallingEdgeDelayAndTimeout(BooleanSupplier condition, double fallingEdgeDelaySeconds, double timeout) {
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    superstructure.setSuperstructureState(state);
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -38,6 +29,6 @@ public class SetSuperstructureState extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return superstructure.isAtTargetState() || !waitForSuccess;
+    return false;
   }
 }

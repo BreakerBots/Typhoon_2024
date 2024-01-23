@@ -16,6 +16,7 @@ public enum SuperstructureState {
     /*Engagued by a disable event to ensure te robot does not snap back to its pre-disabled state if any changes occur */
     ROBOT_NEUTRAL(IntakeState.NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.HOLD_ARBITRARY, CarrageHopperState.NEUTRAL, FlywheelState.NEUTRAL),
     STOW(IntakeState.RETRACTED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.STOW, CarrageHopperState.NEUTRAL, FlywheelState.NEUTRAL),
+    PASTA_ROLLER_TRANSITION_NEUTRAL(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.PASTA_ROLLER_HANDOFF, CarrageHopperState.NEUTRAL, FlywheelState.NEUTRAL),
 
     INTAKE_FROM_GROUND_PREP(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.STOW, CarrageHopperState.INTAKE, FlywheelState.INTAKE),
     INTAKE_FROM_GROUND(IntakeState.EXTENDED_INTAKEING, PastaRollerState.NEUTRAL, CarragePitchMode.STOW, CarrageHopperState.INTAKE, FlywheelState.INTAKE),
