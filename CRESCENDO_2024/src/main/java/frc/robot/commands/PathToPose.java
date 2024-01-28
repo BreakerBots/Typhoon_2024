@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class PathToPose extends Command {
   /** Creates a new PathToPose. */
   public PathToPose() {
-    AutoBuilder.pathfindToPose()
+    //AutoBuilder.pathfindToPose()
   }
 
   // Called when the command is initially scheduled.

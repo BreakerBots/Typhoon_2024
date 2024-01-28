@@ -67,6 +67,15 @@ public final class Constants {
     public static final double PITCH_PINION_TEETH = 12;
     public static final double PITCH_PLANITARY_RATIO = 5.0;
     public static final double PITCH_RATIO = (PITCH_RACK_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
+    public static final double PITCH_KP = 0.0;
+    public static final double PITCH_KI = 0.0;
+    public static final double PITCH_KD = 0.0;
+    public static final double PITCH_KS = 0.0;
+    public static final double PITCH_KA = 0.02;
+    public static final double PITCH_KV = 1.28;
+    public static final double PITCH_KG = 0.69;
+
+
   }
 
   public static class ShooterConstants {
