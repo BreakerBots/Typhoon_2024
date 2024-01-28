@@ -106,5 +106,13 @@ public class Superstructure extends SubsystemBase {
     manageFlywheel(desiredFlywheelState);
   }
 
+  public static enum ControlledNoteLocation {
+    SHOOTER_CARRAGE,
+    PASTA_ROLLER,
+    PASTA_ROLLER_EXTAKE,
+    PASTA_ROLLER_HANDOFF,
+    CARRAGE_EXTAKE;
+  }
+
   
 }

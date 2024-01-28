@@ -9,9 +9,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drive;
 
-public class DriveSnapToAngle extends Command {
+public class DriveAllignToAngle extends Command {
   /** Creates a new DriveSnapToAngle. */
-  public DriveSnapToAngle(Drive drivetrain, Rotation2d snapAngle, double allowablePositionError, double allowableVelocityError, TrapezoidProfile.Constraints snapConstraints) {
+  public DriveAllignToAngle(Drive drivetrain, Rotation2d snapAngle, double allowablePositionError, double allowableVelocityError, TrapezoidProfile.Constraints snapConstraints) {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
