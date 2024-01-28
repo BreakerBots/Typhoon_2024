@@ -29,20 +29,24 @@ public enum SuperstructureState {
     EXTAKE_FROM_PASTA_ROLLER(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.EXTAKE, CarragePitchMode.STOW, CarrageHopperState.INTAKE, FlywheelState.INTAKE),
 
     SHOOT_INTO_SPEAKER_PREP(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.SHOOT_SPEAKER, CarrageHopperState.NEUTRAL, FlywheelState.SHOOT_SPEAKER),
-    SHOOT_INTO_SPEAKER(),
+    SHOOT_INTO_SPEAKER(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.SHOOT_SPEAKER, CarrageHopperState.NEUTRAL, FlywheelState.SHOOT_SPEAKER),//* */
 
-    EJECT_NOTE_PREP(),
-    EJECT_NOTE(),
+    EJECT_NOTE_PREP(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.SHOOT_SPEAKER, CarrageHopperState.NEUTRAL, FlywheelState.SHOOT_SPEAKER),/* */
+    EJECT_NOTE(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.SHOOT_SPEAKER, CarrageHopperState.NEUTRAL, FlywheelState.SHOOT_SPEAKER),/* */
 
-    CLIMB_EXTEND(),
-    CLIMB_RETRACT();
+    CLIMB_EXTEND(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.SHOOT_SPEAKER, CarrageHopperState.NEUTRAL, FlywheelState.SHOOT_SPEAKER),/* */
+    CLIMB_RETRACT(IntakeState.EXTENDED_NEUTRAL, PastaRollerState.NEUTRAL, CarragePitchMode.SHOOT_SPEAKER, CarrageHopperState.NEUTRAL, FlywheelState.SHOOT_SPEAKER);/* */
     final IntakeState intakeState; 
     final PastaRollerState pastaRollerState; 
     final CarragePitchMode shooterCarragePitchMode; 
     final CarrageHopperState shooterCarrageHopperState; 
     final FlywheelState flywheelState;
     private SuperstructureState(IntakeState intakeState, PastaRollerState pastaRollerState, CarragePitchMode shooterCarragePitchMode, CarrageHopperState shooterCarrageHopperState, FlywheelState flywheelState) {
-
+        this.flywheelState = flywheelState;
+        this.intakeState = intakeState;
+        this.shooterCarrageHopperState = shooterCarrageHopperState;
+        this.shooterCarragePitchMode = shooterCarragePitchMode;
+        this.pastaRollerState = pastaRollerState;
     }
 
     public FlywheelState getFlywheelState() {

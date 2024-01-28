@@ -40,9 +40,8 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
     protected BreakerSwerveDrive drivetrain;
     protected double odometeryPeriod;
     protected ChassisSpeeds robotRelSpeeds, fieldRelSpeeds;
-    public BreakerSwerveOdometryThread(BreakerSwerveDrive drivetrain, BreakerSwerveOdometryConfig odometryConfig) {
+    public BreakerSwerveOdometryThread(BreakerSwerveOdometryConfig odometryConfig) {
         super(odometryConfig.threadPriority);
-        this.drivetrain = drivetrain;
         poseEstimator = new SwerveDrivePoseEstimator(drivetrain.getKinematics(), drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getSwerveModulePositions(), odometryConfig.initialPoseMeters, odometryConfig.stateStdDevs, odometryConfig.defaultVisionStdDevs);
         robotRelSpeeds = new ChassisSpeeds();
         fieldRelSpeeds = new ChassisSpeeds();
@@ -51,6 +50,16 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
         poseOrigin = odometryConfig.poseOrigin;
         
     }
+
+    @Override
+    public synchronized void start() {}
+
+    //TODO make this a better solution
+    public synchronized void start(BreakerSwerveDrive drivetrain) {
+        this.drivetrain = drivetrain;
+        super.start();
+    }
+    
 
     public Matrix<N3, N1> getDefaultVisionStdDevs() {
         return defaultVisionDevs;

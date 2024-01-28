@@ -25,9 +25,12 @@ public class BreakerPhoenixTimesyncSwerveOdometryThread extends BreakerSwerveOdo
     private CTREGyroYawStatusSignals gyroStatusSignals;
     private CTRESwerveModuleStatusSignals[] moduleStatusSignals;
     private BaseStatusSignal[] allStatusSignals;
-    public BreakerPhoenixTimesyncSwerveOdometryThread(BreakerSwerveDrive drivetrain,
-            BreakerSwerveOdometryConfig odometryConfig, CTREGyroYawStatusSignals gyroStatusSignals, CTRESwerveModuleStatusSignals... moduleStatusSignals) {
-        super(drivetrain, odometryConfig);
+    public BreakerPhoenixTimesyncSwerveOdometryThread(
+            BreakerSwerveOdometryConfig odometryConfig, 
+            CTREGyroYawStatusSignals gyroStatusSignals, 
+            CTRESwerveModuleStatusSignals... moduleStatusSignals
+        ) {
+        super(odometryConfig);
         this.gyroStatusSignals = gyroStatusSignals;
         this.moduleStatusSignals = moduleStatusSignals;
         ArrayList<BaseStatusSignal> statSigArrList = new ArrayList<>();

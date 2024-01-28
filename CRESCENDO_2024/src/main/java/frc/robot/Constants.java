@@ -4,23 +4,34 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
+import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread.BreakerSwerveOdometryConfig;
+import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerPathplannerSwerveAutoConfig.BreakerPathplannerStandardSwerveAutoConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder.BreakerSwerveModuleConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
 import frc.robot.BreakerLib.util.BreakerArbitraryFeedforwardProvider;
 import frc.robot.BreakerLib.util.math.BreakerUnits;
+import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolableDouble;
+import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolablePair;
 import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
 
 /**
@@ -32,6 +43,10 @@ import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTre
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static class GeneralConstants {
+    public static final String DRIVE_CANIVORE_NAME = "drive_canivore";
+  }
   public static class FieldConstants {
     public static final double FIELD_WIDTH = 16.4846;
   }
@@ -39,14 +54,27 @@ public final class Constants {
   public static class IntakeConstants {
     public static final int ROLLER_MOTOR_ID = 0; // TODO
     public static final int PIVOT_MOTOR_ID = 0; // TODO
+
+    /*0deg is 15 deg behind fully retracted*/
+    public static final double PIVIOT_RETRACTED_THRESHOLD = Units.degreesToRotations(20.0);
+    /*0deg is 20 deg behind fully retracted*/
+    public static final double PIVIOT_EXTENDED_THRESHOLD = Units.degreesToRotations(90.0+15.0);
+
+  }
+
+  public static class ShooterCarrageConstants {
+    public static final double PITCH_RACK_TEETH = 163;
+    public static final double PITCH_PINION_TEETH = 12;
+    public static final double PITCH_PLANITARY_RATIO = 5.0;
+    public static final double PITCH_RATIO = (PITCH_RACK_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
   }
 
   public static class ShooterConstants {
-    public static final BreakerInterpolatingTreeMap<Double, BreakerVector2> FIREING_MAP = getFireingMap();
+    public static final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> FIREING_MAP = getFireingMap();
 
-    private static BreakerInterpolatingTreeMap<Double, BreakerVector2> getFireingMap() {
-      BreakerInterpolatingTreeMap<Double, BreakerVector2> fm = new BreakerInterpolatingTreeMap<>();
-      fm.put(1.0, new BreakerVector2(Rotation2d.fromDegrees(0.0), 0000));
+    private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
+       BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fm = new BreakerInterpolatingTreeMap<>();
+      fm.put(1.0, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(0.0), 0000), new BreakerInterpolableDouble(0.0)));
       return fm;
     } 
   }
@@ -175,6 +203,8 @@ public final class Constants {
     .withHeadingCompensation(HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND, HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL, HEADING_COMPENSATION_PID)
     .withSlowModeMultipliers(SLOW_MODE_LINEAR_MULTIPLIER, SLOW_MODE_TURN_MULTIPLIER);
 
+    public static final BreakerSwerveOdometryConfig ODOMETRY_CONFIG = new BreakerSwerveOdometryConfig(1.0/200.0,  VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.9, 0.9, 0.9), PoseOrigin.ofGlobal(), new Pose2d(), 5);
+
     public static final double X_PID_KP = 4.5;
     public static final double X_PID_KI = 0.0;
     public static final double X_PID_KD = 0.0;
@@ -188,6 +218,14 @@ public final class Constants {
     public static final double THETA_PID_KP = 3.5;
     public static final double THETA_PID_KI = 0.0;
     public static final double THETA_PID_KD = 0.0;
+
+    public static final double LINEAR_PID_KP = Math.hypot(X_PID_KP, Y_PID_KP);
+    public static final double LINEAR_PID_KI = Math.hypot(X_PID_KP, Y_PID_KP);
+    public static final double LINEAR_PID_KD = Math.hypot(X_PID_KP, Y_PID_KP);
+
+    public static final ReplanningConfig AUTO_REPLANNING_CONFIG = new ReplanningConfig(true, false) ;
+    public static final BreakerPathplannerStandardSwerveAutoConfig AUTO_CONFIG = new BreakerPathplannerStandardSwerveAutoConfig(new PIDConstants(LINEAR_PID_KP, LINEAR_PID_KI, LINEAR_PID_KD), new PIDConstants(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD), AUTO_REPLANNING_CONFIG, AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE, true);
+
     
     public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);
   }

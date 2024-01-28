@@ -108,7 +108,8 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
           furthestModuleDistanceFromRobotCenter = i < 1 ? modDist : Math.max(modDist, furthestModuleDistanceFromRobotCenter);
         }
         kinematics = new SwerveDriveKinematics(wheelPositions);
-        odometryThread = odometryThread;
+        this.odometryThread = odometryThread;
+        odometryThread.start(this);
         stopRequest = new BreakerSwerveStopRequest();
         autoConfig.configureAuto(this);
     }

@@ -6,8 +6,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
 import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
 import com.ctre.phoenix6.signals.ForwardLimitValue;
@@ -16,12 +20,14 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
 import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
@@ -34,6 +40,8 @@ public class Intake extends SubsystemBase {
   private IntakeState targetState;
   private BooleanSupplier piviotForwardLimit;
   private BooleanSupplier piviotReverseLimit;
+  private CANcoder piviotEncoder;
+  private DutyCycleOut piviotDutyCycleControlRequest;
  
 
   /** Creates a new Intake. */
@@ -47,21 +55,17 @@ public class Intake extends SubsystemBase {
     pivotConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    pivotConfig.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
-    pivotConfig.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
-    pivotConfig.HardwareLimitSwitch.ForwardLimitEnable = true;
-
-    pivotConfig.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
-    pivotConfig.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
-    pivotConfig.HardwareLimitSwitch.ReverseLimitEnable = true;
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     pivotMotor.getConfigurator().apply(pivotConfig);
+
+    BreakerCANCoderFactory.configExistingCANCoder(piviotEncoder, AbsoluteSensorRangeValue.Unsigned_0To1, 0.0,SensorDirectionValue.CounterClockwise_Positive);
 
     TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
     rollerConfig.peakCurrentLimit = 60;
     rollerConfig.peakCurrentDuration = 1500;
     rollerConfig.continuousCurrentLimit = 20;
+    rollerMotor.configAllSettings(rollerConfig);
 
 
     Supplier<ForwardLimitValue> fwdLimSup = pivotMotor.getForwardLimit().asSupplier();
@@ -136,6 +140,14 @@ public class Intake extends SubsystemBase {
     }
   }
 
+  public boolean isForwardLimitTriggered() {
+    return piviotEncoder.getAbsolutePosition().getValue() >= PIVIOT_EXTENDED_THRESHOLD;
+  }
+
+  public boolean isReverseLimitTriggered() {
+    return piviotEncoder.getAbsolutePosition().getValue() <= PIVIOT_RETRACTED_THRESHOLD;
+  }
+
 
 
   @Override
@@ -147,7 +159,11 @@ public class Intake extends SubsystemBase {
         setState(IntakeState.RETRACTED_NEUTRAL);
       }
     }
+    piviotDutyCycleControlRequest.withOutput(targetState.getRollerState().getMotorDutyCycle());
+    piviotDutyCycleControlRequest.withLimitForwardMotion(isForwardLimitTriggered());
+    piviotDutyCycleControlRequest.withLimitReverseMotion(isReverseLimitTriggered());
+    pivotMotor.setControl(piviotDutyCycleControlRequest);
     rollerMotor.set(targetState.getRollerState().getMotorDutyCycle());
-    pivotMotor.set(targetState.getPivotState().getMotorDutyCycle());
+    
   }
 }

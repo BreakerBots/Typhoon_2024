@@ -50,7 +50,7 @@ public class BreakerSwerveCANcoder implements BreakerSwerveAzimuthEncoder {
     }
 
     @Override
-    public Object getBaseEncoder() {
+    public CANcoder getBaseEncoder() {
         return encoder;
     }
 
