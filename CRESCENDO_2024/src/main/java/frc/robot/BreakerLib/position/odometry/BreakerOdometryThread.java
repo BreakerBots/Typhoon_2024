@@ -33,6 +33,7 @@ public abstract class BreakerOdometryThread extends Thread implements BreakerGen
     private double averagePeriod;
     protected BreakerOdometryThread(int threadPriority) {
         setDaemon(true);
+        odometryLock = new ReentrantLock();
         peakRemover = new MedianFilter(3);
         lowPass = LinearFilter.movingAverage(50);
         lastThreadPriority = threadPriority;

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerPhoenixTimesyncSwerveOdometryThread;
+import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerPhoenixTimesyncSwerveOdometryThread.CTREGyroYawStatusSignals;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerPhoenixTimesyncSwerveOdometryThread.CTRESwerveModuleStatusSignals;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
@@ -52,23 +53,23 @@ public class Drive extends BreakerSwerveDrive {
     private static BreakerSwerveCANcoder encoderBR =  new BreakerSwerveCANcoder(new CANcoder(BR_ENCODER_ID, DRIVE_CANIVORE_NAME));
 
     private static BreakerSwerveModule frontLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withProTalonFXAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveFL, ProTalonFXControlOutputUnits.VOLTAGE, true)
+        .withTalonFXAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
+        .withTalonFXDriveMotor(driveFL, TalonFXControlOutputUnits.VOLTAGE, true)
         .createSwerveModule(FL_TRANSLATION);
 
     private static BreakerSwerveModule frontRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withProTalonFXAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveFR, ProTalonFXControlOutputUnits.VOLTAGE, false)
+        .withTalonFXAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
+        .withTalonFXDriveMotor(driveFR, TalonFXControlOutputUnits.VOLTAGE, false)
         .createSwerveModule(FR_TRANSLATION);
 
     private static BreakerSwerveModule backLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withProTalonFXAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveBL, ProTalonFXControlOutputUnits.VOLTAGE, true)
+        .withTalonFXAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
+        .withTalonFXDriveMotor(driveBL, TalonFXControlOutputUnits.VOLTAGE, true)
         .createSwerveModule(BL_TRANSLATION);
 
     private static BreakerSwerveModule backRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withProTalonFXAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveBR, ProTalonFXControlOutputUnits.VOLTAGE, false)
+        .withTalonFXAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
+        .withTalonFXDriveMotor(driveBR, TalonFXControlOutputUnits.VOLTAGE, false)
         .createSwerveModule(BR_TRANSLATION);
 
     private static Field2d field = new Field2d();
@@ -78,14 +79,15 @@ public class Drive extends BreakerSwerveDrive {
         super(
             DRIVE_BASE_CONFIG, 
             AUTO_CONFIG, 
-            new BreakerPhoenixTimesyncSwerveOdometryThread(
-                ODOMETRY_CONFIG, 
-                new CTREGyroYawStatusSignals(((Pigeon2)pigeon.getBaseGyro()).getYaw(), ((Pigeon2)pigeon.getBaseGyro()).getAngularVelocityZWorld()),
-                new CTRESwerveModuleStatusSignals(driveFL.getRotorPosition(), driveFL.getRotorVelocity(), encoderFL.getBaseEncoder().getAbsolutePosition(), encoderFL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-                new CTRESwerveModuleStatusSignals(driveFR.getRotorPosition(), driveFR.getRotorVelocity(), encoderFR.getBaseEncoder().getAbsolutePosition(), encoderFR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-                new CTRESwerveModuleStatusSignals(driveBL.getRotorPosition(), driveBL.getRotorVelocity(), encoderBL.getBaseEncoder().getAbsolutePosition(), encoderBL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-                new CTRESwerveModuleStatusSignals(driveBR.getRotorPosition(), driveBR.getRotorVelocity(), encoderBR.getBaseEncoder().getAbsolutePosition(), encoderBR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI)
-            ),
+            // new BreakerPhoenixTimesyncSwerveOdometryThread(
+            //     ODOMETRY_CONFIG, 
+            //     new CTREGyroYawStatusSignals((pigeon.getBaseGyro()).getYaw(), pigeon.getBaseGyro().getAngularVelocityZWorld()),
+            //     new CTRESwerveModuleStatusSignals(driveFL.getRotorPosition(), driveFL.getRotorVelocity(), encoderFL.getBaseEncoder().getAbsolutePosition(), encoderFL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+            //     new CTRESwerveModuleStatusSignals(driveFR.getRotorPosition(), driveFR.getRotorVelocity(), encoderFR.getBaseEncoder().getAbsolutePosition(), encoderFR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+            //     new CTRESwerveModuleStatusSignals(driveBL.getRotorPosition(), driveBL.getRotorVelocity(), encoderBL.getBaseEncoder().getAbsolutePosition(), encoderBL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+            //     new CTRESwerveModuleStatusSignals(driveBR.getRotorPosition(), driveBR.getRotorVelocity(), encoderBR.getBaseEncoder().getAbsolutePosition(), encoderBR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI)
+            // ),
+            new BreakerSwerveOdometryThread(ODOMETRY_CONFIG),
             pigeon, 
             frontLeftModule, 
             frontRightModule,

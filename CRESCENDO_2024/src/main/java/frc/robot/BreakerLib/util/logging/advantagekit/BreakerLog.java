@@ -465,43 +465,43 @@ public class BreakerLog {
     Logger.recordOutput(key, proto, value);
   }
 
-  /**
-   * Records a single output field for easy access when viewing the log. On the
-   * simulator, use this method to record extra data based on the original inputs.
-   * 
-   * <p>
-   * This method serializes a single object as a struct or protobuf automatically
-   * by searching for a {@code struct} or {@code proto} field. Struct is preferred
-   * if both methods are supported.
-   * 
-   * @param T     The type
-   * @param key   The name of the field to record. It will be stored under
-   *              "/RealOutputs" or "/ReplayOutputs"
-   * @param value The value of the field.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T> void recordOutput(String key, T value) {
-    Logger.recordOutput(key, value);
-  }
+  // /**
+  //  * Records a single output field for easy access when viewing the log. On the
+  //  * simulator, use this method to record extra data based on the original inputs.
+  //  * 
+  //  * <p>
+  //  * This method serializes a single object as a struct or protobuf automatically
+  //  * by searching for a {@code struct} or {@code proto} field. Struct is preferred
+  //  * if both methods are supported.
+  //  * 
+  //  * @param T     The type
+  //  * @param key   The name of the field to record. It will be stored under
+  //  *              "/RealOutputs" or "/ReplayOutputs"
+  //  * @param value The value of the field.
+  //  */
+  // @SuppressWarnings("unchecked")
+  // public static <T> void recordOutput(String key, T value) {
+  //   Logger.recordOutput(key, value);
+  // }
 
-  /**
-   * Records a single output field for easy access when viewing the log. On the
-   * simulator, use this method to record extra data based on the original inputs.
-   * 
-   * <p>
-   * This method serializes an array of objects as a struct automatically
-   * by searching for a {@code struct} field. Top-level protobuf arrays are not
-   * supported.
-   * 
-   * @param T     The type
-   * @param key   The name of the field to record. It will be stored under
-   *              "/RealOutputs" or "/ReplayOutputs"
-   * @param value The value of the field.
-   */
-  @SuppressWarnings("unchecked")
-  public static <T> void recordOutput(String key, T... value) {
-    Logger.recordOutput(key, value);
-  }
+  // /**
+  //  * Records a single output field for easy access when viewing the log. On the
+  //  * simulator, use this method to record extra data based on the original inputs.
+  //  * 
+  //  * <p>
+  //  * This method serializes an array of objects as a struct automatically
+  //  * by searching for a {@code struct} field. Top-level protobuf arrays are not
+  //  * supported.
+  //  * 
+  //  * @param T     The type
+  //  * @param key   The name of the field to record. It will be stored under
+  //  *              "/RealOutputs" or "/ReplayOutputs"
+  //  * @param value The value of the field.
+  //  */
+  // @SuppressWarnings("unchecked")
+  // public static <T> void recordOutput(String key, T... value) {
+  //   Logger.recordOutput(key, value);
+  // }
 
   /**
    * Records a single output field for easy access when viewing the log. On the

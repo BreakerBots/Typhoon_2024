@@ -321,7 +321,7 @@ public class BreakerPigeon2 extends BreakerGenericIMU implements BreakerGenericM
   }
 
   @Override
-  public Object getBaseGyro() {
+  public Pigeon2 getBaseGyro() {
     return pigeon;
   }
 

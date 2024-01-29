@@ -44,6 +44,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSw
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveStopRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
 import frc.robot.BreakerLib.util.math.BreakerMath;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
@@ -95,7 +96,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
         this.config = config;
         this.swerveModules = swerveModules;
         this.gyro = gyro;
-        lastSetHeading = getOdometryPoseMeters().getRotation();
+        this.odometryThread = odometryThread;
         deviceName = "Swerve_Drivetrain";
         targetModuleStates = new SwerveModuleState[swerveModules.length];
         Translation2d[] wheelPositions = new Translation2d[swerveModules.length];
@@ -108,10 +109,10 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
           furthestModuleDistanceFromRobotCenter = i < 1 ? modDist : Math.max(modDist, furthestModuleDistanceFromRobotCenter);
         }
         kinematics = new SwerveDriveKinematics(wheelPositions);
-        this.odometryThread = odometryThread;
         odometryThread.start(this);
         stopRequest = new BreakerSwerveStopRequest();
         autoConfig.configureAuto(this);
+        lastSetHeading = getOdometryPoseMeters().getRotation();
     }
 
     public void applyRequest(BreakerSwerveRequest requestToApply) {
@@ -365,6 +366,8 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
     table.put("DeviceHealth", getHealth().toString());
     table.put("RealModuleStates", getSwerveModuleStates());
     table.put("TargetModuleStates", targetModuleStates);
+    BreakerLog.recordOutput("RealModuleStates", getSwerveModuleStates());
+    BreakerLog.recordOutput("TargetModuleStates", targetModuleStates);
     odometryThread.toLog(table.getSubtable("Odometry"));
     LogTable moduleTable = table.getSubtable("Modules");
     for (BreakerGenericSwerveModule module: swerveModules) {

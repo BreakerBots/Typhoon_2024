@@ -42,17 +42,17 @@ public interface BreakerSwerveAzimuthEncoder {
 
     //public abstract BreakerSwerveAzimuthEncoderSimIO getSimIO();
 
-    public static interface BreakerSwerveAzimuthEncoderSimIO {
+    // public static interface BreakerSwerveAzimuthEncoderSimIO {
 
-        public abstract void setSimAngle(double angle);
+    //     public abstract void setSimAngle(double angle);
 
-        public abstract void setSimAngleVel(double angleVel);
+    //     public abstract void setSimAngleVel(double angleVel);
 
-        public abstract void setSimSupplyVoltage(double supplyVoltage);
+    //     public abstract void setSimSupplyVoltage(double supplyVoltage);
 
-        public abstract void setInverted(boolean isInverted);
+    //     public abstract void setInverted(boolean isInverted);
         
-    };
+    // };
 
 
 }

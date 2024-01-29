@@ -7,10 +7,16 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.BreakerLib.auto.BreakerAutoPath;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
+import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalogDeadbandConfig;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.util.math.functions.BreakerBezierCurve;
+import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
+import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
+import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
+import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.Constants.GeneralConstants;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
@@ -23,9 +29,9 @@ import frc.robot.subsystems.Intake;
  */
 public class RobotContainer {
   private final BreakerPigeon2 imuSys = new BreakerPigeon2(5, GeneralConstants.DRIVE_CANIVORE_NAME);
-  private final Drive drivetrainSys = new Drive(null);
+  private final Drive drivetrainSys = new Drive(imuSys);
   private final BreakerXboxController controllerSys = new BreakerXboxController(0);
-  private final BreakerTeleopSwerveDriveController teleopSwerveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
+  private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -33,11 +39,15 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureDriveControls();
     configureBindings();
+    configureRobotManager();
   }
 
   private void configureDriveControls() {
-    //BreakerBezierCurve linearSpeedCurve = new BreakerBezierCurve(null, null)
-    //teleopSwerveCommand.addSpeedCurves()
+    // BreakerBezierCurve linearSpeedCurve = new BreakerBezierCurve(null, null)
+    // teleopSwerveCommand.addSpeedCurves()
+    controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.05, 0.05));
+    drivetrainSys.setDefaultCommand(teleopDriveCommand);
+    
   }
 
   /**
@@ -51,6 +61,23 @@ public class RobotContainer {
    */
   private void configureBindings() {
     
+  }
+
+  private void configureRobotManager() {
+    BreakerRobotConfig robotConfig = 
+    new BreakerRobotConfig(
+      new BreakerRobotStartConfig(
+        5104, 
+        "BreakerBots", 
+        new BreakerRobotNameConfig(),
+        //  .addRobot(MiscConstants.ROBORIO_SN, "Plop"), 
+        2023, 
+        "v1",
+        "Roman Abrahamson, Sebastian Rueda"
+        )
+      );
+      robotConfig.setLogFilePaths("/U/logs", "");
+    BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
   /**

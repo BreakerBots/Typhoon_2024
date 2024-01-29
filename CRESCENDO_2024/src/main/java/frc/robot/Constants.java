@@ -146,10 +146,10 @@ public final class Constants {
     public static final int BR_ENCODER_ID = 23;
 
     //Azimuth encoder angle offets
-    public static final double FL_ENCODER_OFFSET = 0.0;
-    public static final double FR_ENCODER_OFFSET = 0.0;
-    public static final double BL_ENCODER_OFFSET = 0.0;
-    public static final double BR_ENCODER_OFFSET = 0.0;
+    public static final double FL_ENCODER_OFFSET = 0.41455078125;
+    public static final double FR_ENCODER_OFFSET = -0.340087890625;
+    public static final double BL_ENCODER_OFFSET = -0.10693359375;
+    public static final double BR_ENCODER_OFFSET = -0.43603515625;
 
     //Module wheel centerpoint locations relative to robot origin (center)
     public static final Translation2d FL_TRANSLATION = new Translation2d(0.314325, 0.314325);
@@ -176,7 +176,7 @@ public final class Constants {
     public static final double FF_VELOCITY_COEFFICIENT = 2.82;
     public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT);
 
-    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.0;
+    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.3;
     public static final double DRIVE_MOTOR_GEAR_RATIO_TO_ONE = 6.12;
     public static final double AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE = 21.4285714286;
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);

@@ -21,7 +21,7 @@ import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
 /** Add your docs here. */
 public class BreakerSwerveCANcoder implements BreakerSwerveAzimuthEncoder {
     private CANcoder encoder;
-    private BreakerSwerveAzimuthEncoderSimIO simIO;
+    //private BreakerSwerveAzimuthEncoderSimIO simIO;
     public BreakerSwerveCANcoder(CANcoder encoder) {
         this.encoder = encoder;
         //CANcoderSimState simState = encoder.getSimState();
@@ -62,10 +62,10 @@ public class BreakerSwerveCANcoder implements BreakerSwerveAzimuthEncoder {
     @Override
     public void config(boolean invertEncoder, double offset) {
         BreakerCANCoderFactory.configExistingCANCoder(encoder, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, offset, invertEncoder ? SensorDirectionValue.Clockwise_Positive : SensorDirectionValue.CounterClockwise_Positive);
-        simIO.setSimAngle(0.0);
-        simIO.setSimAngleVel(0.0);
-        simIO.setInverted(invertEncoder);
-        simIO.setSimSupplyVoltage(12.0);
+        // simIO.setSimAngle(0.0);
+        // simIO.setSimAngleVel(0.0);
+        // simIO.setInverted(invertEncoder);
+        // simIO.setSimSupplyVoltage(12.0);
     }
 
     @Override

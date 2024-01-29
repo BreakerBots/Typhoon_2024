@@ -10,9 +10,6 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix5Util;
-import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util;
-
 /** Factory for producing CANcoders. */
 public class BreakerCANCoderFactory {
 
