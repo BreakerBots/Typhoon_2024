@@ -158,9 +158,9 @@ public final class Constants {
     public static final Translation2d BR_TRANSLATION = new Translation2d(-0.314325, -0.314325);
 
     //Module Azimuth PIDF constants
-    public static final double MODULE_AZIMUTH_KP = 20.419941348973605;
+    public static final double MODULE_AZIMUTH_KP = 22.05;
     public static final double MODULE_AZIMUTH_KI = 0.0;
-    public static final double MODULE_AZIMUTH_KD = 0.0;
+    public static final double MODULE_AZIMUTH_KD = 0.3;
     public static final double MODULE_AZIMUTH_KF = 0.0;
     public static final BreakerSwerveMotorPIDConfig MODULE_ANGLE_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_AZIMUTH_KP, MODULE_AZIMUTH_KI, MODULE_AZIMUTH_KD, MODULE_AZIMUTH_KF);
 

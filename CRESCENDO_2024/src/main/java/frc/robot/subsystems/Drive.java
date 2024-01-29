@@ -53,23 +53,23 @@ public class Drive extends BreakerSwerveDrive {
     private static BreakerSwerveCANcoder encoderBR =  new BreakerSwerveCANcoder(new CANcoder(BR_ENCODER_ID, DRIVE_CANIVORE_NAME));
 
     private static BreakerSwerveModule frontLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withTalonFXAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
-        .withTalonFXDriveMotor(driveFL, TalonFXControlOutputUnits.VOLTAGE, true)
+        .withProTalonFXAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
+        .withProTalonFXDriveMotor(driveFL, ProTalonFXControlOutputUnits.TORQUE_CURRENT, true)
         .createSwerveModule(FL_TRANSLATION);
 
     private static BreakerSwerveModule frontRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withTalonFXAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
-        .withTalonFXDriveMotor(driveFR, TalonFXControlOutputUnits.VOLTAGE, false)
+        .withProTalonFXAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
+        .withProTalonFXDriveMotor(driveFR, ProTalonFXControlOutputUnits.TORQUE_CURRENT, false)
         .createSwerveModule(FR_TRANSLATION);
 
     private static BreakerSwerveModule backLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withTalonFXAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
-        .withTalonFXDriveMotor(driveBL, TalonFXControlOutputUnits.VOLTAGE, true)
+        .withProTalonFXAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
+        .withProTalonFXDriveMotor(driveBL, ProTalonFXControlOutputUnits.TORQUE_CURRENT, true)
         .createSwerveModule(BL_TRANSLATION);
 
     private static BreakerSwerveModule backRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
-        .withTalonFXAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
-        .withTalonFXDriveMotor(driveBR, TalonFXControlOutputUnits.VOLTAGE, false)
+        .withProTalonFXAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
+        .withProTalonFXDriveMotor(driveBR, ProTalonFXControlOutputUnits.TORQUE_CURRENT, false)
         .createSwerveModule(BR_TRANSLATION);
 
     private static Field2d field = new Field2d();
