@@ -158,29 +158,29 @@ public final class Constants {
     public static final Translation2d BR_TRANSLATION = new Translation2d(-0.314325, -0.314325);
 
     //Module Azimuth PIDF constants
-    public static final double MODULE_AZIMUTH_KP = 22.05;
+    public static final double MODULE_AZIMUTH_KP = 20.0;//20
     public static final double MODULE_AZIMUTH_KI = 0.0;
-    public static final double MODULE_AZIMUTH_KD = 0.3;
+    public static final double MODULE_AZIMUTH_KD = 0.3;//0.3
     public static final double MODULE_AZIMUTH_KF = 0.0;
     public static final BreakerSwerveMotorPIDConfig MODULE_ANGLE_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_AZIMUTH_KP, MODULE_AZIMUTH_KI, MODULE_AZIMUTH_KD, MODULE_AZIMUTH_KF);
 
     //Module Drive Velocity PIDF constants
-    public static final double MODULE_VELOCITY_KP = -0.10810557184750733;
+    public static final double MODULE_VELOCITY_KP = 8.0;
     public static final double MODULE_VELOCITY_KI = 0.0;
     public static final double MODULE_VELOCITY_KD = 0.0;
     public static final double MODULE_VELOCITY_KF = 0.0;
     public static final BreakerSwerveMotorPIDConfig MODULE_VELOCITY_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_VELOCITY_KP, MODULE_VELOCITY_KI, MODULE_VELOCITY_KD, MODULE_VELOCITY_KF);
 
     //Module Drive Arbitrary FeedForward
-    public static final double FF_STATIC_FRICTION_COEFFICIENT = 0.3;
-    public static final double FF_VELOCITY_COEFFICIENT = 2.82;
+    public static final double FF_STATIC_FRICTION_COEFFICIENT = 1.2025;
+    public static final double FF_VELOCITY_COEFFICIENT = 0.0;
     public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT);
 
-    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.3;
-    public static final double DRIVE_MOTOR_GEAR_RATIO_TO_ONE = 6.12;
+    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.5;
+    public static final double DRIVE_MOTOR_GEAR_RATIO_TO_ONE = 5.76;
     public static final double AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE = 21.4285714286;
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);
-    public static final double MODULE_WHEEL_SPEED_DEADBAND = 0.001;
+    public static final double MODULE_WHEEL_SPEED_DEADBAND = 0.005;
     public static final double AZIMUTH_MOTOR_SUPPLY_CURRENT_LIMIT = 40.0;
     public static final double DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT = 80.0;
     public static final BreakerSwerveModuleConfig MODULE_CONFIG = new BreakerSwerveModuleConfig(
@@ -204,7 +204,7 @@ public final class Constants {
 
     //Physical Robot Constants
     public static final double MAX_ANGULAR_VEL = ((FL_TRANSLATION.getNorm() * 2.0 * Math.PI) / MAX_ATTAINABLE_MODULE_WHEEL_SPEED) * (2.0 * Math.PI); 
-    public static final double MAX_LINEAR_VEL = 5.0;
+    public static final double MAX_LINEAR_VEL = 5.35;
     public static final double HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND = 0.005;
     public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.01;
     public static final BreakerSwerveDriveConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveConfig(

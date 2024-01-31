@@ -31,7 +31,7 @@ public class BreakerAutoBrakeManagerConfig {
     public BreakerAutoBrakeManagerConfig(BreakerGenericDrivetrain baseDrivetrain) {
         this.brakeInAuto = true;
         this.brakeInDisabled = false;
-        this.brakeInTeleop = true;
+        this.brakeInTeleop = false;//true
         this.brakeInTest = true;
         this.baseDrivetrain = baseDrivetrain;
     }

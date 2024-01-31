@@ -57,7 +57,7 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
         targetVelocity = 0.0;
         velocityDutyCycleRequest = new VelocityDutyCycle(0.0, 0.0, true, 0.0, 1, false, false, false);
         velocityVoltageRequest = new VelocityVoltage(0.0, 0.0, true, 0.0, 1, false, false, false);
-        velocityTorqueCurrentRequest = new VelocityTorqueCurrentFOC(0.0, 0.0, 1, 0, false, false, false);
+        velocityTorqueCurrentRequest = new VelocityTorqueCurrentFOC(0.0, 0.0, 1, 1, false, false, false);
         openLoopDutyCycleRequest = new DutyCycleOut(0.0, true, false, false, false);
         this.controlOutputUnits = controlOutputUnits;
         TalonFXConfiguration driveConfig = new TalonFXConfiguration();
