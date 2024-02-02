@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.BreakerLib.auto.BreakerAutoPath;
@@ -63,7 +64,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    
+    controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
   }
 
   private void configureRobotManager() {

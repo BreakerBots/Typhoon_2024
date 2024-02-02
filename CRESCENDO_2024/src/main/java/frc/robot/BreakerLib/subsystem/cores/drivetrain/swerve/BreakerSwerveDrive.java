@@ -40,6 +40,7 @@ import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerGenericSwerveModule;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveStopRequest;
@@ -191,11 +192,11 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
       for (int i = 0; i < swerveModules.length; i++) {
 
         if (Math.abs(targetModuleStates[i].speedMetersPerSecond) < config.getModuleWheelSpeedDeadband()) {
-
-          swerveModules[i].stop();
-
-          this.targetModuleStates[i] = swerveModules[i].getModuleTargetState();
-
+          for (int j = 0; j < swerveModules.length; j++) {
+            swerveModules[j].stop();
+            this.targetModuleStates[j] = swerveModules[j].getModuleTargetState();
+          }
+          return;
         } else {
 
           SwerveModuleState optimizedState = SwerveModuleState.optimize(targetModuleStates[i],

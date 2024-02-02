@@ -54,22 +54,22 @@ public class Drive extends BreakerSwerveDrive {
 
     private static BreakerSwerveModule frontLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
         .withProTalonFXAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveFL, ProTalonFXControlOutputUnits.TORQUE_CURRENT, true)
+        .withProTalonFXDriveMotor(driveFL, ProTalonFXControlOutputUnits.DUTY_CYCLE, true)
         .createSwerveModule(FL_TRANSLATION);
 
     private static BreakerSwerveModule frontRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
         .withProTalonFXAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveFR, ProTalonFXControlOutputUnits.TORQUE_CURRENT, false)
+        .withProTalonFXDriveMotor(driveFR, ProTalonFXControlOutputUnits.DUTY_CYCLE, false)
         .createSwerveModule(FR_TRANSLATION);
 
     private static BreakerSwerveModule backLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
         .withProTalonFXAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveBL, ProTalonFXControlOutputUnits.TORQUE_CURRENT, true)
+        .withProTalonFXDriveMotor(driveBL, ProTalonFXControlOutputUnits.DUTY_CYCLE, true)
         .createSwerveModule(BL_TRANSLATION);
 
     private static BreakerSwerveModule backRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
         .withProTalonFXAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveBR, ProTalonFXControlOutputUnits.TORQUE_CURRENT, false)
+        .withProTalonFXDriveMotor(driveBR, ProTalonFXControlOutputUnits.DUTY_CYCLE, false)
         .createSwerveModule(BR_TRANSLATION);
 
     private static Field2d field = new Field2d();

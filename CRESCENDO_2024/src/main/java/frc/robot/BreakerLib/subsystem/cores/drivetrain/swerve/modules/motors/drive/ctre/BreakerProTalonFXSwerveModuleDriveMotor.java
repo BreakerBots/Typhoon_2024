@@ -23,7 +23,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.RobotBase;
@@ -98,7 +100,7 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
                 motor.setControl(velocityDutyCycleRequest.withVelocity(vel).withFeedForward(ff));
                 break;
             case TORQUE_CURRENT:
-                motor.setControl(velocityTorqueCurrentRequest.withVelocity(vel).withFeedForward(ff));
+                motor.setControl(velocityTorqueCurrentRequest.withVelocity(vel).withFeedForward(ff).withOverrideCoastDurNeutral(MathUtil.isNear(0.0, vel, 1E-9)));
                 break;
             case VOLTAGE:
             default:
