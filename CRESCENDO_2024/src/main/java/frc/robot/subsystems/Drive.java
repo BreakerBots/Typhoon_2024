@@ -4,11 +4,37 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.DriveConstants.AUTO_CONFIG;
+import static frc.robot.Constants.DriveConstants.BL_DRIVE_ID;
+import static frc.robot.Constants.DriveConstants.BL_ENCODER_ID;
+import static frc.robot.Constants.DriveConstants.BL_ENCODER_OFFSET;
+import static frc.robot.Constants.DriveConstants.BL_TRANSLATION;
+import static frc.robot.Constants.DriveConstants.BL_TURN_ID;
+import static frc.robot.Constants.DriveConstants.BR_DRIVE_ID;
+import static frc.robot.Constants.DriveConstants.BR_ENCODER_ID;
+import static frc.robot.Constants.DriveConstants.BR_ENCODER_OFFSET;
+import static frc.robot.Constants.DriveConstants.BR_TRANSLATION;
+import static frc.robot.Constants.DriveConstants.BR_TURN_ID;
+import static frc.robot.Constants.DriveConstants.DRIVE_BASE_CONFIG;
+import static frc.robot.Constants.DriveConstants.FL_DRIVE_ID;
+import static frc.robot.Constants.DriveConstants.FL_ENCODER_ID;
+import static frc.robot.Constants.DriveConstants.FL_ENCODER_OFFSET;
+import static frc.robot.Constants.DriveConstants.FL_TRANSLATION;
+import static frc.robot.Constants.DriveConstants.FL_TURN_ID;
+import static frc.robot.Constants.DriveConstants.FR_DRIVE_ID;
+import static frc.robot.Constants.DriveConstants.FR_ENCODER_ID;
+import static frc.robot.Constants.DriveConstants.FR_ENCODER_OFFSET;
+import static frc.robot.Constants.DriveConstants.FR_TRANSLATION;
+import static frc.robot.Constants.DriveConstants.FR_TURN_ID;
+import static frc.robot.Constants.DriveConstants.MODULE_CONFIG;
+import static frc.robot.Constants.DriveConstants.ODOMETRY_CONFIG;
+import static frc.robot.Constants.GeneralConstants.DRIVE_CANIVORE_NAME;
+
+import org.littletonrobotics.junction.LogTable;
+
 import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.hardware.Pigeon2;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
@@ -19,18 +45,9 @@ import frc.robot.BreakerLib.position.odometry.swerve.BreakerPhoenixTimesyncSwerv
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveAzimuthEncoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerProTalonFXSwerveModuleDriveMotor.ProTalonFXControlOutputUnits;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerTalonFXSwerveModuleDriveMotor.TalonFXControlOutputUnits;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
-import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLogUtil;
-
-import static frc.robot.Constants.DriveConstants.*;
-import static frc.robot.Constants.GeneralConstants.DRIVE_CANIVORE_NAME;
-
-import org.littletonrobotics.junction.LogTable;
-import org.littletonrobotics.junction.Logger;
 
 /** Add your docs here. */
 public class Drive extends BreakerSwerveDrive {
@@ -54,22 +71,22 @@ public class Drive extends BreakerSwerveDrive {
 
     private static BreakerSwerveModule frontLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
         .withProTalonFXAngleMotor(turnFL, encoderFL, FL_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveFL, ProTalonFXControlOutputUnits.DUTY_CYCLE, true)
+        .withProTalonFXDriveMotor(driveFL, ProTalonFXControlOutputUnits.VOLTAGE, true)
         .createSwerveModule(FL_TRANSLATION);
 
     private static BreakerSwerveModule frontRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
         .withProTalonFXAngleMotor(turnFR, encoderFR, FR_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveFR, ProTalonFXControlOutputUnits.DUTY_CYCLE, false)
+        .withProTalonFXDriveMotor(driveFR, ProTalonFXControlOutputUnits.VOLTAGE, false)
         .createSwerveModule(FR_TRANSLATION);
 
     private static BreakerSwerveModule backLeftModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
         .withProTalonFXAngleMotor(turnBL, encoderBL, BL_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveBL, ProTalonFXControlOutputUnits.DUTY_CYCLE, true)
+        .withProTalonFXDriveMotor(driveBL, ProTalonFXControlOutputUnits.VOLTAGE, true)
         .createSwerveModule(BL_TRANSLATION);
 
     private static BreakerSwerveModule backRightModule = BreakerSwerveModuleBuilder.getInstance(MODULE_CONFIG)
         .withProTalonFXAngleMotor(turnBR, encoderBR, BR_ENCODER_OFFSET, true)
-        .withProTalonFXDriveMotor(driveBR, ProTalonFXControlOutputUnits.DUTY_CYCLE, false)
+        .withProTalonFXDriveMotor(driveBR, ProTalonFXControlOutputUnits.VOLTAGE, false)
         .createSwerveModule(BR_TRANSLATION);
 
     private static Field2d field = new Field2d();
@@ -79,15 +96,15 @@ public class Drive extends BreakerSwerveDrive {
         super(
             DRIVE_BASE_CONFIG, 
             AUTO_CONFIG, 
-            // new BreakerPhoenixTimesyncSwerveOdometryThread(
-            //     ODOMETRY_CONFIG, 
-            //     new CTREGyroYawStatusSignals((pigeon.getBaseGyro()).getYaw(), pigeon.getBaseGyro().getAngularVelocityZWorld()),
-            //     new CTRESwerveModuleStatusSignals(driveFL.getRotorPosition(), driveFL.getRotorVelocity(), encoderFL.getBaseEncoder().getAbsolutePosition(), encoderFL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-            //     new CTRESwerveModuleStatusSignals(driveFR.getRotorPosition(), driveFR.getRotorVelocity(), encoderFR.getBaseEncoder().getAbsolutePosition(), encoderFR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-            //     new CTRESwerveModuleStatusSignals(driveBL.getRotorPosition(), driveBL.getRotorVelocity(), encoderBL.getBaseEncoder().getAbsolutePosition(), encoderBL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-            //     new CTRESwerveModuleStatusSignals(driveBR.getRotorPosition(), driveBR.getRotorVelocity(), encoderBR.getBaseEncoder().getAbsolutePosition(), encoderBR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI)
-            // ),
-            new BreakerSwerveOdometryThread(ODOMETRY_CONFIG),
+            new BreakerPhoenixTimesyncSwerveOdometryThread(
+                ODOMETRY_CONFIG, 
+                new CTREGyroYawStatusSignals((pigeon.getBaseGyro()).getYaw(), pigeon.getBaseGyro().getAngularVelocityZWorld()),
+                new CTRESwerveModuleStatusSignals(driveFL.getRotorPosition(), driveFL.getRotorVelocity(), encoderFL.getBaseEncoder().getAbsolutePosition(), encoderFL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+                new CTRESwerveModuleStatusSignals(driveFR.getRotorPosition(), driveFR.getRotorVelocity(), encoderFR.getBaseEncoder().getAbsolutePosition(), encoderFR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+                new CTRESwerveModuleStatusSignals(driveBL.getRotorPosition(), driveBL.getRotorVelocity(), encoderBL.getBaseEncoder().getAbsolutePosition(), encoderBL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+                new CTRESwerveModuleStatusSignals(driveBR.getRotorPosition(), driveBR.getRotorVelocity(), encoderBR.getBaseEncoder().getAbsolutePosition(), encoderBR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI)
+            ),
+            //new BreakerSwerveOdometryThread(ODOMETRY_CONFIG),
             pigeon, 
             frontLeftModule, 
             frontRightModule,
@@ -117,5 +134,6 @@ public class Drive extends BreakerSwerveDrive {
     @Override
     public void toLog(LogTable table) {
         super.toLog(table);
+        table.put("OdometryPose", getOdometryPoseMeters());
     }
 }

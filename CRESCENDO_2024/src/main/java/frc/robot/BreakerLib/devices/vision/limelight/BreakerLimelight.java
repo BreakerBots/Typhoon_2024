@@ -35,6 +35,7 @@ import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceP
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPose;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPoseSource;
 import frc.robot.BreakerLib.util.math.BreakerMath;
+import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
 import frc.robot.BreakerLib.util.vendorutil.LimelightHelpers;
 import frc.robot.BreakerLib.util.vendorutil.LimelightHelpers.LimelightResults;
 import frc.robot.BreakerLib.util.vendorutil.LimelightHelpers.LimelightTarget_Fiducial;
@@ -173,8 +174,7 @@ public class BreakerLimelight extends BreakerGenericDevice implements BreakerEst
 
     @Override
     public void runSelfTest() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'runSelfTest'");
+        this.health = DeviceHealth.NOMINAL;
     }
   
 

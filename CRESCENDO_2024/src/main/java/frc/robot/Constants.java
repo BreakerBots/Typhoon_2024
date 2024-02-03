@@ -103,7 +103,7 @@ public final class Constants {
     public static final String BACK_CAMERA_NAME = "backCam";
     public static final Transform3d BACK_CAMERA_TRANS = new Transform3d();
 
-    public static final String LIMELIGHT_NAME = "limelight";
+    public static final String LIMELIGHT_NAME = "limelight-note";
     public static final Transform3d LIMELIGHT_TRANS = new Transform3d();
 
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFields.kDefaultField.loadAprilTagLayoutField();
@@ -158,31 +158,31 @@ public final class Constants {
     public static final Translation2d BR_TRANSLATION = new Translation2d(-0.314325, -0.314325);
 
     //Module Azimuth PIDF constants
-    public static final double MODULE_AZIMUTH_KP = 25.0;//20
+    public static final double MODULE_AZIMUTH_KP = 30.0;//20
     public static final double MODULE_AZIMUTH_KI = 0.0;
-    public static final double MODULE_AZIMUTH_KD = 0.3;//0.3
+    public static final double MODULE_AZIMUTH_KD = 0.25;//0.3
     public static final double MODULE_AZIMUTH_KF = 0.0;
     public static final BreakerSwerveMotorPIDConfig MODULE_ANGLE_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_AZIMUTH_KP, MODULE_AZIMUTH_KI, MODULE_AZIMUTH_KD, MODULE_AZIMUTH_KF);
 
     //Module Drive Velocity PIDF constants
-    public static final double MODULE_VELOCITY_KP = 0.10810557184750733;//65, 0.10810557184750733
+    public static final double MODULE_VELOCITY_KP = 0.05 * 12;//65, 0.10810557184750733
     public static final double MODULE_VELOCITY_KI = 0.0;
     public static final double MODULE_VELOCITY_KD = 0.0;
     public static final double MODULE_VELOCITY_KF = 0.0;
     public static final BreakerSwerveMotorPIDConfig MODULE_VELOCITY_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_VELOCITY_KP, MODULE_VELOCITY_KI, MODULE_VELOCITY_KD, MODULE_VELOCITY_KF);
 
     //Module Drive Arbitrary FeedForward
-    public static final double FF_STATIC_FRICTION_COEFFICIENT = 0.3;//3.0, 0.3
-    public static final double FF_VELOCITY_COEFFICIENT = 2.82;//0.0, 2.82
+    public static final double FF_STATIC_FRICTION_COEFFICIENT = 0.1 * 12;//3.0, 0.3
+    public static final double FF_VELOCITY_COEFFICIENT = 0.18 * 12;//0.0, 2.82
     public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT);
 
-    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.5;
+    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.3;
     public static final double DRIVE_MOTOR_GEAR_RATIO_TO_ONE = 5.76;
     public static final double AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE = 21.4285714286;
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);
     public static final double MODULE_WHEEL_SPEED_DEADBAND = 0.001;
     public static final double AZIMUTH_MOTOR_SUPPLY_CURRENT_LIMIT = 40.0;
-    public static final double DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT = 10.0;
+    public static final double DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT = 40.0;
     public static final BreakerSwerveModuleConfig MODULE_CONFIG = new BreakerSwerveModuleConfig(
       DRIVE_MOTOR_GEAR_RATIO_TO_ONE, AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE, 
       WHEEL_DIAMETER, 
@@ -193,7 +193,7 @@ public final class Constants {
     );
 
       //Theta-axis positional PID
-      public static final double HEADING_COMPENSATION_PID_KP = 1.6;
+      public static final double HEADING_COMPENSATION_PID_KP = 2.2;
       public static final double HEADING_COMPENSATION_PID_KI = 0.0;
       public static final double HEADING_COMPENSATION_PID_KD = 0.0;
       public static final PIDController HEADING_COMPENSATION_PID = new PIDController(HEADING_COMPENSATION_PID_KP, HEADING_COMPENSATION_PID_KI, HEADING_COMPENSATION_PID_KD);
@@ -206,7 +206,7 @@ public final class Constants {
     public static final double MAX_ANGULAR_VEL = ((FL_TRANSLATION.getNorm() * 2.0 * Math.PI) / MAX_ATTAINABLE_MODULE_WHEEL_SPEED) * (2.0 * Math.PI); 
     public static final double MAX_LINEAR_VEL = 5.35;
     public static final double HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND = 0.001;
-    public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.1;
+    public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.05;
     public static final BreakerSwerveDriveConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveConfig(
     MAX_LINEAR_VEL, MAX_ANGULAR_VEL, MODULE_WHEEL_SPEED_DEADBAND)
     .withHeadingCompensation(HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND, HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL, HEADING_COMPENSATION_PID)

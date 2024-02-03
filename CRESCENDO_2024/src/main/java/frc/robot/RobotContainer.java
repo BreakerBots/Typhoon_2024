@@ -21,6 +21,7 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.Constants.GeneralConstants;
+import frc.robot.commands.OrbitNote;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 
@@ -35,6 +36,7 @@ public class RobotContainer {
   private final Drive drivetrainSys = new Drive(imuSys);
   private final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
+  private final Vision visionSys = new Vision(drivetrainSys);
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -48,7 +50,7 @@ public class RobotContainer {
   private void configureDriveControls() {
     BreakerLinearizedConstrainedExponential linearMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.3, 3.0);
     BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
-    controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.08, 0.08));
+    controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.1, 0.1));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
     drivetrainSys.setDefaultCommand(teleopDriveCommand);
     
@@ -65,6 +67,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
+    controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
   }
 
   private void configureRobotManager() {
