@@ -100,7 +100,7 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
                 motor.setControl(velocityDutyCycleRequest.withVelocity(vel).withFeedForward(ff));
                 break;
             case TORQUE_CURRENT:
-                motor.setControl(velocityTorqueCurrentRequest.withVelocity(vel).withFeedForward(ff).withOverrideCoastDurNeutral(MathUtil.isNear(0.0, vel, 1E-9)));
+                motor.setControl(velocityTorqueCurrentRequest.withVelocity(vel).withFeedForward(ff)/*.withOverrideCoastDurNeutral(MathUtil.isNear(0.0, vel, 1E-9))*/);
                 break;
             case VOLTAGE:
             default:

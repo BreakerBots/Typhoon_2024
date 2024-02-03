@@ -47,7 +47,7 @@ public class RobotContainer {
 
   private void configureDriveControls() {
     BreakerLinearizedConstrainedExponential linearMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.3, 3.0);
-    BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.1, 3.0);
+    BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
     controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.08, 0.08));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
     drivetrainSys.setDefaultCommand(teleopDriveCommand);
