@@ -68,10 +68,6 @@ public class ShooterCarrage extends SubsystemBase {
     pitchMotorConfig.ClosedLoopGeneral.ContinuousWrap = true;
   }
 
-
-  
-
-
   public Rotation2d getPitch() {
     return new Rotation2d();
   }
@@ -84,11 +80,11 @@ public class ShooterCarrage extends SubsystemBase {
   }
 
   public void setTargetPitch(Rotation2d targetPitch) {
-    
+    this.targetPitch = targetPitch;
   }
 
   public void setHopperState(CarrageHopperState hopperState) {
-    
+    this.hopperState = hopperState;
   }
 
   @Override
@@ -103,28 +99,8 @@ public class ShooterCarrage extends SubsystemBase {
   }
 
   public static enum CarragePitchMode {
-    STOW(Rotation2d.fromDegrees(0.0)),
-    PASTA_ROLLER_HANDOFF(Rotation2d.fromDegrees(90.0)),
-    INTAKE_FROM_HUMAN_PLAYER(Rotation2d.fromDegrees(55.0)),
-    EJECT_NOTE(Rotation2d.fromDegrees(45.0)),
+    STOW,
     HOLD_ARBITRARY,
-    SHOOT_SPEAKER;
-
-    private Optional<Rotation2d> targetAngleOptional;
-    private CarragePitchMode(Optional<Rotation2d> targetAngleOptional) {
-      this.targetAngleOptional = targetAngleOptional;
-    }
-
-    private CarragePitchMode(Rotation2d targetAngle) {
-      this(Optional.of(targetAngle));
-    }
-
-    private CarragePitchMode() {
-      this(Optional.empty());
-    }
-
-    public Optional<Rotation2d> getTargetAngle() {
-      return targetAngleOptional;
-    }
+    TRACK_TARGET;
   }
 }
