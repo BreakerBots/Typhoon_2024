@@ -4,9 +4,11 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.ShooterTarget;
 import frc.robot.SuperstructureState;
 import frc.robot.ShooterTarget.FireingSolution;
@@ -22,27 +24,34 @@ public class Superstructure extends SubsystemBase {
   private Flywheel flywheel;
   private PastaRoller pastaRoller;
   private ShooterCarrage shooterCarrage;
-  private Climb climb;
+  private ClimbArm climb;
   private Drive drivetrain;
-  private FireingSolution latestSpeakerFireingSolution;
-
-  private final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrain, new Translation3d(), null);
-  
-  public Superstructure() {}
+  private FireingSolution latestFireingSolution;
+  private ShooterTarget selectedShooterTarget;
+  public Superstructure(ShooterTarget initalShooterTarget) {
+    selectedShooterTarget = initalShooterTarget;
+    latestFireingSolution = selectedShooterTarget.getFireingSolution();
+  }
 
   public void setSuperstructureState(SuperstructureState stateRequest) {
     superstructureState = stateRequest;
   }
 
+  public boolean strictHasNote() {
+    return intake.hasNote() || shooterCarrage.hasNote() || pastaRoller.hasNote();
+  }
+
+  public boolean intakeHasNote() {
+    return intake.hasNote();
+  }
+
+  public boolean shooterCarrageHasNote() {
+    return shooterCarrage.hasNote();s
+  }
+
   /** This is a sligly oversensitive call that is true if a sensor detects a note in the robot or the robot is in a state in which it may have a note but woud not detect it */
   public boolean hasNote() {
-    return
-      pastaRoller.hasNote() || 
-      shooterCarrage.hasNote() || 
-      superstructureState == SuperstructureState.HANDOFF_TO_PASTA_ROLLER || 
-      superstructureState == SuperstructureState.EXTAKE_FROM_PASTA_ROLLER ||
-      superstructureState == SuperstructureState.EJECT_NOTE ||
-      superstructureState == SuperstructureState.SHOOT_INTO_SPEAKER;
+    return strictHasNote();
   }
 
   public SuperstructureState getSuperstructureState() {
@@ -53,57 +62,45 @@ public class Superstructure extends SubsystemBase {
     return intake.isAtTargetState() && shooterCarrage.isAtTargetState() && flywheel.isAtTargetVelocity();
   }
 
-  private void manageFlywheel(FlywheelState desiredFlywheelState) {
-    switch (desiredFlywheelState) {
-      case EJECT_NOTE:
-      case INTAKE:
-      case NEUTRAL:
-      case PASTA_ROLLER_HANDOFF:
-        flywheel.setTargetState(desiredFlywheelState.getRequiredVelocityRPS().get(), desiredFlywheelState.getRequiredPresision());
-        break;
-      case IDLE:
-        flywheel.setTargetState(latestSpeakerFireingSolution.fireingVec().getMagnitude() * 0.75, desiredFlywheelState.getRequiredPresision());
-        break;
-      case SHOOT_SPEAKER:
-        flywheel.setTargetState(latestSpeakerFireingSolution.fireingVec().getMagnitude(), desiredFlywheelState.getRequiredPresision());
-        break;
-    }
-  }
-
   private void manageShooterCarragePitch(CarragePitchMode desiredPitchMode) {
     switch (desiredPitchMode) {
-      case EJECT_NOTE:
       case STOW:
-      case INTAKE_FROM_HUMAN_PLAYER:
-      case PASTA_ROLLER_HANDOFF:
-        shooterCarrage.setTargetPitch(desiredPitchMode.getTargetAngle().get());
+        shooterCarrage.setTargetPitch(Constants.ShooterCarrageConstants.STOW_ANGLE);
         break;
       case HOLD_ARBITRARY:
         shooterCarrage.setTargetPitch(shooterCarrage.getPitch());
         break;
-      case SHOOT_SPEAKER:
-        shooterCarrage.setTargetPitch(latestSpeakerFireingSolution.fireingVec().getVectorRotation());
+      case TRACK_TARGET:
+        shooterCarrage.setTargetPitch(latestFireingSolution.fireingVec().getVectorRotation());
         break;    
     }
   }
 
   @Override
   public void periodic() {
-    latestSpeakerFireingSolution = SPEAKER_TARGET.getFireingSolution();
+    latestFireingSolution = selectedShooterTarget.getFireingSolution();
 
     if (RobotState.isDisabled() || RobotState.isEStopped()) {
       superstructureState = SuperstructureState.ROBOT_NEUTRAL;
     }
 
+    if (superstructureState == SuperstructureState.INTAKE_FROM_GROUND && intake.hasNote()) {
+      superstructureState = SuperstructureState.INTAKE_EXTENDED_HOLD;
+    }
+
+    pushStateRequests();
+  }
+
+  private void pushStateRequests() {
     pastaRoller.setState(superstructureState.getPastaRollerState());
     intake.setState(superstructureState.getIntakeState());
     shooterCarrage.setHopperState(superstructureState.getShooterCarrageHopperState());
     manageShooterCarragePitch(superstructureState.getShooterCarragePitchMode());
-    FlywheelState desiredFlywheelState = superstructureState.getFlywheelState();
-    if (shooterCarrage.hasNote() && desiredFlywheelState == FlywheelState.NEUTRAL) {
-      desiredFlywheelState = FlywheelState.IDLE;
+    if (superstructureState != SuperstructureState.ROBOT_NEUTRAL) {
+      flywheel.setTargetVelocity(latestFireingSolution.fireingVec().getMagnitude());
+    } else {
+      flywheel.stop();
     }
-    manageFlywheel(desiredFlywheelState);
   }
 
   public static enum ControlledNoteLocation {

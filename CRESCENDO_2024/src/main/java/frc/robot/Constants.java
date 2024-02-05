@@ -75,6 +75,7 @@ public final class Constants {
     public static final double PITCH_KV = 1.28;
     public static final double PITCH_KG = 0.69;
 
+    public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(0.0);
 
   }
 
@@ -112,10 +113,8 @@ public final class Constants {
 
   public static class FlywheelConstants {
     public static final double MAX_SPEED = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(6380.0);
-    public static final double COARSE_VELOCITY_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(150.0);
-    public static final double COARSE_ACCELERATION_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(80.0);
-    public static final double FINE_VELOCITY_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(5.0);
-    public static final double FINE_ACCELERATION_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(1.0);
+    public static final double VELOCITY_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(5.0);
+    public static final double ACCELERATION_TOLERENCE = BreakerUnits.rotationsPerMinuteToRotationsPerSecond(1.0);
     public static final double CONTACT_WHEEL_CIRCUMFRENCE = Units.inchesToMeters(Math.PI*4.0);
     public static final double MOTOR_TO_FLYWHEEL_GEARING = 1.0;
     public static final double METERS_PER_SEC_PER_MOTOR_ROT = (1.0 / MOTOR_TO_FLYWHEEL_GEARING) * CONTACT_WHEEL_CIRCUMFRENCE;
@@ -123,7 +122,11 @@ public final class Constants {
   }
 
   public static class ClimbConstants {
-    
+    public static final double HOMEING_DUTY_CYCLE = -0.3;
+    public static final double HOMEING_CURRENT = 35.0;
+    public static final double LEVELING_SOFT_STOP_CURRENT = 25.0;
+    public static final double EXTENDED_POSITION_ROTATIONS = 0.0;
+    public static final double RETRACTED_POSITION_ROTATIONS = 0.0;
   }
 
   public static class DriveConstants {

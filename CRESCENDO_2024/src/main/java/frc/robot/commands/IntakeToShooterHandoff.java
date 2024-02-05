@@ -4,21 +4,24 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.SuperstructureState;
 import frc.robot.subsystems.Superstructure;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class IntakeFromGround extends SequentialCommandGroup {
-  /** Creates a new IntakeFromGround. */
-  public IntakeFromGround(Superstructure superstructure) {
+public class IntakeToShooterHandoff extends SequentialCommandGroup {
+  /** Creates a new IntakeToShooterHandoff. */
+  public IntakeToShooterHandoff(Superstructure superstructure) {
+    // Add your commands in the addCommands() call, e.g.
+    // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> {if(superstructure.hasNote()) {this.cancel();}}),
       new SetSuperstructureState(superstructure, SuperstructureState.INTAKE_EXTENDED_HOLD, true),
-      new SetSuperstructureState(superstructure, SuperstructureState.INTAKE_FROM_GROUND, false)
+      new SetSuperstructureState(superstructure, SuperstructureState.INTAKE_TO_SHOOTER_HANDOFF, false),
+      new WaitUntilCommand(() -> {return !superstructure.intakeHasNote() && superstructure.shooterCarrageHasNote();}),
+      new SetSuperstructureState(superstructure, SuperstructureState.SHOOTER_HOLD_NOTE, false)
     );
   }
 }
