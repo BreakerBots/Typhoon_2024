@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -21,6 +24,8 @@ public class Flywheel extends SubsystemBase {
   /** Creates a new Flywheel. */
   private TalonFX flywheelA, flywheelB;
   private double targetVelRPS;
+  private VelocityVoltage velRequest;
+  private Follower followRequest;
   public Flywheel() {
     
   } 
@@ -49,5 +54,7 @@ public class Flywheel extends SubsystemBase {
 
   @Override
   public void periodic() {
+    flywheelA.setControl(velRequest.withVelocity(targetVelRPS));
+    flywheelB.setControl(followRequest);
   }
 }

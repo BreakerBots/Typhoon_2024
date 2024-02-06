@@ -21,9 +21,14 @@ public enum SuperstructureState {
     INTAKE_TO_SHOOTER_HANDOFF(IntakeState.EXTENDED_INTAKEING, PastaRollerState.NEUTRAL, CarrageHopperState.INTAKE, CarragePitchMode.STOW),
     SHOOTER_TO_INTAKE_HANDOFF(IntakeState.EXTENDED_EXTAKEING, PastaRollerState.NEUTRAL, CarrageHopperState.EXTAKE, CarragePitchMode.STOW),
     INTAKE_TO_PASTA_ROLLER_HANDOFF(IntakeState.RETRACTED_EXTAKEING, PastaRollerState.INTAKE, CarrageHopperState.NEUTRAL, CarragePitchMode.STOW),
+    PASTA_ROLLER_TO_INTAKE_HANDOFF(IntakeState.RETRACTED_INTAKEING, PastaRollerState.EXTAKE_REVERSE, CarrageHopperState.NEUTRAL, CarragePitchMode.STOW),
 
     SHOOTER_HOLD_NOTE(IntakeState.NEUTRAL, PastaRollerState.NEUTRAL, CarrageHopperState.NEUTRAL, CarragePitchMode.TRACK_TARGET),
-    SHOOT_TO_TARGET(IntakeState.NEUTRAL, PastaRollerState.NEUTRAL, CarrageHopperState.INTAKE, CarragePitchMode.TRACK_TARGET);
+    SHOOT_TO_TARGET(IntakeState.NEUTRAL, PastaRollerState.NEUTRAL, CarrageHopperState.INTAKE, CarragePitchMode.TRACK_TARGET),
+
+    PASTA_ROLLER_HOLD_NOTE(IntakeState.RETRACTED_NEUTRAL, PastaRollerState.NEUTRAL, CarrageHopperState.NEUTRAL, CarragePitchMode.STOW),
+    PASTA_ROLLER_EXTAKE(IntakeState.RETRACTED_NEUTRAL, PastaRollerState.EXTAKE, CarrageHopperState.NEUTRAL, CarragePitchMode.STOW),
+    ;
 
     
     final IntakeState intakeState; 

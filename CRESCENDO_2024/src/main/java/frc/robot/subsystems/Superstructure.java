@@ -12,8 +12,6 @@ import frc.robot.Constants;
 import frc.robot.ShooterTarget;
 import frc.robot.SuperstructureState;
 import frc.robot.ShooterTarget.FireingSolution;
-import frc.robot.subsystems.Flywheel.FlywheelPresisionType;
-import frc.robot.subsystems.Flywheel.FlywheelState;
 import frc.robot.subsystems.ShooterCarrage.CarragePitchMode;
 
 public class Superstructure extends SubsystemBase {
@@ -46,8 +44,14 @@ public class Superstructure extends SubsystemBase {
   }
 
   public boolean shooterCarrageHasNote() {
-    return shooterCarrage.hasNote();s
+    return shooterCarrage.hasNote();
   }
+
+  public boolean pastaRollerHasNote() {
+    return pastaRoller.hasNote();
+  }
+
+  
 
   /** This is a sligly oversensitive call that is true if a sensor detects a note in the robot or the robot is in a state in which it may have a note but woud not detect it */
   public boolean hasNote() {
@@ -60,6 +64,10 @@ public class Superstructure extends SubsystemBase {
 
   public boolean isAtTargetState() {
     return intake.isAtTargetState() && shooterCarrage.isAtTargetState() && flywheel.isAtTargetVelocity();
+  }
+
+  public void setSelectedShooterTarget(ShooterTarget newTarget) {
+    selectedShooterTarget = newTarget;
   }
 
   private void manageShooterCarragePitch(CarragePitchMode desiredPitchMode) {
@@ -86,6 +94,14 @@ public class Superstructure extends SubsystemBase {
 
     if (superstructureState == SuperstructureState.INTAKE_FROM_GROUND && intake.hasNote()) {
       superstructureState = SuperstructureState.INTAKE_EXTENDED_HOLD;
+    }
+
+    if (superstructureState == SuperstructureState.INTAKE_TO_SHOOTER_HANDOFF && shooterCarrageHasNote()) {
+      superstructureState = SuperstructureState.SHOOTER_HOLD_NOTE;
+    }
+
+    if (superstructureState == SuperstructureState.INTAKE_TO_PASTA_ROLLER_HANDOFF && pastaRollerHasNote()) {
+      superstructureState = SuperstructureState.PASTA_ROLLER_HOLD_NOTE;
     }
 
     pushStateRequests();
