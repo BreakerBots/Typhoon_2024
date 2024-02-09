@@ -96,34 +96,34 @@ public class Drive extends BreakerSwerveDrive {
         super(
             DRIVE_BASE_CONFIG, 
             AUTO_CONFIG, 
-            new BreakerPhoenixTimesyncSwerveOdometryThread(
-                ODOMETRY_CONFIG, 
-                new CTREGyroYawStatusSignals((pigeon.getBaseGyro()).getYaw(), pigeon.getBaseGyro().getAngularVelocityZWorld()),
-                new CTRESwerveModuleStatusSignals(driveFL.getRotorPosition(), driveFL.getRotorVelocity(), encoderFL.getBaseEncoder().getAbsolutePosition(), encoderFL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-                new CTRESwerveModuleStatusSignals(driveFR.getRotorPosition(), driveFR.getRotorVelocity(), encoderFR.getBaseEncoder().getAbsolutePosition(), encoderFR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-                new CTRESwerveModuleStatusSignals(driveBL.getRotorPosition(), driveBL.getRotorVelocity(), encoderBL.getBaseEncoder().getAbsolutePosition(), encoderBL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
-                new CTRESwerveModuleStatusSignals(driveBR.getRotorPosition(), driveBR.getRotorVelocity(), encoderBR.getBaseEncoder().getAbsolutePosition(), encoderBR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI)
-            ),
-            //new BreakerSwerveOdometryThread(ODOMETRY_CONFIG),
+            // new BreakerPhoenixTimesyncSwerveOdometryThread(
+            //     ODOMETRY_CONFIG, 
+            //     new CTREGyroYawStatusSignals((pigeon.getBaseGyro()).getYaw(), pigeon.getBaseGyro().getAngularVelocityZWorld()),
+            //     new CTRESwerveModuleStatusSignals(driveFL.getRotorPosition(), driveFL.getRotorVelocity(), encoderFL.getBaseEncoder().getAbsolutePosition(), encoderFL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+            //     new CTRESwerveModuleStatusSignals(driveFR.getRotorPosition(), driveFR.getRotorVelocity(), encoderFR.getBaseEncoder().getAbsolutePosition(), encoderFR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+            //     new CTRESwerveModuleStatusSignals(driveBL.getRotorPosition(), driveBL.getRotorVelocity(), encoderBL.getBaseEncoder().getAbsolutePosition(), encoderBL.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI),
+            //     new CTRESwerveModuleStatusSignals(driveBR.getRotorPosition(), driveBR.getRotorVelocity(), encoderBR.getBaseEncoder().getAbsolutePosition(), encoderBR.getBaseEncoder().getVelocity(), MODULE_CONFIG.getDriveMotorConfig().getWheelDiameter() * Math.PI)
+            // ),
+            new BreakerSwerveOdometryThread(ODOMETRY_CONFIG),
             pigeon, 
             frontLeftModule, 
             frontRightModule,
             backLeftModule, 
             backRightModule
         );
-        BreakerDashboard.getMainTab().add(field);
+        // BreakerDashboard.getMainTab().add(field);
         
         frontLeftModule.setDeviceName(" FL_Module ");
         frontRightModule.setDeviceName(" FR_Module ");
         backLeftModule.setDeviceName(" BL_Module ");
         backRightModule.setDeviceName(" BR_Module ");
 
-        BreakerDashboard.getDiagnosticsTab().add("FL Module", frontLeftModule);
-        BreakerDashboard.getDiagnosticsTab().add("FR Module", frontRightModule);
-        BreakerDashboard.getDiagnosticsTab().add("BL Module", backLeftModule);
-        BreakerDashboard.getDiagnosticsTab().add("BR Module", backRightModule);
+        // BreakerDashboard.getDiagnosticsTab().add("FL Module", frontLeftModule);
+        // BreakerDashboard.getDiagnosticsTab().add("FR Module", frontRightModule);
+        // BreakerDashboard.getDiagnosticsTab().add("BL Module", backLeftModule);
+        // BreakerDashboard.getDiagnosticsTab().add("BR Module", backRightModule);
 
-        BreakerLog.registerLogable("Drive", this);
+         BreakerLog.registerLogable("Drive", this);
     }
 
     @Override

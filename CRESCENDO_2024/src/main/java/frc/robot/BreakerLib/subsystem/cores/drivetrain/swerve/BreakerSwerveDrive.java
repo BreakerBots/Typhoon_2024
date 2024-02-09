@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.LogTable;
+import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
@@ -175,6 +176,8 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
         if (descreteTimestep > 0.0) {
           ChassisSpeeds.discretize(targetVels, descreteTimestep);
         }
+
+        Logger.recordOutput("peofw", targetVels);
 
         //convertes the robot relative chasss speeds into raw swerve module states and applys them with desaturation and opimization
         setModuleStates(false, isOpenLoop, kinematics.toSwerveModuleStates(targetVels, centerOfRotation));
@@ -437,7 +440,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
           drivetrain::getOdometryPoseMeters,
           drivetrain::setOdometryPosition, 
           drivetrain::getRobotRelativeChassisSpeeds, 
-          (ChassisSpeeds speeds) -> drivetrain.applyRequest(autoRequest.withChassisSpeeds(speeds)),
+          (ChassisSpeeds speeds) -> {drivetrain.applyRequest(autoRequest.withChassisSpeeds(speeds));},
           new HolonomicPathFollowerConfig(
             linearPIDConstants, 
             rotationalPIDConstants, 
