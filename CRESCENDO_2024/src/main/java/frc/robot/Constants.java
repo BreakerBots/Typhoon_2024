@@ -90,18 +90,18 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    public static final String FRONT_CAMERA_NAME = "frontCam";
+    public static final String FRONT_CAMERA_NAME = "frontcam";
     public static final Transform3d FRONT_CAMERA_TRANS = new Transform3d();
 
-    public static final String LEFT_CAMERA_NAME = "leftCam";
+    public static final String LEFT_CAMERA_NAME = "leftcam";
     public static final Transform3d LEFT_CAMERA_TRANS = new Transform3d();
 
 
-    public static final String RIGHT_CAMERA_NAME = "rightCam";
+    public static final String RIGHT_CAMERA_NAME = "rightcam";
     public static final Transform3d RIGHT_CAMERA_TRANS = new Transform3d();
 
 
-    public static final String BACK_CAMERA_NAME = "backCam";
+    public static final String BACK_CAMERA_NAME = "backcam";
     public static final Transform3d BACK_CAMERA_TRANS = new Transform3d();
 
     public static final String LIMELIGHT_NAME = "limelight-note";
@@ -185,7 +185,7 @@ public final class Constants {
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);
     public static final double MODULE_WHEEL_SPEED_DEADBAND = 0.001;
     public static final double AZIMUTH_MOTOR_SUPPLY_CURRENT_LIMIT = 40.0;
-    public static final double DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT = 60.0;
+    public static final double DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT = 100.0;
     public static final BreakerSwerveModuleConfig MODULE_CONFIG = new BreakerSwerveModuleConfig(
       DRIVE_MOTOR_GEAR_RATIO_TO_ONE, AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE, 
       WHEEL_DIAMETER, 
@@ -196,7 +196,7 @@ public final class Constants {
     );
 
       //Theta-axis positional PID
-      public static final double HEADING_COMPENSATION_PID_KP = 2.2;
+      public static final double HEADING_COMPENSATION_PID_KP = 2.8;
       public static final double HEADING_COMPENSATION_PID_KI = 0.0;
       public static final double HEADING_COMPENSATION_PID_KD = 0.0;
       public static final PIDController HEADING_COMPENSATION_PID = new PIDController(HEADING_COMPENSATION_PID_KP, HEADING_COMPENSATION_PID_KI, HEADING_COMPENSATION_PID_KD);

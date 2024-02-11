@@ -125,8 +125,8 @@ public abstract class BreakerGenericSwerveModule extends BreakerGenericDevice im
 
     @Override
     public void toLog(LogTable table) {
-        table.put("ModuleState", BreakerLogUtil.formatSwerveModuleStateForLog(getModuleState()));
+        table.put("ModuleState", SwerveModuleState.struct, getModuleState());
         table.put("WheelDistanceMeters", getModuleDriveDistanceMeters());
-        table.put("OverallHealth", getHealth().toString());
+        table.put("OverallHealth", getHealth());
     }
 }

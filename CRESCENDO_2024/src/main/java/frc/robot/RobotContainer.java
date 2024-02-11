@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -17,6 +20,7 @@ import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalo
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.functions.BreakerBezierCurve;
 import frc.robot.BreakerLib.util.math.functions.BreakerLinearizedConstrainedExponential;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
@@ -35,8 +39,8 @@ import frc.robot.subsystems.Intake;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final BreakerPigeon2 imuSys = new BreakerPigeon2(5, GeneralConstants.DRIVE_CANIVORE_NAME);
-  private final Drive drivetrainSys = new Drive(imuSys);
+   private final BreakerPigeon2 imuSys = new BreakerPigeon2(5, GeneralConstants.DRIVE_CANIVORE_NAME);
+   private final Drive drivetrainSys = new Drive(imuSys);
   private final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private final Vision visionSys = new Vision(drivetrainSys);
@@ -81,7 +85,7 @@ public class RobotContainer {
         "BreakerBots", 
         new BreakerRobotNameConfig(),
         //  .addRobot(MiscConstants.ROBORIO_SN, "Plop"), 
-        2023, 
+        2024, 
         "v1",
         "Roman Abrahamson, Sebastian Rueda"
         )
@@ -98,6 +102,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
-    return AutoBuilder.followPath(path).beforeStarting(() -> {drivetrainSys.setOdometryPosition(path.getPreviewStartingHolonomicPose());});
+    // return AutoBuilder.followPath(path).beforeStarting(() -> {drivetrainSys.setOdometryPosition(path.getPreviewStartingHolonomicPose());});
+    return null;
   }
 }

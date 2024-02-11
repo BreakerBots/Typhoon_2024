@@ -113,17 +113,17 @@ public class Drive extends BreakerSwerveDrive {
         );
         // BreakerDashboard.getMainTab().add(field);
         
-        frontLeftModule.setDeviceName(" FL_Module ");
-        frontRightModule.setDeviceName(" FR_Module ");
-        backLeftModule.setDeviceName(" BL_Module ");
-        backRightModule.setDeviceName(" BR_Module ");
+        frontLeftModule.setDeviceName("FL_Module");
+        frontRightModule.setDeviceName("FR_Module");
+        backLeftModule.setDeviceName("BL_Module");
+        backRightModule.setDeviceName("BR_Module");
 
         // BreakerDashboard.getDiagnosticsTab().add("FL Module", frontLeftModule);
         // BreakerDashboard.getDiagnosticsTab().add("FR Module", frontRightModule);
         // BreakerDashboard.getDiagnosticsTab().add("BL Module", backLeftModule);
         // BreakerDashboard.getDiagnosticsTab().add("BR Module", backRightModule);
 
-         BreakerLog.registerLogable("Drive", this);
+        BreakerLog.registerLogable("Drive", this);
     }
 
     @Override
@@ -134,6 +134,5 @@ public class Drive extends BreakerSwerveDrive {
     @Override
     public void toLog(LogTable table) {
         super.toLog(table);
-        table.put("OdometryPose", getOdometryPoseMeters());
     }
 }
