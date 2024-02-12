@@ -151,7 +151,7 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
 
     @Override
     public void toLog(LogTable table) {
-
+        //table.put("Pose", Pose2d.struct, getOdometryPoseMeters());
     }
 
     @Override

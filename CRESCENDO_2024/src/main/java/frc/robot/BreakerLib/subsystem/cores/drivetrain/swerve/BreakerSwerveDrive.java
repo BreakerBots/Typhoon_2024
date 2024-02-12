@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import org.littletonrobotics.junction.LogTable;
+import org.littletonrobotics.junction.Logger;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathWithEvents;
@@ -29,6 +30,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.protobuf.ProtobufSerializable;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -175,6 +177,8 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
         if (descreteTimestep > 0.0) {
           ChassisSpeeds.discretize(targetVels, descreteTimestep);
         }
+
+        Logger.recordOutput("peofw", targetVels);
 
         //convertes the robot relative chasss speeds into raw swerve module states and applys them with desaturation and opimization
         setModuleStates(false, isOpenLoop, kinematics.toSwerveModuleStates(targetVels, centerOfRotation));
@@ -364,16 +368,14 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
 
   @Override
   public void toLog(LogTable table) {
-    table.put("DeviceHealth", getHealth().toString());
-    table.put("RealModuleStates", getSwerveModuleStates());
-    table.put("TargetModuleStates", targetModuleStates);
-    BreakerLog.recordOutput("RealModuleStates", getSwerveModuleStates());
-    BreakerLog.recordOutput("TargetModuleStates", targetModuleStates);
-    odometryThread.toLog(table.getSubtable("Odometry"));
-    LogTable moduleTable = table.getSubtable("Modules");
-    for (BreakerGenericSwerveModule module: swerveModules) {
-      module.toLog(moduleTable.getSubtable(module.getDeviceName()));
-    }
+    table.put("DeviceHealth", getHealth());
+    table.put("RealModuleStates", SwerveModuleState.struct, getSwerveModuleStates());
+    table.put("TargetModuleStates", SwerveModuleState.struct, targetModuleStates);
+    //odometryThread.toLog(table.getSubtable("Odometry"));
+    // LogTable moduleTable = table.getSubtable("Modules");
+    // for (BreakerGenericSwerveModule module: swerveModules) {
+    //   module.toLog(moduleTable.getSubtable(module.getDeviceName()));
+    // }
   }
 
   public enum SwerveMovementRefrenceFrame {
@@ -437,7 +439,7 @@ public class BreakerSwerveDrive extends BreakerGenericDrivetrain /*implements Br
           drivetrain::getOdometryPoseMeters,
           drivetrain::setOdometryPosition, 
           drivetrain::getRobotRelativeChassisSpeeds, 
-          (ChassisSpeeds speeds) -> drivetrain.applyRequest(autoRequest.withChassisSpeeds(speeds)),
+          (ChassisSpeeds speeds) -> {drivetrain.applyRequest(autoRequest.withChassisSpeeds(speeds));},
           new HolonomicPathFollowerConfig(
             linearPIDConstants, 
             rotationalPIDConstants, 
