@@ -22,8 +22,11 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.Constants.GeneralConstants;
 import frc.robot.commands.OrbitNote;
+import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.PastaRoller;
+import frc.robot.subsystems.Shooter;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -37,6 +40,10 @@ public class RobotContainer {
   private final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private final Vision visionSys = new Vision(drivetrainSys);
+
+  // private final Intake intakeSys = new Intake();
+  // private final Shooter shooterSys = new Shooter();
+  // private final PastaRoller pastaRollerSys = new PastaRoller();
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -56,6 +63,10 @@ public class RobotContainer {
     
   }
 
+  // public boolean strictHasNote() {
+  //   return intakeSys.hasNote() || shooterSys.hasNote() || pastaRollerSys.hasNote();
+  // }
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -68,6 +79,8 @@ public class RobotContainer {
   private void configureBindings() {
     controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
     controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
+    // controllerSys.getButtonX().and(() -> {return !strictHasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
+    // controllerSys.getButtonX().and(intakeSys::hasNote).onTrue(new IntakeToShooterHandoff);
   }
 
   private void configureRobotManager() {

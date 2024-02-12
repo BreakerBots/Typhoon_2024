@@ -2,42 +2,33 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.auto;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Vision;
-import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
-import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.vendorutil.LimelightHelpers.LimelightTarget_Detector;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Intake;
 
-public class OrbitNote extends Command {
-  /** Creates a new OrbitNote. */
-  private Drive drivetrain;
-  private PIDController anglePID;
+public class PersueNote extends Command {
+  /** Creates a new PurePursuitIntakeNote. */
   private Vision vision;
-  private BreakerXboxController controller;
   private Optional<LimelightTarget_Detector> bestNoteTarget;
-  public OrbitNote(Drive drivetrain, Vision vision, BreakerXboxController controller) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.drivetrain = drivetrain;
-    this.controller = controller;
-    this.vision = vision;
-    bestNoteTarget = Optional.empty();
-    anglePID = new PIDController(0.03, 0, 0.002);
-    addRequirements(drivetrain);
+  private PIDController anglePID;
+  private BreakerSwerveVelocityRequest velocityRequest;
+  private Drive drivetrain;
+  private Intake intake;
+  private double persuitVel;
+  public PersueNote() {
+    velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);
   }
 
   // Called when the command is initially scheduled.
@@ -45,7 +36,6 @@ public class OrbitNote extends Command {
   public void initialize() {
     anglePID.reset();
     updateVision();
-    BreakerLog.recordOutput("IsOrbitingNote", true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -53,24 +43,17 @@ public class OrbitNote extends Command {
   public void execute() {
     updateVision();
     if (bestNoteTarget.isPresent()) {
-      ChassisPercentSpeeds speeds = new ChassisPercentSpeeds();
-      speeds.vxPercentOfMax = controller.getLeftThumbstick().getY() * 0.5;
-      speeds.vyPercentOfMax = controller.getRightThumbstick().getX() * 0.2;
-      BreakerLog.recordOutput("NoteTX", bestNoteTarget.get().tx);
-      if (!MathUtil.isNear(0.0, bestNoteTarget.get().tx, 2.0)) {
-        speeds.omegaPercentOfMax = anglePID.calculate(bestNoteTarget.get().tx, 0.0);
+      LimelightTarget_Detector tgt = bestNoteTarget.get();
+      ChassisSpeeds speeds = new ChassisSpeeds();
+      speeds.vxMetersPerSecond = persuitVel;
+      if (!(tgt.ty <= -15.0)) {
+        speeds.omegaRadiansPerSecond = anglePID.calculate(tgt.tx, 0.0);
+        velocityRequest.withHeadingCorrectionEnabled(false);
+      } else {
+        velocityRequest.withHeadingCorrectionEnabled(true);
       }
-      drivetrain.applyRequest(new BreakerSwervePercentSpeedRequest(speeds, SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false));
-    } else {
-      cancel();
+      drivetrain.applyRequest(velocityRequest.withChassisSpeeds(speeds));
     }
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-    drivetrain.stop();
-    BreakerLog.recordOutput("IsOrbitingNote", false);
   }
 
   private void updateVision() {
@@ -96,9 +79,15 @@ public class OrbitNote extends Command {
     }
   }
 
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    drivetrain.stop();
+  }
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return bestNoteTarget.isEmpty();
+    return intake.hasNote();
   }
 }

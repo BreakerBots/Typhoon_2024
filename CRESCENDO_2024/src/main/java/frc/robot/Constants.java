@@ -52,8 +52,9 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int ROLLER_MOTOR_ID = 0; // TODO
-    public static final int PIVOT_MOTOR_ID = 0; // TODO
+    public static final int ROLLER_MOTOR_ID = 0; 
+    public static final int PIVOT_LEFT_ID = 0;
+    public static final int PIVOT_RIGHT_ID = 0;
 
     /*0deg is 15 deg behind fully retracted*/
     public static final double PIVIOT_RETRACTED_THRESHOLD = Units.degreesToRotations(20.0);
@@ -62,7 +63,7 @@ public final class Constants {
 
   }
 
-  public static class ShooterCarrageConstants {
+  public static class ShooterConstants {
     public static final double PITCH_RACK_TEETH = 163;
     public static final double PITCH_PINION_TEETH = 12;
     public static final double PITCH_PLANITARY_RATIO = 5.0;
@@ -77,9 +78,6 @@ public final class Constants {
 
     public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(0.0);
 
-  }
-
-  public static class ShooterConstants {
     public static final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> FIREING_MAP = getFireingMap();
 
     private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
@@ -123,8 +121,11 @@ public final class Constants {
 
   public static class ClimbConstants {
     public static final double HOMEING_DUTY_CYCLE = -0.3;
-    public static final double HOMEING_CURRENT = 35.0;
-    public static final double LEVELING_SOFT_STOP_CURRENT = 25.0;
+    public static final double HOMEING_CURRENT = 20.0;
+    public static final double LEVELING_SOFT_STOP_CURRENT = 10.0;
+    public static final double LEVELING_CURRENT_LIMIT = 15.0;
+    public static final double HOMEING_CURRENT_LIMIT = 30.0;
+    public static final double STANDARD_CURRENT_LIMIT = 65.0;
     public static final double EXTENDED_POSITION_ROTATIONS = 0.0;
     public static final double RETRACTED_POSITION_ROTATIONS = 0.0;
   }

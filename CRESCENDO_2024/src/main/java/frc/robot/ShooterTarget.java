@@ -4,11 +4,15 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
 import frc.robot.subsystems.Drive;
@@ -16,11 +20,11 @@ import edu.wpi.first.math.interpolation.Interpolatable;
 
 /** Add your docs here. */
 public class ShooterTarget {
-    private final Translation3d targetPoint;
+    private Translation3d blueTargetPoint;
     private final Drive drivetrain;
     private final BreakerInterpolatingTreeMap<Double, BreakerVector2> fireingTable;
-    public ShooterTarget(Drive drivetrain, Translation3d targetPoint, BreakerInterpolatingTreeMap<Double, BreakerVector2> fireingTable) {
-        this.targetPoint = targetPoint;
+    public ShooterTarget(Drive drivetrain, Translation3d blueTargetPoint, BreakerInterpolatingTreeMap<Double, BreakerVector2> fireingTable) {
+        this.blueTargetPoint = blueTargetPoint;
         this.drivetrain = drivetrain;
         this.fireingTable = fireingTable;
     }
@@ -30,7 +34,13 @@ public class ShooterTarget {
     }   
 
     public Translation3d getTargetPoint() {
-        return targetPoint;
+        Optional<Alliance> allainceOpt =  DriverStation.getAlliance();
+        if (allainceOpt.isPresent()) {
+            if (allainceOpt.get() == Alliance.Red) {
+                blueTargetPoint.getX()
+            }
+        }
+        return blueTargetPoint; 
     }
 
     public FireingSolution getFireingSolution() {

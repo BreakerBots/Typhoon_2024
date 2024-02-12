@@ -5,24 +5,36 @@
 package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
-import frc.robot.SuperstructureState;
-import frc.robot.commands.SetSuperstructureState;
-import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakeFromGroundForShooter extends SequentialCommandGroup {
   /** Creates a new IntakeForShooter. */
-  public IntakeFromGroundForShooter(Superstructure superstructure, boolean waitFo) {
-    
+  public IntakeFromGroundForShooter(Intake intake, Shooter shooter) {
     addCommands(
-      new InstantCommand(() -> {if(superstructure.hasNote()) {this.cancel();}}),
-      new SetSuperstructureState(superstructure, SuperstructureState.INTAKE_EXTENDED_HOLD, true),
-      new SetSuperstructureState(superstructure, SuperstructureState.INTAKE_TO_SHOOTER_HANDOFF, false)
-      //NOTE: HOLD NOTE STATE IS NOT SET FROM HERE AS THAT IS HANDELED BY Superstructure.java in its periodic loop
+      new ParallelCommandGroup(
+        intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true).andThen(
+          intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
+          new WaitUntilCommand(intake::hasNote)
+            .andThen(intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false))
+            .onlyWhile(()->{return !shooter.isAtAngleGoal();})
+        ),
+        new InstantCommand(() -> shooter.setState(ShooterState.STOW))
+        .andThen(new WaitUntilCommand(shooter::isAtAngleGoal))
+      ),
+      new InstantCommand(() -> shooter.setState(ShooterState.INTAKE_TO_SHOOTER_HANDOFF)),
+      intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
+      new WaitUntilCommand(shooter::hasNote),
+      new InstantCommand(() -> shooter.setState(ShooterState.STOW)),
+      intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false)
     );
   }
 }

@@ -9,18 +9,18 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.SuperstructureState;
 import frc.robot.commands.SetSuperstructureState;
-import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.PastaRoller;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakeFromGroundForPastaRoller extends SequentialCommandGroup {
   /** Creates a new IntakeFromGroundForPastaRoller. */
-  public IntakeFromGroundForPastaRoller(Superstructure superstructure) {
+  public IntakeFromGroundForPastaRoller(Intake intake, PastaRoller pastaRoller) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> {if(superstructure.hasNote()) {this.cancel();}}),
       new SetSuperstructureState(superstructure, SuperstructureState.INTAKE_EXTENDED_HOLD, true),
       new SetSuperstructureState(superstructure, SuperstructureState.INTAKE_FROM_GROUND, false),
       new WaitUntilCommand(superstructure::intakeHasNote),

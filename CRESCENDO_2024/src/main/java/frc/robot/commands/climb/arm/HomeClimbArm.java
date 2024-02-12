@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.climb;
+package frc.robot.commands.climb.arm;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -21,7 +21,7 @@ public class HomeClimbArm extends SequentialCommandGroup {
     addCommands(
       new InstantCommand(climbArm::setHomeingSpeed, climbArm),
       new WaitUntilCommandWithConditionSatisfactionDuration(() -> {return climbArm.getMotorCurrent() >= ClimbConstants.HOMEING_CURRENT;}, 1.5),
-      new InstantCommand(climbArm::resetEncoder, climbArm)
+      new InstantCommand(climbArm::home, climbArm)
     );
   }
 }

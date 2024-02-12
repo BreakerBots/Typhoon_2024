@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -37,18 +38,20 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public class Intake extends SubsystemBase {
-  private WPI_TalonSRX rollerMotor;  
-  private TalonFX pivotMotor;
+  private TalonFX rollerMotor;  
+  private TalonFX pivotLeft, pivotRight;
   private IntakeState targetState;
   private CANcoder piviotEncoder;
   private DutyCycleOut piviotDutyCycleControlRequest;
+  private Follower pivotFollowerRequest;
   private BreakerBeamBreak beamBreak;
  
 
   /** Creates a new Intake. */
   public Intake() {
-    rollerMotor = new WPI_TalonSRX(ROLLER_MOTOR_ID);
-    pivotMotor = new TalonFX(PIVOT_MOTOR_ID);
+    rollerMotor = new TalonFX(ROLLER_MOTOR_ID);
+    pivotLeft = new TalonFX(PIVOT_LEFT_ID);
+    pivotRight = new TalonFX(PIVOT_RIGHT_ID);
     
     TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -56,19 +59,27 @@ public class Intake extends SubsystemBase {
     pivotConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
 
-    pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    pivotMotor.getConfigurator().apply(pivotConfig);
+    pivotLeft.getConfigurator().apply(pivotConfig);
+    pivotRight.getConfigurator().apply(pivotConfig);
 
     BreakerCANCoderFactory.configExistingCANCoder(piviotEncoder, AbsoluteSensorRangeValue.Unsigned_0To1, 0.0,SensorDirectionValue.CounterClockwise_Positive);
 
-    TalonSRXConfiguration rollerConfig = new TalonSRXConfiguration();
-    rollerConfig.peakCurrentLimit = 60;
-    rollerConfig.peakCurrentDuration = 1500;
-    rollerConfig.continuousCurrentLimit = 20;
-    rollerMotor.configAllSettings(rollerConfig);
+    TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
+    rollerConfig.CurrentLimits.SupplyCurrentLimit = 20;
+    rollerConfig.CurrentLimits.SupplyTimeThreshold = 1.5;
+    rollerConfig.CurrentLimits.SupplyCurrentThreshold = 60;
+    rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+    rollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    rollerMotor.getConfigurator().apply(rollerConfig);
+
+    piviotDutyCycleControlRequest = new DutyCycleOut(0.0);
+    pivotFollowerRequest = new Follower(PIVOT_LEFT_ID, true);
   }
 
+  public Command setStateCommand(IntakeState stateToSet, boolean waitForSuccess) {
+    return new FunctionalCommand(() -> {setState(stateToSet);}, ()-> {}, (Boolean interrupted) -> {}, () -> {return !waitForSuccess||isAtTargetState();}, this);
+  }
 
   public boolean hasNote() {
     return beamBreak.isBroken();
@@ -170,7 +181,8 @@ public class Intake extends SubsystemBase {
     piviotDutyCycleControlRequest.withOutput(targetState.getRollerState().getMotorDutyCycle());
     piviotDutyCycleControlRequest.withLimitForwardMotion(isForwardLimitTriggered());
     piviotDutyCycleControlRequest.withLimitReverseMotion(isReverseLimitTriggered());
-    pivotMotor.setControl(piviotDutyCycleControlRequest);
+    pivotLeft.setControl(piviotDutyCycleControlRequest);
+    pivotRight.setControl(pivotFollowerRequest);
     rollerMotor.set(targetState.getRollerState().getMotorDutyCycle());
     
   }
