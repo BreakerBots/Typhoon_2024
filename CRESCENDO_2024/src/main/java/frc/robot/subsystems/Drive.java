@@ -35,6 +35,7 @@ import org.littletonrobotics.junction.LogTable;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
@@ -128,7 +129,7 @@ public class Drive extends BreakerSwerveDrive {
 
     @Override
     public void periodic() {
-
+        BreakerLog.recordOutput("Odom Pose", Pose2d.struct, getOdometryPoseMeters());
     }
 
     @Override

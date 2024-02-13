@@ -4,6 +4,7 @@
 
 package frc.robot.BreakerLib.devices.vision.photon;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -19,6 +20,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -30,6 +32,7 @@ import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceP
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPoseSource;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseCordinateSystem;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.power.BreakerPowerManagementConfig;
 import frc.robot.BreakerLib.util.power.DevicePowerMode;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
@@ -67,33 +70,33 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
         return camera;
     }
 
-    /** @return Overall raw result from photon camera. */
-    public PhotonPipelineResult getLatestRawResult() {
-        return camera.getLatestResult();
-    }
+    // /** @return Overall raw result from photon camera. */
+    // public PhotonPipelineResult getLatestRawResult() {
+    //     return camera.getLatestResult();
+    // }
 
-    /** @return If camera is locked onto any targets. */
-    public boolean hasTargets() {
-        return getLatestRawResult().hasTargets();
-    }
+    // /** @return If camera is locked onto any targets. */
+    // public boolean hasTargets() {
+    //     return getLatestRawResult().hasTargets();
+    // }
 
-    /**
-     * @return List of all raw PhotonTrackedTargets the camera has in its field of
-     * view.
-     */
-    public PhotonTrackedTarget[] getAllRawTrackedTargets() {
-        return getLatestRawResult().targets.toArray(new PhotonTrackedTarget[getLatestRawResult().targets.size()]);
-    }
+    // /**
+    //  * @return List of all raw PhotonTrackedTargets the camera has in its field of
+    //  * view.
+    //  */
+    // public PhotonTrackedTarget[] getAllRawTrackedTargets() {
+    //     return getLatestRawResult().targets.toArray(new PhotonTrackedTarget[getLatestRawResult().targets.size()]);
+    // }
 
-    /** @return Number of camera targets currently locked on. */
-    public int getNumberOfCameraTargets() {
-        return getAllRawTrackedTargets().length;
-    }
+    // /** @return Number of camera targets currently locked on. */
+    // public int getNumberOfCameraTargets() {
+    //     return getAllRawTrackedTargets().length;
+    // }
 
-    /** @return Camera latency in milliseconds */
-    public double getPipelineLatancyMilliseconds() {
-        return getLatestRawResult().getLatencyMillis();
-    }
+    // /** @return Camera latency in milliseconds */
+    // public double getPipelineLatancyMilliseconds() {
+    //     return getLatestRawResult().getLatencyMillis();
+    // }
 
     /** Sets camera pipeline based on given number. */
     public void setPipelineIndex(int pipeNum) {
@@ -106,12 +109,12 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
     }
 
     /**
-     * @return The raw PhotonTrackedTarget object representing the best tracked
-     * target according to the pipeline's native sort
-     */
-    public PhotonTrackedTarget getBestTarget() {
-        return getLatestRawResult().getBestTarget();
-    }
+    //  * @return The raw PhotonTrackedTarget object representing the best tracked
+    //  * target according to the pipeline's native sort
+    //  */
+    // public PhotonTrackedTarget getBestTarget() {
+    //     return getLatestRawResult().getBestTarget();
+    // }
 
     /** @return Height relative to ground in meters. */
     public double getCameraHeight() {
@@ -154,10 +157,10 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
     public void runSelfTest() {
         faultStr = "";
         health = DeviceHealth.NOMINAL;
-        if (getPipelineLatancyMilliseconds() == 0) {
-            health = DeviceHealth.INOPERABLE;
-            faultStr = " camera_not_connected ";
-        }
+        // if (getPipelineLatancyMilliseconds() == 0) {
+        //     health = DeviceHealth.INOPERABLE;
+        //     faultStr = " camera_not_connected ";
+        // }
     }
 
     
@@ -183,16 +186,23 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
         private AprilTagFieldLayout apriltagFieldLayout;
         private Optional<Function<BreakerEstimatedPose, Matrix<N3, N1>>> stdDevCalculation;
         private PhotonPoseEstimator poseEstimator;
+        private List<PhotonTrackedTarget> trackedTargets;
         private BreakerPhotonVisionPoseEstimator(AprilTagFieldLayout apriltagFieldLayout, boolean pnpOnCoprocessor, Optional<Function<BreakerEstimatedPose, Matrix<N3, N1>>> stdDevCalculation) {
             this.apriltagFieldLayout = apriltagFieldLayout;
             this.stdDevCalculation = stdDevCalculation;
             PoseStrategy poseStrategy = (pnpOnCoprocessor ? PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR : PoseStrategy.MULTI_TAG_PNP_ON_RIO);
             poseEstimator = new PhotonPoseEstimator(apriltagFieldLayout, poseStrategy, camera, cameraPositionRelativeToRobot);
+            trackedTargets = new ArrayList<PhotonTrackedTarget>();
+        }
+
+        public List<PhotonTrackedTarget> getTrackedTargets() {
+            return trackedTargets;
         }
 
         public Optional<BreakerEstimatedPose> getEstimatedPose(PoseOrigin origin) {
             Optional<EstimatedRobotPose> pvEstPoseOpt = poseEstimator.update();
             Optional<PoseCordinateSystem> chordSys = Optional.empty();
+            trackedTargets = pvEstPoseOpt.get().targetsUsed;
             if (pvEstPoseOpt.isPresent()) {
                chordSys = origin.getCordinateSystem();
             } else {
@@ -204,6 +214,7 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
                if (stdDevCalculation.isPresent()) {
                     estPose = new BreakerEstimatedPose(estPose, stdDevCalculation.get().apply(estPose));
                }
+               BreakerLog.recordOutput(cameraName + " POSE", Pose2d.struct, estPose.estimatedPose.toPose2d());
                return Optional.of(estPose);
             } else {
                 return Optional.empty();
@@ -227,12 +238,12 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
 
 
     @Override
-    public BreakerEstimatedPoseSource getEstimatedPoseSource(AprilTagFieldLayout apriltagFieldLayout) {
+    public BreakerPhotonVisionPoseEstimator getEstimatedPoseSource(AprilTagFieldLayout apriltagFieldLayout) {
         return new BreakerPhotonVisionPoseEstimator(apriltagFieldLayout, true, Optional.empty());
     }
 
     @Override
-    public BreakerEstimatedPoseSource getEstimatedPoseSource(AprilTagFieldLayout apriltagFieldLayout,
+    public BreakerPhotonVisionPoseEstimator getEstimatedPoseSource(AprilTagFieldLayout apriltagFieldLayout,
             Function<BreakerEstimatedPose, Matrix<N3, N1>> stdDevCalculation) {
         return new BreakerPhotonVisionPoseEstimator(apriltagFieldLayout, true, Optional.of(stdDevCalculation));
     }

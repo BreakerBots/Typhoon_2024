@@ -12,11 +12,14 @@ import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread.BreakerSwerveOdometryConfig;
@@ -100,7 +103,7 @@ public final class Constants {
 
 
     public static final String BACK_CAMERA_NAME = "backcam";
-    public static final Transform3d BACK_CAMERA_TRANS = new Transform3d();
+    public static final Transform3d BACK_CAMERA_TRANS = new Transform3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, -Math.PI));
 
     public static final String LIMELIGHT_NAME = "limelight-note";
     public static final Transform3d LIMELIGHT_TRANS = new Transform3d();
@@ -238,6 +241,8 @@ public final class Constants {
 
     public static final ReplanningConfig AUTO_REPLANNING_CONFIG = new ReplanningConfig(true, false) ;
     public static final BreakerPathplannerStandardSwerveAutoConfig AUTO_CONFIG = new BreakerPathplannerStandardSwerveAutoConfig(new PIDConstants(LINEAR_PID_KP, LINEAR_PID_KI, LINEAR_PID_KD), new PIDConstants(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD), AUTO_REPLANNING_CONFIG, AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE, true);
+
+    public static final ProfiledPIDController SPEAKER_ALLIGN_ANGLE_PID = new ProfiledPIDController(1.4, 0.0, 0.1, new Constraints(1.0, 3.0));
 
     
     public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);

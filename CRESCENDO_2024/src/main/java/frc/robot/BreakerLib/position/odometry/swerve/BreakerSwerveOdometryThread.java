@@ -103,7 +103,8 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
             stdDevs = estStdDevs;
         }
         if (!visionSeeded) {
-            poseEstimator.resetPosition(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getSwerveModulePositions(), getOdometryPoseMeters());
+            poseEstimator.resetPosition(drivetrain.getBaseGyro().getYawRotation2d(), drivetrain.getSwerveModulePositions(), estimatedPose.estimatedPose.toPose2d());
+            visionSeeded = true;
         } else {
             poseEstimator.addVisionMeasurement(estimatedPose.estimatedPose.toPose2d(), estimatedPose.captureTimestamp, stdDevs);
         }

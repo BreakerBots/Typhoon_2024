@@ -30,14 +30,17 @@ public class ShooterTarget {
     }
 
     public double getDistance2d() {
-        return drivetrain.getOdometryPoseMeters().getTranslation().getDistance(targetPoint.toTranslation2d());
+        return drivetrain.getOdometryPoseMeters().getTranslation().getDistance(getTargetPoint().toTranslation2d());
     }   
 
     public Translation3d getTargetPoint() {
         Optional<Alliance> allainceOpt =  DriverStation.getAlliance();
         if (allainceOpt.isPresent()) {
             if (allainceOpt.get() == Alliance.Red) {
-                blueTargetPoint.getX()
+                final double halfFieldWidth = Constants.FieldConstants.FIELD_WIDTH/2.0;
+                double deltaX = halfFieldWidth -  blueTargetPoint.getX();
+                double redX = halfFieldWidth + deltaX;
+                return new Translation3d(redX, blueTargetPoint.getY(), blueTargetPoint.getZ());
             }
         }
         return blueTargetPoint; 
@@ -45,7 +48,7 @@ public class ShooterTarget {
 
     public FireingSolution getFireingSolution() {
         Translation2d drivetrainTrans = drivetrain.getOdometryPoseMeters().getTranslation();
-        Translation2d targetTrans = targetPoint.toTranslation2d();
+        Translation2d targetTrans = getTargetPoint().toTranslation2d();
         Translation2d deltaTrans = drivetrainTrans.minus(targetTrans);
         Rotation2d deltaTransVecAng = deltaTrans.getAngle();
         double distance = drivetrainTrans.getDistance(targetTrans);

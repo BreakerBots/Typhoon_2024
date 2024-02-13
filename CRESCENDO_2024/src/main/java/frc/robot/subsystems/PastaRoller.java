@@ -13,23 +13,13 @@ import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 
 public class PastaRoller extends SubsystemBase {
   /** Creates a new PastaRoller. */
-  private WPI_TalonSRX innerRollerMotor, outerRollerMotor;
-  private BreakerBeamBreak beamBreak;
+  private WPI_TalonSRX rollerMotor;
   public PastaRoller() {
     
   }
 
-  public boolean hasNote() {
-    return beamBreak.isBroken();
-  }
-
-  public boolean doesNotHaveNote() {
-    return !beamBreak.isBroken();
-  }
-
   public void setState(PastaRollerState state) {
-    innerRollerMotor.set(state.getInnerRollerDutyCycle());
-    outerRollerMotor.set(state.getOuterRollerDutyCycle());
+    
   }
 
   public InstantCommand setStateCommand(PastaRollerState state) {
@@ -37,15 +27,12 @@ public class PastaRoller extends SubsystemBase {
   }
 
   public static enum PastaRollerState {
-    INTAKE(0.2, 0.5),
-    EXTAKE(0.2, -0.8),
-    EXTAKE_REVERSE(-0.2, -0.5),
-    NEUTRAL(0.0, 0.0);
+    EXTAKE(0.3),
+    NEUTRAL(0.0);
     private double innerRollerDutyCycle;
     private double outerRollerDutyCycle;
-    private PastaRollerState(double innerRollerDutyCycle, double outerRollerDutyCycle) {
-      this.innerRollerDutyCycle = innerRollerDutyCycle;
-      this.outerRollerDutyCycle = outerRollerDutyCycle;
+    private PastaRollerState(double dutyCycle) {
+      
     }
 
     public double getInnerRollerDutyCycle() {

@@ -29,12 +29,9 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.Constants.GeneralConstants;
 import frc.robot.commands.OrbitNote;
-import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PastaRoller;
-import frc.robot.subsystems.Shooter;
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}

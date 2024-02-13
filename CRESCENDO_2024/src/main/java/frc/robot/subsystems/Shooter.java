@@ -10,14 +10,19 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShooterTarget;
+import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.ShooterTarget.FireingSolution;
 
 import static frc.robot.Constants.ShooterConstants.*;
+
+import java.util.function.DoubleSupplier;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
@@ -26,15 +31,24 @@ public class Shooter extends SubsystemBase {
   private WPI_TalonSRX hopper;
   private ShooterTarget target;
   private ShooterState state;
+  private DoubleSupplier flywheelVelSup;
+  private DoubleSupplier flywheelAccelSup;
+  private DoubleSupplier pivotPosSup;
+  private DoubleSupplier pivotVelSup;
   private VelocityVoltage flywheelVelRequest;
   private Follower flywheelFollowRequest;
   private MotionMagicVoltage pivotMotionMagicRequest;
   private FireingSolution latestFireingSolution;
+  private BreakerBeamBreak beamBreak;
   public Shooter(ShooterTarget defaultTarget) {
     target = defaultTarget;
   }
 
   private void configFlywheel() {
+
+  }
+
+  private void configPivot() {
 
   }
 
@@ -50,22 +64,20 @@ public class Shooter extends SubsystemBase {
       return latestFireingSolution;
   }
 
-
-
   public boolean hasNote() {
-    return true;
+    return beamBreak.isBroken();
   }
 
   public boolean isAtGoal() {
-
+    return isAtAngleGoal() && isAtFlywheelGoal();
   }
 
   public boolean isAtAngleGoal() {
-
+    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.getAsDouble(), Units.degreesToRotations(0.5)) && MathUtil.isNear(0.0, pivotVelSup.getAsDouble(),  Units.degreesToRotations(0.1));
   }
 
   public boolean isAtFlywheelGoal() {
-
+    return MathUtil.isNear(pivotMotionMagicRequest.Position, flywheelVelSup.getAsDouble(), 5.0 / 60.0) && MathUtil.isNear(0.0, flywheelAccelSup.getAsDouble(), 0.5 / 60) ;
   }
 
 
@@ -101,11 +113,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getFlywheelVel() {
+    return flywheelVelSup.getAsDouble();
+  }
 
+  public double getFlywheelAccel() {
+    return flywheelAccelSup.getAsDouble();
   }
 
   public Rotation2d getShooterAngle() {
-
+    return Rotation2d.fromRotations(pivotPosSup.getAsDouble());
   }
 
   private void pushControlRequests(double hopperDutyCycle, double piviotPos, double flywheelVel) {
