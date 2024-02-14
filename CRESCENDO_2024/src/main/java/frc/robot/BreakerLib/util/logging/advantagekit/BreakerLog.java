@@ -12,6 +12,7 @@ import org.littletonrobotics.junction.LogReplaySource;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 import org.littletonrobotics.junction.networktables.LoggedDashboardInput;
+
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.units.Measure;
@@ -23,7 +24,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import frc.robot.BuildConstants;
 import frc.robot.BreakerLib.util.BreakerLibVersion;
 import frc.robot.BreakerLib.util.BreakerRoboRIO.RobotOperatingMode;
-import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import us.hebi.quickbuf.ProtoMessage;
 
@@ -459,7 +459,6 @@ public class BreakerLog {
    *              "/RealOutputs" or "/ReplayOutputs"
    * @param value The value of the field.
    */
-  @SuppressWarnings("unchecked")
   public static <T, MessageType extends ProtoMessage<?>> void recordOutput(String key, Protobuf<T, MessageType> proto,
       T value) {
     Logger.recordOutput(key, proto, value);

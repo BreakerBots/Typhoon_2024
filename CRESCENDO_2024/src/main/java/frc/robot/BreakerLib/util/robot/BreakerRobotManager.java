@@ -4,22 +4,16 @@
 
 package frc.robot.BreakerLib.util.robot;
 
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
-import edu.wpi.first.wpilibj.DataLogManager;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.BreakerLib.auto.BreakerAutoManager;
-import frc.robot.BreakerLib.devices.cosmetic.music.BreakerFalconOrchestra;
-import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
-import frc.robot.BreakerLib.util.test.selftest.SelfTest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.brakemode.BreakerAutoBrakeManager;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.brakemode.BreakerAutoBrakeManagerConfig;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.test.selftest.SelfTest;
 
 /**
  * Robot manager that configures SelfTest functionality, automatic brake mode,
@@ -55,7 +49,7 @@ public class BreakerRobotManager {
         BreakerRobotManager.autoManager = robotConfig.usesPaths() ? new BreakerAutoManager(robotConfig.getAutoPaths())
                 : new BreakerAutoManager();
         BreakerRobotManager.brakeModeManager = new BreakerAutoBrakeManager(
-                new BreakerAutoBrakeManagerConfig(baseDrivetrain));
+                new BreakerAutoBrakeManagerConfig(baseDrivetrain, true)); // avoid big red from absolutely flying into the sunset.
         BreakerLog.start(robotConfig.getStartConfig());
     }
 

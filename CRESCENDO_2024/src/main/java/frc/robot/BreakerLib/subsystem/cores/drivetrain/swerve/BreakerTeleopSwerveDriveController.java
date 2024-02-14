@@ -209,7 +209,7 @@ public class BreakerTeleopSwerveDriveController extends Command {
 
     ChassisPercentSpeeds percentSpeeds = new ChassisPercentSpeeds(0.0, 0.0, 0.0);
 
-    double MAX_SPEED_COEFF = 0.70;
+    double MAX_SPEED_COEFF = 1;
     double MAX_TURN_COEEF = 1;
 
     if (usesSuppliers) { // If double suppliers are used.

@@ -84,7 +84,7 @@ public class RobotContainer {
         new BreakerRobotNameConfig(),
         //  .addRobot(MiscConstants.ROBORIO_SN, "Plop"), 
         2024, 
-        "v1",
+        "v1 Big Red Edition",
         "Roman Abrahamson, Sebastian Rueda"
         )
       );
