@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
@@ -25,9 +24,9 @@ import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread.BreakerSwerveOdometryConfig;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveConfig;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerPathplannerSwerveAutoConfig.BreakerPathplannerStandardSwerveAutoConfig;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder.BreakerSwerveModuleConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
@@ -153,10 +152,10 @@ public final class Constants {
     public static final int BR_ENCODER_ID = 23;
 
     //Azimuth encoder angle offets
-    public static final double FL_ENCODER_OFFSET = 0.431396484375;
-    public static final double FR_ENCODER_OFFSET = -0.247802734375;
-    public static final double BL_ENCODER_OFFSET = -0.078369140625;
-    public static final double BR_ENCODER_OFFSET = -0.42333984375;
+    public static final double FL_ENCODER_OFFSET = 0.427490234375;
+    public static final double FR_ENCODER_OFFSET = -0.28857421875;
+    public static final double BL_ENCODER_OFFSET = 0.053466796875;
+    public static final double BR_ENCODER_OFFSET = -0.439453125;
 
     //Module wheel centerpoint locations relative to robot origin (center)
     public static final Translation2d FL_TRANSLATION = new Translation2d(0.314325, 0.314325);
@@ -216,6 +215,7 @@ public final class Constants {
     public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.05;
     public static final BreakerSwerveDriveConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveConfig(
     MAX_LINEAR_VEL, MAX_ANGULAR_VEL, MODULE_WHEEL_SPEED_DEADBAND)
+    // .withoutHeadingCompensation()
     .withHeadingCompensation(HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND, HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL, HEADING_COMPENSATION_PID)
     .withSlowModeMultipliers(SLOW_MODE_LINEAR_MULTIPLIER, SLOW_MODE_TURN_MULTIPLIER);
 

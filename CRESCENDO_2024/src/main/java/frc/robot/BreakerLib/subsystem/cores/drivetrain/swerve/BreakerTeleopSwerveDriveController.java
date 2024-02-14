@@ -9,13 +9,11 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
 import frc.robot.BreakerLib.util.math.functions.BreakerGenericMathFunction;
 import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter;
@@ -211,6 +209,9 @@ public class BreakerTeleopSwerveDriveController extends Command {
 
     ChassisPercentSpeeds percentSpeeds = new ChassisPercentSpeeds(0.0, 0.0, 0.0);
 
+    double MAX_SPEED_COEFF = 0.70;
+    double MAX_TURN_COEEF = 1;
+
     if (usesSuppliers) { // If double suppliers are used.
       // Default suppliers are used unless overwritten.
       percentSpeeds.vxPercentOfMax = forwardSpeedPercentSupplier.getAsDouble();
@@ -218,9 +219,9 @@ public class BreakerTeleopSwerveDriveController extends Command {
       percentSpeeds.omegaPercentOfMax = turnSpeedPercentSupplier.getAsDouble();
     } else { // Use controller inputs.
       // Controller inputs are used unless overwritten.
-      percentSpeeds.vxPercentOfMax = controller.getLeftThumbstick().getY();
-      percentSpeeds.vyPercentOfMax = controller.getLeftThumbstick().getX();
-      percentSpeeds.omegaPercentOfMax = controller.getRightThumbstick().getX();
+      percentSpeeds.vxPercentOfMax = controller.getLeftThumbstick().getY() * MAX_SPEED_COEFF;
+      percentSpeeds.vyPercentOfMax = controller.getLeftThumbstick().getX() * MAX_SPEED_COEFF;
+      percentSpeeds.omegaPercentOfMax = controller.getRightThumbstick().getX() * MAX_TURN_COEEF;
     }
 
     // Speed curves are applied if overrides are not active.

@@ -4,34 +4,22 @@
 
 package frc.robot;
 
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.BreakerLib.auto.BreakerAutoPath;
+import frc.robot.Constants.GeneralConstants;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalogDeadbandConfig;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
-import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
-import frc.robot.BreakerLib.util.math.functions.BreakerBezierCurve;
 import frc.robot.BreakerLib.util.math.functions.BreakerLinearizedConstrainedExponential;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
-import frc.robot.Constants.GeneralConstants;
-import frc.robot.commands.OrbitNote;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.PastaRoller;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -43,7 +31,7 @@ public class RobotContainer {
    private final Drive drivetrainSys = new Drive(imuSys);
   private final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
-  private final Vision visionSys = new Vision(drivetrainSys);
+  // private final Vision visionSys = new Vision(drivetrainSys);
 
   // private final Intake intakeSys = new Intake();
   // private final Shooter shooterSys = new Shooter();
@@ -82,7 +70,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
-    controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
+    // controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
     // controllerSys.getButtonX().and(() -> {return !strictHasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
     // controllerSys.getButtonX().and(intakeSys::hasNote).onTrue(new IntakeToShooterHandoff);
   }
@@ -111,7 +99,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
+    // PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
     // return AutoBuilder.followPath(path).beforeStarting(() -> {drivetrainSys.setOdometryPosition(path.getPreviewStartingHolonomicPose());});
     return null;
   }

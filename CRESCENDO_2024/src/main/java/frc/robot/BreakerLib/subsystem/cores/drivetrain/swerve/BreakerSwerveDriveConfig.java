@@ -53,6 +53,14 @@ public class BreakerSwerveDriveConfig {
         headingCompensationController.enableContinuousInput(-Math.PI, Math.PI);
         this.headingCompensationController = Optional.of(headingCompensationController);
         return this;
+    
+    }
+
+    public BreakerSwerveDriveConfig withoutHeadingCompensation() {
+        headingCompensationAngularVelDeadband = Optional.empty();
+        headingCompensationMinActiveLinearSpeed = Optional.empty();
+        headingCompensationController = Optional.empty();
+        return this;
     }
 
     /**
