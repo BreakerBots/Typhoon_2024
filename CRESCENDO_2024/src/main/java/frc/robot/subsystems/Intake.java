@@ -29,8 +29,10 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
@@ -49,9 +51,10 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   public Intake() {
-    rollerMotor = new TalonFX(ROLLER_MOTOR_ID);
-    pivotLeft = new TalonFX(PIVOT_LEFT_ID);
-    pivotRight = new TalonFX(PIVOT_RIGHT_ID);
+    rollerMotor = new TalonFX(ROLLER_MOTOR_ID, Constants.GeneralConstants.DRIVE_CANIVORE_NAME);
+    pivotLeft = new TalonFX(PIVOT_LEFT_ID, Constants.GeneralConstants.DRIVE_CANIVORE_NAME);
+    pivotRight = new TalonFX(PIVOT_RIGHT_ID, Constants.GeneralConstants.DRIVE_CANIVORE_NAME);
+    piviotEncoder = new CANcoder(PIVOT_ENCODER_ID, Constants.GeneralConstants.DRIVE_CANIVORE_NAME);
     
     TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -63,14 +66,14 @@ public class Intake extends SubsystemBase {
     pivotLeft.getConfigurator().apply(pivotConfig);
     pivotRight.getConfigurator().apply(pivotConfig);
 
-    BreakerCANCoderFactory.configExistingCANCoder(piviotEncoder, AbsoluteSensorRangeValue.Unsigned_0To1, 0.0,SensorDirectionValue.CounterClockwise_Positive);
+    BreakerCANCoderFactory.configExistingCANCoder(piviotEncoder, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PIVOT_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
 
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
-    rollerConfig.CurrentLimits.SupplyCurrentLimit = 20;
-    rollerConfig.CurrentLimits.SupplyTimeThreshold = 1.5;
-    rollerConfig.CurrentLimits.SupplyCurrentThreshold = 60;
+    rollerConfig.CurrentLimits.SupplyCurrentLimit = 130;
+    rollerConfig.CurrentLimits.SupplyTimeThreshold = 3.5;
     rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    rollerConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    rollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     rollerMotor.getConfigurator().apply(rollerConfig);
 
     piviotDutyCycleControlRequest = new DutyCycleOut(0.0);
@@ -90,15 +93,11 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isAtTargetState() {
-    switch(targetState.getPivotState()) {
-      case EXTENDED:
-        return isForwardLimitTriggered();
-      case RETRACTED:
-         return isReverseLimitTriggered();
-      case NEUTRAL:
-      default:
-        return true;
-    }
+    return switch(targetState.getPivotState()) {
+      case EXTENDED -> isExtendLimitTriggered();
+      case RETRACTED -> isRetractLimitTriggered();
+      default -> true;
+    };
   }
 
   public void setState(IntakeState stateToSet) {
@@ -131,8 +130,8 @@ public class Intake extends SubsystemBase {
   }
 
   public static enum IntakePivotState {
-    EXTENDED(0.6),
-    RETRACTED(-0.6),
+    EXTENDED(0.1),
+    RETRACTED(-0.15),
     NEUTRAL(0.0);
     private double motorDutyCycle;
     private IntakePivotState(double motorDutyCycle) {
@@ -145,7 +144,7 @@ public class Intake extends SubsystemBase {
   }
 
   public static enum IntakeRollerState {
-    INTAKEING(-0.5),
+    INTAKEING(-1.0),
     EXTAKEING(0.7),
     NEUTRAL(0.0);
     private double motorDutyCycle;
@@ -158,12 +157,12 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  public boolean isForwardLimitTriggered() {
-    return piviotEncoder.getAbsolutePosition().getValue() >= PIVIOT_EXTENDED_THRESHOLD;
+  public boolean isExtendLimitTriggered() {
+    return piviotEncoder.getAbsolutePosition().getValue() <= PIVIOT_EXTENDED_THRESHOLD;
   }
 
-  public boolean isReverseLimitTriggered() {
-    return piviotEncoder.getAbsolutePosition().getValue() <= PIVIOT_RETRACTED_THRESHOLD;
+  public boolean isRetractLimitTriggered() {
+    return piviotEncoder.getAbsolutePosition().getValue() >= PIVIOT_RETRACTED_THRESHOLD;
   }
 
 
@@ -171,16 +170,18 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     if (RobotState.isDisabled()) {
-      if (isForwardLimitTriggered()) {
+      if (isExtendLimitTriggered()) {
         setState(IntakeState.EXTENDED_NEUTRAL);
       } else { 
         setState(IntakeState.RETRACTED_NEUTRAL);
       }
     }
 
-    piviotDutyCycleControlRequest.withOutput(targetState.getRollerState().getMotorDutyCycle());
-    piviotDutyCycleControlRequest.withLimitForwardMotion(isForwardLimitTriggered());
-    piviotDutyCycleControlRequest.withLimitReverseMotion(isReverseLimitTriggered());
+    piviotDutyCycleControlRequest.withOutput(targetState.getPivotState().getMotorDutyCycle());
+    piviotDutyCycleControlRequest.withLimitForwardMotion(isExtendLimitTriggered());
+    piviotDutyCycleControlRequest.withLimitReverseMotion(isRetractLimitTriggered());
+    BreakerLog.recordOutput("EXT LIM", isExtendLimitTriggered());
+    BreakerLog.recordOutput("RET LIM", isRetractLimitTriggered());
     pivotLeft.setControl(piviotDutyCycleControlRequest);
     pivotRight.setControl(pivotFollowerRequest);
     rollerMotor.set(targetState.getRollerState().getMotorDutyCycle());

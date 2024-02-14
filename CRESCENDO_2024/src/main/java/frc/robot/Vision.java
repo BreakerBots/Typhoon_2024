@@ -40,10 +40,10 @@ public class Vision extends SubsystemBase {
     public Vision(Drive drivetrain) {
         limelight = new BreakerLimelight(LIMELIGHT_NAME, LIMELIGHT_TRANS);
         //frontCam = new BreakerPhotonCamera(FRONT_CAMERA_NAME, FRONT_CAMERA_TRANS);
-        backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
-        backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
-        this.drivetrain = drivetrain;
-        drivetrain.getOdometryThread().registerEstimatedPoseSource(backPosSrc);
+        // backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
+        // backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
+        // this.drivetrain = drivetrain;
+        // drivetrain.getOdometryThread().registerEstimatedPoseSource(backPosSrc);
     }
 
     public List<PhotonTrackedTarget> getFrontCamTrackedTargets() {

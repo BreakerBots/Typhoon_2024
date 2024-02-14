@@ -36,8 +36,7 @@ public class BreakerCANCoderFactory {
         config.MagnetSensor.AbsoluteSensorRange = absoluteSensorRange;
         config.MagnetSensor.MagnetOffset = absoluteOffsetRotations;
         config.MagnetSensor.SensorDirection = encoderDirection;
-        StatusCode cod = encoder.getConfigurator().apply(config);
-        
+        StatusCode cod = encoder.getConfigurator().apply(config);    
         //BreakerPhoenix6Util.checkStatusCode(encoder.getConfigurator().apply(config),  " CANcoder " + encoder.getDeviceID() + " general config fail ");
     }
 }

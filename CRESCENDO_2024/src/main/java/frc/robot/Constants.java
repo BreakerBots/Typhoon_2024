@@ -55,29 +55,42 @@ public final class Constants {
   }
 
   public static class IntakeConstants {
-    public static final int ROLLER_MOTOR_ID = 0; 
-    public static final int PIVOT_LEFT_ID = 0;
-    public static final int PIVOT_RIGHT_ID = 0;
+    public static final int ROLLER_MOTOR_ID = 40; 
+    public static final int PIVOT_LEFT_ID = 41;
+    public static final int PIVOT_RIGHT_ID = 42;
+    public static final int PIVOT_ENCODER_ID = 43;
+    
+    public static final double PIVOT_ENCODER_OFFSET = -0.32470703125;
 
     /*0deg is 15 deg behind fully retracted*/
-    public static final double PIVIOT_RETRACTED_THRESHOLD = Units.degreesToRotations(20.0);
+    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.35;
     /*0deg is 20 deg behind fully retracted*/
-    public static final double PIVIOT_EXTENDED_THRESHOLD = Units.degreesToRotations(90.0+15.0);
+    public static final double PIVIOT_EXTENDED_THRESHOLD = Units.degreesToRotations(5.0);
 
   }
 
   public static class ShooterConstants {
-    public static final double PITCH_RACK_TEETH = 163;
-    public static final double PITCH_PINION_TEETH = 12;
-    public static final double PITCH_PLANITARY_RATIO = 5.0;
-    public static final double PITCH_RATIO = (PITCH_RACK_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 0.0;
+    public static final int LEFT_FLYWHEEL_ID = 30;
+    public static final int RIGHT_FLYWHEEL_ID = 31;
+    public static final int SHOOTER_PIVOT_ID = 32;
+    public static final int HOPPER_ID = 33; 
+    public static final int PIVOT_ENCODER_ID = 34;
+
+    public static final double PITCH_RACK_FULL_ROT_TEETH = 440;
+    public static final double PITCH_PINION_TEETH = 18;
+    public static final double PITCH_PLANITARY_RATIO = 25.0;
+    public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
+    public static final double PITCH_KP = 100.0;
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.0;
     public static final double PITCH_KS = 0.0;
     public static final double PITCH_KA = 0.02;
-    public static final double PITCH_KV = 1.28;
-    public static final double PITCH_KG = 0.69;
+    public static final double PITCH_KV = 100.0;
+    public static final double PITCH_KG = 0.2;
+    public static final double PITCH_ENCODER_OFFSET = -0.0234375+0.5;
+
+    public static final double PITCH_MAX_ROT = 0.2;
+    public static final double PITCH_MIN_ROT = 0.0;
 
     public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(0.0);
 
@@ -153,10 +166,10 @@ public final class Constants {
     public static final int BR_ENCODER_ID = 23;
 
     //Azimuth encoder angle offets
-    public static final double FL_ENCODER_OFFSET = 0.431396484375;
-    public static final double FR_ENCODER_OFFSET = -0.247802734375;
-    public static final double BL_ENCODER_OFFSET = -0.078369140625;
-    public static final double BR_ENCODER_OFFSET = -0.42333984375;
+    public static final double FL_ENCODER_OFFSET = 0.1943359375;
+    public static final double FR_ENCODER_OFFSET = 0.39306640625;
+    public static final double BL_ENCODER_OFFSET = -0.05224609375;
+    public static final double BR_ENCODER_OFFSET = -0.43212890625;
 
     //Module wheel centerpoint locations relative to robot origin (center)
     public static final Translation2d FL_TRANSLATION = new Translation2d(0.314325, 0.314325);

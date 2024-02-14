@@ -4,6 +4,7 @@
 
 package frc.robot.BreakerLib.util.math.averages;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 

@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,9 +30,13 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.Constants.GeneralConstants;
 import frc.robot.commands.OrbitNote;
+import frc.robot.commands.ShooterTest;
+import frc.robot.commands.HandoffTest;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PastaRoller;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake.IntakeState;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -45,8 +50,8 @@ public class RobotContainer {
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private final Vision visionSys = new Vision(drivetrainSys);
 
-  // private final Intake intakeSys = new Intake();
-  // private final Shooter shooterSys = new Shooter();
+  private final Intake intakeSys = new Intake();
+  private final Shooter shooterSys = new Shooter(controllerSys);
   // private final PastaRoller pastaRollerSys = new PastaRoller();
 
   
@@ -82,7 +87,11 @@ public class RobotContainer {
    */
   private void configureBindings() {
     controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
-    controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
+    //controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
+    controllerSys.getButtonB().onTrue(new HandoffTest(shooterSys, intakeSys));
+    controllerSys.getLeftBumper().onTrue(new ShooterTest(shooterSys));
+    controllerSys.getButtonX().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_INTAKEING, false));
+     controllerSys.getButtonY().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
     // controllerSys.getButtonX().and(() -> {return !strictHasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
     // controllerSys.getButtonX().and(intakeSys::hasNote).onTrue(new IntakeToShooterHandoff);
   }
