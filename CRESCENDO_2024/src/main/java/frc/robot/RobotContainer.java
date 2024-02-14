@@ -15,6 +15,8 @@ import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxControl
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
 import frc.robot.BreakerLib.util.math.functions.BreakerLinearizedConstrainedExponential;
+import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter;
+import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter.UnitlessChassisSpeeds;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
@@ -51,6 +53,14 @@ public class RobotContainer {
     BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
     controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.1, 0.1));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
+    
+    teleopDriveCommand.addSlewRateLimiter(
+      new BreakerHolonomicSlewRateLimiter(
+        0.5, 1, 0.7, 0.7, 
+        new UnitlessChassisSpeeds(0,0,0)), 
+      AppliedModifierUnits.PERCENT_OF_MAX
+    );
+    
     drivetrainSys.setDefaultCommand(teleopDriveCommand);
     
   }
