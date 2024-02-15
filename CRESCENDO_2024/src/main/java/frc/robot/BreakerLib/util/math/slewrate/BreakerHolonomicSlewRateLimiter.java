@@ -18,6 +18,11 @@ public class BreakerHolonomicSlewRateLimiter {
     private double prevTime;
     public BreakerHolonomicSlewRateLimiter(double positiveLinearRateLimit,  double negitiveLinearRateLimit, double positiveAngularRateLimit, double negitiveAngularRateLimit, UnitlessChassisSpeeds initalSpeeds) {
         prevTime = MathSharedStore.getTimestamp();
+        this.positiveLinearRateLimit = positiveLinearRateLimit;
+        this.negitiveLinearRateLimit = negitiveLinearRateLimit;
+        this.positiveAngularRateLimit = positiveAngularRateLimit;
+        this.negitiveAngularRateLimit = negitiveAngularRateLimit;
+        prevSpeeds = initalSpeeds;
     }
 
     public double getPositiveLinearRateLimit() {
@@ -73,6 +78,7 @@ public class BreakerHolonomicSlewRateLimiter {
         BreakerVector2 deltaVec = input.getLinearVelocityVector().minus(prevVelVec);
         double clampedDeltaMag = MathUtil.clamp(deltaVec.getMagnitude(), negitiveLinearRateLimit * elapsedTime, positiveLinearRateLimit * elapsedTime);
         BreakerVector2 clampedDeltaVec = new BreakerVector2(deltaVec.getVectorRotation(), clampedDeltaMag);
+        System.out.println(deltaVec.getVectorRotation());
         return prevVelVec.plus(clampedDeltaVec);
     }
 

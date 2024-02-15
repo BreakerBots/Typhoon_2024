@@ -152,10 +152,10 @@ public final class Constants {
     public static final int BR_ENCODER_ID = 23;
 
     //Azimuth encoder angle offets
-    public static final double FL_ENCODER_OFFSET = 0.43017578125;
-    public static final double FR_ENCODER_OFFSET = -0.293212890625;
-    public static final double BL_ENCODER_OFFSET = 0.029541015625;
-    public static final double BR_ENCODER_OFFSET = -0.4462890625;
+    public static final double FL_ENCODER_OFFSET = 0.433837890625;
+    public static final double FR_ENCODER_OFFSET = -0.317138671875;
+    public static final double BL_ENCODER_OFFSET = 0.02490234375;
+    public static final double BR_ENCODER_OFFSET = -0.446044921875;
 
     //Module wheel centerpoint locations relative to robot origin (center)
     public static final Translation2d FL_TRANSLATION = new Translation2d(0.314325, 0.314325);

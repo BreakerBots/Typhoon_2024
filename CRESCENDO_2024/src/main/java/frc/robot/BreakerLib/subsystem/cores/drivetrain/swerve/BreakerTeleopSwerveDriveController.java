@@ -7,8 +7,10 @@ package frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
@@ -37,6 +39,11 @@ public class BreakerTeleopSwerveDriveController extends Command {
   private AppliedModifierUnits overrideFwdUnits, overrideHorizUnits, overrideTurnUnits;
   private BreakerSwervePercentSpeedRequest percentSpeedRequest;
 
+  // private Timer accelTimer = new Timer();
+  // private boolean startedSlew = false;
+
+  private BreakerVector2 lastVelVec = new BreakerVector2();
+  
   /**
    * Creates a BreakerSwerveDriveController which only utilizes HID input.
    * 
@@ -211,7 +218,6 @@ public class BreakerTeleopSwerveDriveController extends Command {
 
     double MAX_SPEED_COEFF = 1;
     double MAX_TURN_COEEF = 1;
-
     if (usesSuppliers) { // If double suppliers are used.
       // Default suppliers are used unless overwritten.
       percentSpeeds.vxPercentOfMax = forwardSpeedPercentSupplier.getAsDouble();
@@ -223,6 +229,8 @@ public class BreakerTeleopSwerveDriveController extends Command {
       percentSpeeds.vyPercentOfMax = controller.getLeftThumbstick().getX() * MAX_SPEED_COEFF;
       percentSpeeds.omegaPercentOfMax = controller.getRightThumbstick().getX() * MAX_TURN_COEEF;
     }
+      BreakerVector2 interpolLinVelVec = lastVelVec.interpolate(new BreakerVector2(percentSpeeds.vxPercentOfMax, percentSpeeds.vyPercentOfMax), 0.05);
+      lastVelVec = interpolLinVelVec;
 
     // Speed curves are applied if overrides are not active.
     if (usesCurves) {

@@ -86,7 +86,6 @@ public class Drive extends BreakerSwerveDrive {
         .createSwerveModule(BR_TRANSLATION);
 
     // private static Field2d field = new Field2d();
-    
 
     public Drive(BreakerPigeon2 pigeon) {
         super(
