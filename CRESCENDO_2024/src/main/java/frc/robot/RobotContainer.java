@@ -32,6 +32,7 @@ import frc.robot.Constants.GeneralConstants;
 import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ShooterTest;
 import frc.robot.commands.HandoffTest;
+import frc.robot.commands.IntakeConstantTest;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PastaRoller;
@@ -90,6 +91,7 @@ public class RobotContainer {
     //controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
     controllerSys.getButtonB().onTrue(new HandoffTest(shooterSys, intakeSys));
     controllerSys.getLeftBumper().onTrue(new ShooterTest(shooterSys));
+    controllerSys.getRightBumper().onTrue(new IntakeConstantTest(intakeSys, shooterSys));
     controllerSys.getButtonX().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_INTAKEING, false));
      controllerSys.getButtonY().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
     // controllerSys.getButtonX().and(() -> {return !strictHasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));

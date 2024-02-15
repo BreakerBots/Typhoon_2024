@@ -19,7 +19,7 @@ public class ShooterTest extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> shooter.setFlywheelSpeed(1.0)),
+      new InstantCommand(() -> shooter.setFlywheelSpeed(0.5)),
       new WaitCommand(3.5),
       new InstantCommand(() -> shooter.setHopSpeed(-1.0)),
       new WaitUntilCommndWithFallingEdgeDelayAndTimeout(() -> {return !shooter.hasNote();}, 0.5, 3.0),

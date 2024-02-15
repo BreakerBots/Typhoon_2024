@@ -22,12 +22,12 @@ public class HandoffTest extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
-      new InstantCommand(() -> shooter.setHopSpeed(-1.0)),
+      new InstantCommand(() -> shooter.setHopSpeed(-0.3), shooter),
       new WaitUntilCommand(shooter::hasNote),
       intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false),
-      new InstantCommand(() -> shooter.setHopSpeed(1.0)),
-      new WaitCommand(0.05),
-      new InstantCommand(() -> shooter.setHopSpeed(0.0))
+      // new InstantCommand(() -> shooter.setHopSpeed(1.0)),
+      // new WaitCommand(0.05),
+      new InstantCommand(() -> shooter.setHopSpeed(0.0), shooter)
     );
   }
 }

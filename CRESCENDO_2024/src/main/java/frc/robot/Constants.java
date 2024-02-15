@@ -78,21 +78,21 @@ public final class Constants {
 
     public static final double PITCH_RACK_FULL_ROT_TEETH = 440;
     public static final double PITCH_PINION_TEETH = 18;
-    public static final double PITCH_PLANITARY_RATIO = 25.0;
+    public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 100.0;
+    public static final double PITCH_KP = 0.75;
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.0;
-    public static final double PITCH_KS = 0.0;
-    public static final double PITCH_KA = 0.02;
-    public static final double PITCH_KV = 100.0;
-    public static final double PITCH_KG = 0.2;
-    public static final double PITCH_ENCODER_OFFSET = -0.0234375+0.5;
+    public static final double PITCH_KS = 0.1;
+    public static final double PITCH_KA = 0.09;
+    public static final double PITCH_KV = 22.0;
+    public static final double PITCH_KG = 0.41;
+    public static final double PITCH_ENCODER_OFFSET = -0.0234375+0.25;
 
     public static final double PITCH_MAX_ROT = 0.2;
     public static final double PITCH_MIN_ROT = 0.0;
 
-    public static final Rotation2d STOW_ANGLE = Rotation2d.fromDegrees(0.0);
+    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.02);
 
     public static final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> FIREING_MAP = getFireingMap();
 

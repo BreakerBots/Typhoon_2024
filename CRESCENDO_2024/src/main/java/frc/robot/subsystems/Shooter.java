@@ -66,7 +66,8 @@ public class Shooter extends SubsystemBase {
   private DoubleSupplier pivotPosSup;
   private DoubleSupplier pivotVelSup;
   private VelocityVoltage flywheelVelRequest;
-  private Follower flywheelFollowRequest;
+  private Follower 
+  flywheelFollowRequest;
   private MotionMagicVoltage pivotMotionMagicRequest;
   private FireingSolution latestFireingSolution;
   private BreakerBeamBreak beamBreak;
@@ -81,6 +82,7 @@ public class Shooter extends SubsystemBase {
     hopper = new WPI_TalonSRX(HOPPER_ID);
     pivotEncoder = BreakerCANCoderFactory.createCANCoder(PIVOT_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PITCH_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
     configPivot();
+    configFlywheel();
   }
 
   private void configFlywheel() {
@@ -88,14 +90,14 @@ public class Shooter extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.CurrentLimits.SupplyCurrentLimit = 10;
-    config.CurrentLimits.SupplyCurrentThreshold = 60;
+    config.CurrentLimits.SupplyCurrentThreshold = 100;
     config.CurrentLimits.SupplyTimeThreshold = 3.0;
-    config.CurrentLimits.StatorCurrentLimitEnable = true;
+    config.CurrentLimits.StatorCurrentLimitEnable = false;
     flywheelRight.getConfigurator().apply(config);
     config.Slot0.kP = 0.0;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.0;
-    config.Slot0.kV = 0.0;
+    config.Slot0.kV = 15.0;
     config.Slot0.kS = 0.0;
     config.Slot0.kA = 0.0;
     flywheelLeft.getConfigurator().apply(config);
@@ -118,10 +120,13 @@ public class Shooter extends SubsystemBase {
     config.Slot0.kA = PITCH_KA;
     config.Slot0.kG = PITCH_KG;
     config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    config.MotionMagic.MotionMagicCruiseVelocity = 0.1;
+
+    config.MotionMagic.MotionMagicCruiseVelocity = 4.0;
+    config.MotionMagic.MotionMagicAcceleration = 0.6;
+
     config.CurrentLimits.SupplyCurrentLimit = 80;
     config.CurrentLimits.SupplyTimeThreshold = 1.5;
-    config.CurrentLimits.SupplyCurrentLimitEnable = true;
+    config.CurrentLimits.SupplyCurrentLimitEnable = false;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PITCH_MIN_ROT;
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PITCH_MAX_ROT;
@@ -202,8 +207,8 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setFlywheelSpeed(double speed) {
-    flywheelLeft.set(-speed);
-    flywheelRight.set(speed);
+    flywheelLeft.set(speed);
+    flywheelRight.set(-speed);
   }
 
   public void setHopSpeed(double speed) {
@@ -225,6 +230,8 @@ public class Shooter extends SubsystemBase {
       flywheelLeft.set(0.0);
       flywheelRight.set(0.0);
     }
+    // flywheelLeft.setControl(flywheelVelRequest.withVelocity(50));
+    // flywheelRight.setControl(flywheelFollowRequest);
     // latestFireingSolution = target.getFireingSolution();
     // switch (state) {
     //   case SHOOT_TO_TARGET:
