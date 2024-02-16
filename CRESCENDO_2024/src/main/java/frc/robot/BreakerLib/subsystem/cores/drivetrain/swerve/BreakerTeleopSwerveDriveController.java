@@ -232,6 +232,11 @@ public class BreakerTeleopSwerveDriveController extends Command {
       BreakerVector2 interpolLinVelVec = lastVelVec.interpolate(new BreakerVector2(percentSpeeds.vxPercentOfMax, percentSpeeds.vyPercentOfMax), 0.05);
       lastVelVec = interpolLinVelVec;
 
+      percentSpeeds.vxPercentOfMax = interpolLinVelVec.getX();
+      percentSpeeds.vyPercentOfMax = interpolLinVelVec.getY();
+      
+
+
     // Speed curves are applied if overrides are not active.
     if (usesCurves) {
       if (speedCurveUnits == AppliedModifierUnits.PERCENT_OF_MAX) {
