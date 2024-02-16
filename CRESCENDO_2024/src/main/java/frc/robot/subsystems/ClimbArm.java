@@ -10,7 +10,11 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.BreakerLib.util.BreakerRoboRIO.RobotOperatingMode;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 public class ClimbArm extends SubsystemBase {
   /** Creates a new Climb. */
@@ -20,13 +24,21 @@ public class ClimbArm extends SubsystemBase {
   private DutyCycleOut dutyCycleRequest;
   private MotionMagicVoltage positionRequest;
   public ClimbArm(int motorID, String  motorBus) {
-
+    motor = new TalonFX(motorID, motorBus);
+    positionControl = false;
+    homed = false;
+    dutyCycleRequest = new DutyCycleOut(0.0);
+    
   }
 
   public void setTargetPositionRotations(double targetPos) {
-    positionControl = true;
-    positionRequest.withPosition(targetPos);
-    
+    if (homed) {
+      positionControl = true;
+      positionRequest.withPosition(targetPos);
+    } else {
+      String warnStr = "WARNING: CLIMB POS CTRL CANT BE USED BEFORE HOMEING!";
+      DriverStation.reportWarning(warnStr, false);
+    }
   }
 
   public void setDutyCycle(double dutyCycle) {
@@ -65,6 +77,13 @@ public class ClimbArm extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    if (RobotState.isDisabled()) {
+      motor.set(0.0);
+    }
+    if (positionControl) {
+      motor.setControl(positionRequest);
+    } else {
+      motor.setControl(dutyCycleRequest);
+    }
   }
 }

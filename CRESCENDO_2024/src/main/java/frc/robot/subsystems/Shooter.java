@@ -24,11 +24,13 @@ import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_ID;
 import static frc.robot.Constants.ShooterConstants.STOW_ANGLE;
 
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -59,22 +61,20 @@ public class Shooter extends SubsystemBase {
   private TalonFX flywheelLeft, flywheelRight;
   private CANcoder pivotEncoder;
   private WPI_TalonSRX hopper;
-  private ShooterTarget target;
+  private Supplier<FireingSolution> target;
   private ShooterState state;
-  private DoubleSupplier flywheelVelSup;
-  private DoubleSupplier flywheelAccelSup;
-  private DoubleSupplier pivotPosSup;
-  private DoubleSupplier pivotVelSup;
+  private Supplier<Double> flywheelVelSup;
+  private Supplier<Double> flywheelAccelSup;
+  private Supplier<Double> pivotPosSup;
+  private Supplier<Double> pivotVelSup;
   private VelocityVoltage flywheelVelRequest;
   private Follower 
   flywheelFollowRequest;
   private MotionMagicVoltage pivotMotionMagicRequest;
   private FireingSolution latestFireingSolution;
   private BreakerBeamBreak beamBreak;
-  private BreakerXboxController con;
-  public Shooter(/*ShooterTarget defaultTarget*/BreakerXboxController con) {
-   // target = defaultTarget;
-    this.con = con;
+  public Shooter(Supplier<FireingSolution> defaultTarget) {
+    target = defaultTarget;
     beamBreak = new BreakerBeamBreak(0, true);
     piviotMotor = new TalonFX(SHOOTER_PIVOT_ID);
     flywheelLeft = new TalonFX(LEFT_FLYWHEEL_ID);
@@ -83,6 +83,7 @@ public class Shooter extends SubsystemBase {
     pivotEncoder = BreakerCANCoderFactory.createCANCoder(PIVOT_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PITCH_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
     configPivot();
     configFlywheel();
+    state = ShooterState.STOW;
   }
 
   private void configFlywheel() {
@@ -94,15 +95,17 @@ public class Shooter extends SubsystemBase {
     config.CurrentLimits.SupplyTimeThreshold = 3.0;
     config.CurrentLimits.StatorCurrentLimitEnable = false;
     flywheelRight.getConfigurator().apply(config);
-    config.Slot0.kP = 0.0;
+    config.Slot0.kP = 0.09;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.0;
-    config.Slot0.kV = 15.0;
-    config.Slot0.kS = 0.0;
+    config.Slot0.kV = 0.1145;
+    config.Slot0.kS = 0.19;
     config.Slot0.kA = 0.0;
     flywheelLeft.getConfigurator().apply(config);
     flywheelVelRequest = new VelocityVoltage(0.0);
     flywheelFollowRequest = new Follower(LEFT_FLYWHEEL_ID, true);
+    flywheelVelSup = flywheelLeft.getVelocity().asSupplier();
+    flywheelAccelSup = flywheelLeft.getAcceleration().asSupplier();
   }
 
   private void configPivot() {
@@ -127,18 +130,21 @@ public class Shooter extends SubsystemBase {
     config.CurrentLimits.SupplyCurrentLimit = 80;
     config.CurrentLimits.SupplyTimeThreshold = 1.5;
     config.CurrentLimits.SupplyCurrentLimitEnable = false;
-    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PITCH_MIN_ROT;
-    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PITCH_MAX_ROT;
-    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PITCH_MAX_ROT;
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PITCH_MIN_ROT;
+    config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    pivotMotionMagicRequest = new MotionMagicVoltage(0.0, true, 0.0, 0, false, false, false);
     piviotMotor.getConfigurator().apply(config);
+    pivotPosSup = piviotMotor.getPosition().asSupplier();
+    pivotVelSup = piviotMotor.getVelocity().asSupplier();
   }
 
   public void setState(ShooterState state) {
-
+    this.state = state;
   }
 
-  public void setActiveTarget(ShooterTarget target) {
+  public void setActiveTarget(Supplier<FireingSolution> target) {
     this.target = target;
   }
 
@@ -155,17 +161,17 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtAngleGoal() {
-    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.getAsDouble(), Units.degreesToRotations(0.5)) && MathUtil.isNear(0.0, pivotVelSup.getAsDouble(),  Units.degreesToRotations(0.1));
+    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), Units.degreesToRotations(10.0)) && MathUtil.isNear(0.0, pivotVelSup.get(),  Units.degreesToRotations(100000000.0));//0.5, 0.1
   }
 
   public boolean isAtFlywheelGoal() {
-    return MathUtil.isNear(pivotMotionMagicRequest.Position, flywheelVelSup.getAsDouble(), 5.0 / 60.0) && MathUtil.isNear(0.0, flywheelAccelSup.getAsDouble(), 0.5 / 60) ;
+    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 100.0 / 60.0) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 1000000000.0 / 60) ;//5.0, 0.5
   }
 
 
   public static enum ShooterHopperState {
-    FORWARD(0.75),
-    REVERSE(-0.4),
+    FORWARD(-0.4),
+    REVERSE(0.4),
     NEUTRAL(0.0);
     private double dutyCycle;
     private ShooterHopperState(double dutyCycle) {
@@ -195,24 +201,15 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getFlywheelVel() {
-    return flywheelVelSup.getAsDouble();
+    return flywheelVelSup.get();
   }
 
   public double getFlywheelAccel() {
-    return flywheelAccelSup.getAsDouble();
+    return flywheelAccelSup.get();
   }
 
   public Rotation2d getShooterAngle() {
-    return Rotation2d.fromRotations(pivotPosSup.getAsDouble());
-  }
-
-  public void setFlywheelSpeed(double speed) {
-    flywheelLeft.set(speed);
-    flywheelRight.set(-speed);
-  }
-
-  public void setHopSpeed(double speed) {
-    hopper.set(speed);
+    return Rotation2d.fromRotations(pivotPosSup.get());
   }
 
   private void pushControlRequests(double hopperDutyCycle, double piviotPos, double flywheelVel) {
@@ -224,27 +221,27 @@ public class Shooter extends SubsystemBase {
   
   @Override
   public void periodic() {
-    Logger.recordOutput("Shooter Has Note", hasNote());
-    if (RobotState.isDisabled()) {
-      hopper.set(0.0);
-      flywheelLeft.set(0.0);
-      flywheelRight.set(0.0);
-    }
-    // flywheelLeft.setControl(flywheelVelRequest.withVelocity(50));
-    // flywheelRight.setControl(flywheelFollowRequest);
-    // latestFireingSolution = target.getFireingSolution();
-    // switch (state) {
-    //   case SHOOT_TO_TARGET:
-    //   case TRACK_TARGET:
-    //     pushControlRequests(state.getHopperState().getDutyCycle(), latestFireingSolution.fireingVec().getVectorRotation().getRotations(), latestFireingSolution.fireingVec().getMagnitude());
-    //     break;
-    //   case STOW:
-    //   case INTAKE_TO_SHOOTER_HANDOFF:
-    //   case SHOOTER_TO_INTAKE_HANDOFF:
-    //   default:
-    //     pushControlRequests(state.getHopperState().getDutyCycle(), STOW_ANGLE.getRotations(), latestFireingSolution.fireingVec().getMagnitude());
-    //     break;
-
+    // Logger.recordOutput("Shooter Has Note", hasNote());
+    // if (RobotState.isDisabled()) {
+    //   hopper.set(0.0);
+    //   flywheelLeft.set(0.0);
+    //   flywheelRight.set(0.0);
     // }
+    // flywheelLeft.setControl(flywheelVelRequest.withVelocity(30));
+    // flywheelRight.setControl(flywheelFollowRequest);
+    latestFireingSolution = target.get();
+    switch (state) {
+      case SHOOT_TO_TARGET:
+      case TRACK_TARGET:
+        pushControlRequests(state.getHopperState().getDutyCycle(), latestFireingSolution.fireingVec().getVectorRotation().getRotations(), latestFireingSolution.fireingVec().getMagnitude());
+        break;
+      case STOW:
+      case INTAKE_TO_SHOOTER_HANDOFF:
+      case SHOOTER_TO_INTAKE_HANDOFF:
+      default:
+        pushControlRequests(state.getHopperState().getDutyCycle(), STOW_ANGLE.getRotations(), latestFireingSolution.fireingVec().getMagnitude());
+        break;
+
+    }
   }
 }

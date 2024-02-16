@@ -7,8 +7,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.commands.util.WaitUntilCommndWithFallingEdgeDelayAndTimeout;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -19,12 +21,11 @@ public class ShooterTest extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> shooter.setFlywheelSpeed(0.5)),
-      new WaitCommand(3.5),
-      new InstantCommand(() -> shooter.setHopSpeed(-1.0)),
+      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET)),
+      new WaitUntilCommand(shooter::isAtGoal),
+      new InstantCommand(() -> shooter.setState(ShooterState.SHOOT_TO_TARGET)),
       new WaitUntilCommndWithFallingEdgeDelayAndTimeout(() -> {return !shooter.hasNote();}, 0.5, 3.0),
-      new InstantCommand(() -> shooter.setFlywheelSpeed(0.0)),
-      new InstantCommand(() -> shooter.setHopSpeed(0.0))
+      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET))
     ); 
   }
 }
