@@ -9,7 +9,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest.ChassisPercentSpeeds;
-import frc.robot.BreakerLib.util.BreakerTriplet;
 
 /** Add your docs here. */
 public class BreakerHolonomicSlewRateLimiter {
@@ -18,6 +17,12 @@ public class BreakerHolonomicSlewRateLimiter {
     private double prevTime;
     public BreakerHolonomicSlewRateLimiter(double positiveLinearRateLimit,  double negitiveLinearRateLimit, double positiveAngularRateLimit, double negitiveAngularRateLimit, UnitlessChassisSpeeds initalSpeeds) {
         prevTime = MathSharedStore.getTimestamp();
+        prevSpeeds = initalSpeeds;
+        this.positiveLinearRateLimit = positiveLinearRateLimit;
+        this.negitiveLinearRateLimit = negitiveLinearRateLimit;
+        this.positiveAngularRateLimit = positiveAngularRateLimit;
+        this.negitiveAngularRateLimit = negitiveAngularRateLimit;
+
     }
 
     public double getPositiveLinearRateLimit() {
@@ -55,10 +60,7 @@ public class BreakerHolonomicSlewRateLimiter {
     public UnitlessChassisSpeeds calculate(UnitlessChassisSpeeds input) {
         double currentTime = MathSharedStore.getTimestamp();
         double elapsedTime = currentTime - prevTime;
-        BreakerVector2 linearVels = calculateLinear(input, elapsedTime);
-        prevSpeeds.x = linearVels.getX();
-        prevSpeeds.y = linearVels.getY();
-
+        calculateLinear(input, elapsedTime);
         prevSpeeds.omega +=
             MathUtil.clamp(
                 input.omega - prevSpeeds.omega,
@@ -68,12 +70,19 @@ public class BreakerHolonomicSlewRateLimiter {
         return prevSpeeds;
     }
 
-    protected BreakerVector2 calculateLinear(UnitlessChassisSpeeds input, double elapsedTime) {
-        BreakerVector2 prevVelVec = prevSpeeds.getLinearVelocityVector();
-        BreakerVector2 deltaVec = input.getLinearVelocityVector().minus(prevVelVec);
-        double clampedDeltaMag = MathUtil.clamp(deltaVec.getMagnitude(), negitiveLinearRateLimit * elapsedTime, positiveLinearRateLimit * elapsedTime);
-        BreakerVector2 clampedDeltaVec = new BreakerVector2(deltaVec.getVectorRotation(), clampedDeltaMag);
-        return prevVelVec.plus(clampedDeltaVec);
+    protected void calculateLinear(UnitlessChassisSpeeds input, double elapsedTime) {
+        BreakerVector2 curVelVec = input.getLinearVelocityVector();
+        BreakerVector2 posLimVec = new BreakerVector2(curVelVec.getVectorRotation(), positiveLinearRateLimit);
+        BreakerVector2 negLimVec = new BreakerVector2(curVelVec.getVectorRotation(), negitiveLinearRateLimit);
+        prevSpeeds.x += MathUtil.clamp(
+                input.x - prevSpeeds.x,
+                negLimVec.getX() * elapsedTime,
+                posLimVec.getX() * elapsedTime);
+        
+        prevSpeeds.y += MathUtil.clamp(
+                input.y - prevSpeeds.y,
+                negLimVec.getY() * elapsedTime,
+                posLimVec.getY() * elapsedTime);
     }
 
     public static class UnitlessChassisSpeeds {

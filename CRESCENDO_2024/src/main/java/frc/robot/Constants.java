@@ -77,16 +77,16 @@ public final class Constants {
     public static final int PIVOT_ENCODER_ID = 34;
 
     public static final double PITCH_RACK_FULL_ROT_TEETH = 440;
-    public static final double PITCH_PINION_TEETH = 18;
+    public static final double PITCH_PINION_TEETH = 20;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 1.95;
+    public static final double PITCH_KP = 0.45;
     public static final double PITCH_KI = 0.0;
-    public static final double PITCH_KD = 0.25;
-    public static final double PITCH_KS = 0.1;
+    public static final double PITCH_KD = 0.35;
+    public static final double PITCH_KS = 0.03;
     public static final double PITCH_KA = 0.095;
-    public static final double PITCH_KV = 22.0;
-    public static final double PITCH_KG = 0.5;
+    public static final double PITCH_KV = 19.25;
+    public static final double PITCH_KG = 0.47;
     public static final double PITCH_ENCODER_OFFSET = -0.0234375+0.25;
 
     public static final double PITCH_MAX_ROT = 0.25;

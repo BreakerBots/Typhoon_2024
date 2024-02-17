@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import static frc.robot.Constants.IntakeConstants.PIVOT_ENCODER_OFFSET;
 import static frc.robot.Constants.ShooterConstants.HOPPER_ID;
 import static frc.robot.Constants.ShooterConstants.LEFT_FLYWHEEL_ID;
 import static frc.robot.Constants.ShooterConstants.PITCH_ENCODER_OFFSET;
@@ -23,14 +22,10 @@ import static frc.robot.Constants.ShooterConstants.RIGHT_FLYWHEEL_ID;
 import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_ID;
 import static frc.robot.Constants.ShooterConstants.STOW_ANGLE;
 
-import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
-
-import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -46,14 +41,10 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.ShooterTarget;
 import frc.robot.ShooterTarget.FireingSolution;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
-import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
-import frc.robot.Constants.ShooterConstants.*;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
@@ -68,11 +59,11 @@ public class Shooter extends SubsystemBase {
   private Supplier<Double> pivotPosSup;
   private Supplier<Double> pivotVelSup;
   private VelocityVoltage flywheelVelRequest;
-  private Follower 
-  flywheelFollowRequest;
+  private Follower flywheelFollowRequest;
   private MotionMagicVoltage pivotMotionMagicRequest;
   private FireingSolution latestFireingSolution;
   private BreakerBeamBreak beamBreak;
+  
   public Shooter(Supplier<FireingSolution> defaultTarget) {
     target = defaultTarget;
     beamBreak = new BreakerBeamBreak(0, true);
@@ -95,10 +86,10 @@ public class Shooter extends SubsystemBase {
     config.CurrentLimits.SupplyTimeThreshold = 3.0;
     config.CurrentLimits.StatorCurrentLimitEnable = false;
     flywheelRight.getConfigurator().apply(config);
-    config.Slot0.kP = 0.09;
+    config.Slot0.kP = 0.1;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.0;
-    config.Slot0.kV = 0.1145;
+    config.Slot0.kV = 0.116;
     config.Slot0.kS = 0.19;
     config.Slot0.kA = 0.0;
     flywheelLeft.getConfigurator().apply(config);
@@ -170,7 +161,7 @@ public class Shooter extends SubsystemBase {
 
 
   public static enum ShooterHopperState {
-    FORWARD(-0.4),
+    FORWARD(-0.6),
     REVERSE(0.4),
     NEUTRAL(0.0);
     private double dutyCycle;
