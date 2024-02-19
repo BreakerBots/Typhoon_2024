@@ -13,6 +13,7 @@ public class BreakerPicoColorSensorLowLevel implements AutoCloseable {
   public static class RawColor {
     public RawColor(int r, int g, int b, int _ir) {
       red = r;
+      
       green = g;
       blue = b;
       ir = _ir;

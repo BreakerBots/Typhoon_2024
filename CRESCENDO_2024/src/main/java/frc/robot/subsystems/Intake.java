@@ -61,7 +61,7 @@ public class Intake extends SubsystemBase {
     pivotConfig.CurrentLimits.SupplyCurrentLimit = 30;
     pivotConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-
+    pivotConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
     pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     pivotLeft.getConfigurator().apply(pivotConfig);
     pivotRight.getConfigurator().apply(pivotConfig);

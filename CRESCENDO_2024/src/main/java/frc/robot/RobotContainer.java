@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -20,14 +18,18 @@ import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
 import frc.robot.BreakerLib.util.math.functions.BreakerLinearizedConstrainedExponential;
+import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter;
+import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter.UnitlessChassisSpeeds;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.HandoffTest;
+import frc.robot.commands.HandoffToPastaRollerTest;
 import frc.robot.commands.ShooterTest;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.PastaRoller;
 import frc.robot.subsystems.Shooter;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -44,7 +46,7 @@ public class RobotContainer {
 
   private final Intake intakeSys = new Intake();
   private final Shooter shooterSys = new Shooter(() -> {return new FireingSolution(Rotation2d.fromDegrees(0.0), new BreakerVector2(Rotation2d.fromDegrees(27.0), 65.0));});
-  // private final PastaRoller pastaRollerSys = new PastaRoller();
+  private final PastaRoller pastaRollerSys = new PastaRoller();
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -60,7 +62,7 @@ public class RobotContainer {
     BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
     controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.1, 0.1));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
-    //teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.1, -0.1, 0.1, -0.1, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
+    teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.1, -0.1, 0.1, -0.1, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
     drivetrainSys.setDefaultCommand(teleopDriveCommand);
     
   }
@@ -83,8 +85,7 @@ public class RobotContainer {
     //controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
     controllerSys.getButtonB().onTrue(new HandoffTest(shooterSys, intakeSys));
     controllerSys.getLeftBumper().onTrue(new ShooterTest(shooterSys));
-    // controllerSys.getButtonX().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_INTAKEING, false));
-    //  controllerSys.getButtonY().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
+    controllerSys.getButtonY().onTrue(new HandoffToPastaRollerTest(intakeSys, pastaRollerSys));
     // controllerSys.getButtonX().and(() -> {return !strictHasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
     // controllerSys.getButtonX().and(intakeSys::hasNote).onTrue(new IntakeToShooterHandoff);
   }
@@ -113,7 +114,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
+    // PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
     // return AutoBuilder.followPath(path).beforeStarting(() -> {drivetrainSys.setOdometryPosition(path.getPreviewStartingHolonomicPose());});
     return null;
   }

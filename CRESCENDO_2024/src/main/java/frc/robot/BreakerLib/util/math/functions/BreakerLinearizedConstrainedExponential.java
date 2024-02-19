@@ -8,12 +8,12 @@ import edu.wpi.first.math.MathUtil;
 
 /** Add your docs here. */
 public class BreakerLinearizedConstrainedExponential extends BreakerMathFunction {
-    /*https://www.desmos.com/calculator/epmml4xp0h */
+    /**https://www.desmos.com/calculator/epmml4xp0h */
     public BreakerLinearizedConstrainedExponential(double linearity, double baseExponent) {
         super((Double x) -> {return curve(x, linearity, baseExponent);});
     }
 
-    /*https://www.desmos.com/calculator/epmml4xp0h */
+    /**https://www.desmos.com/calculator/epmml4xp0h */
     public BreakerLinearizedConstrainedExponential() {
         this(0.3, 3.0);
     }

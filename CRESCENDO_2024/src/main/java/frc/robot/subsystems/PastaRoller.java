@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -13,13 +14,15 @@ import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 
 public class PastaRoller extends SubsystemBase {
   /** Creates a new PastaRoller. */
-  private WPI_TalonSRX rollerMotor;
+  private TalonFX rollerMotor;
+  private PastaRollerState state;
   public PastaRoller() {
-    
+    state = PastaRollerState.NEUTRAL;
   }
 
   public void setState(PastaRollerState state) {
-    
+    this.state = state;
+    rollerMotor.set(state.getDutyCycle());
   }
 
   public InstantCommand setStateCommand(PastaRollerState state) {
@@ -29,22 +32,20 @@ public class PastaRoller extends SubsystemBase {
   public static enum PastaRollerState {
     EXTAKE(0.3),
     NEUTRAL(0.0);
-    private double innerRollerDutyCycle;
-    private double outerRollerDutyCycle;
+    private double dutyCycle;
     private PastaRollerState(double dutyCycle) {
-      
+      this.dutyCycle = dutyCycle;
     }
 
-    public double getInnerRollerDutyCycle() {
-        return innerRollerDutyCycle;
-    }
-
-    public double getOuterRollerDutyCycle() {
-        return outerRollerDutyCycle;
+    public double getDutyCycle() {
+        return dutyCycle;
     }
   }
   @Override
   public void periodic() {
-    
+    if (RobotState.isDisabled()) {
+      state = PastaRollerState.NEUTRAL;
+    }
+    rollerMotor.set(state.getDutyCycle());
   }
 }
