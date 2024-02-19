@@ -18,6 +18,7 @@ public class PastaRoller extends SubsystemBase {
   private PastaRollerState state;
   public PastaRoller() {
     state = PastaRollerState.NEUTRAL;
+    rollerMotor = new TalonFX(60);
   }
 
   public void setState(PastaRollerState state) {

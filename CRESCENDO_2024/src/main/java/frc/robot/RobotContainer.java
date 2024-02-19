@@ -62,7 +62,7 @@ public class RobotContainer {
     BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
     controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.1, 0.1));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
-    teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.1, -0.1, 0.1, -0.1, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
+    //teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.1, -0.1, 0.1, -0.1, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
     drivetrainSys.setDefaultCommand(teleopDriveCommand);
     
   }
