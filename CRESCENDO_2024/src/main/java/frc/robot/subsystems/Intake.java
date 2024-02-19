@@ -78,6 +78,8 @@ public class Intake extends SubsystemBase {
 
     piviotDutyCycleControlRequest = new DutyCycleOut(0.0);
     pivotFollowerRequest = new Follower(PIVOT_LEFT_ID, true);
+
+    beamBreak = new BreakerBeamBreak(1, true);
   }
 
   public Command setStateCommand(IntakeState stateToSet, boolean waitForSuccess) {

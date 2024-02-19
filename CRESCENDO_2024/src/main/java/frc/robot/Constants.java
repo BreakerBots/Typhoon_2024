@@ -60,7 +60,7 @@ public final class Constants {
     public static final int PIVOT_RIGHT_ID = 42;
     public static final int PIVOT_ENCODER_ID = 43;
     
-    public static final double PIVOT_ENCODER_OFFSET = -0.32470703125;
+    public static final double PIVOT_ENCODER_OFFSET = 0.292236328125;
 
     /*0deg is 15 deg behind fully retracted*/
     public static final double PIVIOT_RETRACTED_THRESHOLD = 0.35;
