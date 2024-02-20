@@ -17,6 +17,7 @@ public class BreakerBeamBreak extends SubsystemBase {
     input = new DigitalInput(imputPortDIO);
     prevRead = !brokenOnTrue;
     hasChanged = false;
+    this.brokenOnTrue = brokenOnTrue;
   }
 
   public boolean isBroken() {

@@ -45,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShooterTarget.FireingSolution;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
@@ -105,6 +106,7 @@ public class Shooter extends SubsystemBase {
     config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     config.Feedback.RotorToSensorRatio = PITCH_RATIO;
     config.Feedback.SensorToMechanismRatio = 1.0;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.Slot0.kP = PITCH_KP;
     config.Slot0.kI = PITCH_KI;
@@ -212,7 +214,7 @@ public class Shooter extends SubsystemBase {
   
   @Override
   public void periodic() {
-    // Logger.recordOutput("Shooter Has Note", hasNote());
+    BreakerLog.recordOutput("Shooter Has Note", hasNote());
     // if (RobotState.isDisabled()) {
     //   hopper.set(0.0);
     //   flywheelLeft.set(0.0);

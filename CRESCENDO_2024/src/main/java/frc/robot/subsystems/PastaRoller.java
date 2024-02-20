@@ -19,6 +19,7 @@ public class PastaRoller extends SubsystemBase {
   public PastaRoller() {
     state = PastaRollerState.NEUTRAL;
     rollerMotor = new TalonFX(60);
+    
   }
 
   public void setState(PastaRollerState state) {
@@ -31,7 +32,7 @@ public class PastaRoller extends SubsystemBase {
   }
 
   public static enum PastaRollerState {
-    EXTAKE(0.3),
+    EXTAKE(1.0),
     NEUTRAL(0.0);
     private double dutyCycle;
     private PastaRollerState(double dutyCycle) {

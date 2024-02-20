@@ -27,10 +27,14 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameC
 import frc.robot.commands.HandoffTest;
 import frc.robot.commands.HandoffToPastaRollerTest;
 import frc.robot.commands.ShooterTest;
+import frc.robot.commands.intake.IntakeFromGround;
+import frc.robot.commands.intake.IntakeFromGroundForShooter;
+import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PastaRoller;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake.IntakeState;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -40,13 +44,16 @@ import frc.robot.subsystems.Shooter;
 public class RobotContainer {
   private final BreakerPigeon2 imuSys = new BreakerPigeon2(5, GeneralConstants.DRIVE_CANIVORE_NAME);
   private final Drive drivetrainSys = new Drive(imuSys);
-  private final BreakerXboxController controllerSys = new BreakerXboxController(0);
+  public static final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private final Vision visionSys = new Vision(drivetrainSys);
 
   private final Intake intakeSys = new Intake();
-  private final Shooter shooterSys = new Shooter(() -> {return new FireingSolution(Rotation2d.fromDegrees(0.0), new BreakerVector2(Rotation2d.fromDegrees(27.0), 65.0));});
+  private final Shooter shooterSys = new Shooter(() -> {return new FireingSolution(Rotation2d.fromDegrees(0.0), new BreakerVector2(Rotation2d.fromRotations(0.1525), 31.5));});
   private final PastaRoller pastaRollerSys = new PastaRoller();
+
+  public static final ClimbArm leftClimbSys = new ClimbArm(50, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
+  public static final ClimbArm rigtClimbSys = new ClimbArm(51, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -83,8 +90,11 @@ public class RobotContainer {
   private void configureBindings() {
     controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
     //controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
-    controllerSys.getButtonB().onTrue(new HandoffTest(shooterSys, intakeSys));
+    controllerSys.getButtonB().onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
     controllerSys.getLeftBumper().onTrue(new ShooterTest(shooterSys));
+    controllerSys.getButtonX().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
+
+
     controllerSys.getButtonY().onTrue(new HandoffToPastaRollerTest(intakeSys, pastaRollerSys));
     // controllerSys.getButtonX().and(() -> {return !strictHasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
     // controllerSys.getButtonX().and(intakeSys::hasNote).onTrue(new IntakeToShooterHandoff);

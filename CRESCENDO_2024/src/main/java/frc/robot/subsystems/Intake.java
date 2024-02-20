@@ -79,7 +79,7 @@ public class Intake extends SubsystemBase {
     piviotDutyCycleControlRequest = new DutyCycleOut(0.0);
     pivotFollowerRequest = new Follower(PIVOT_LEFT_ID, true);
 
-    beamBreak = new BreakerBeamBreak(1, true);
+    beamBreak = new BreakerBeamBreak(1, false);
   }
 
   public Command setStateCommand(IntakeState stateToSet, boolean waitForSuccess) {
@@ -147,7 +147,7 @@ public class Intake extends SubsystemBase {
 
   public static enum IntakeRollerState {
     INTAKEING(-0.8),
-    EXTAKEING(0.7),
+    EXTAKEING(0.3),
     NEUTRAL(0.0);
     private double motorDutyCycle;
     private IntakeRollerState(double motorDutyCycle) {
@@ -184,6 +184,7 @@ public class Intake extends SubsystemBase {
     piviotDutyCycleControlRequest.withLimitReverseMotion(isRetractLimitTriggered());
     BreakerLog.recordOutput("EXT LIM", isExtendLimitTriggered());
     BreakerLog.recordOutput("RET LIM", isRetractLimitTriggered());
+    BreakerLog.recordOutput("INTK HAS NOTE", hasNote());
     pivotLeft.setControl(piviotDutyCycleControlRequest);
     pivotRight.setControl(pivotFollowerRequest);
     rollerMotor.set(targetState.getRollerState().getMotorDutyCycle());
