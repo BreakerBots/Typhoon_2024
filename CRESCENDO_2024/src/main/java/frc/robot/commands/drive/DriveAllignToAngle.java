@@ -2,7 +2,9 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands;
+package frc.robot.commands.drive;
+
+import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -15,14 +17,12 @@ import frc.robot.subsystems.Drive;
 public class DriveAllignToAngle extends Command {
   /** Creates a new DriveSnapToAngle. */
   private Drive drivetrain;
-  private Rotation2d targetAngle;
+  private Supplier<Rotation2d> targetAngleSupplier;
   private double allowablePositionError;
   private double allowableVelocityError;
-  private boolean overrideManualInput;
   private ProfiledPIDController anglePID;
   private BreakerTeleopSwerveDriveController driveController;
-  public DriveAllignToAngle(Drive drivetrain, BreakerTeleopSwerveDriveController driveController, Rotation2d targetAngle, double allowablePositionError, double allowableVelocityError, TrapezoidProfile.Constraints snapConstraints, boolean overrideManualInput) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public DriveAllignToAngle(Drive drivetrain, BreakerTeleopSwerveDriveController driveController, double allowablePositionError, double allowableVelocityError, TrapezoidProfile.Constraints snapConstraints, Supplier<Rotation2d> targetAngleSupplier) {
     anglePID = new ProfiledPIDController(0.0, 0.0, 0.0, snapConstraints);
     anglePID.setTolerance(allowablePositionError, allowableVelocityError);
   }
@@ -36,7 +36,7 @@ public class DriveAllignToAngle extends Command {
   }
 
   private double calculateFeedback() {
-    return anglePID.calculate(drivetrain.getOdometryPoseMeters().getRotation().getRadians(), targetAngle.getRadians());
+    return anglePID.calculate(drivetrain.getOdometryPoseMeters().getRotation().getRadians(), targetAngleSupplier.get().getRadians());
   }
 
   // Called every time the scheduler runs while the command is scheduled.

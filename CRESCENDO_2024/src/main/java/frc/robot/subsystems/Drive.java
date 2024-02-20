@@ -48,6 +48,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwe
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerProTalonFXSwerveModuleDriveMotor.ProTalonFXControlOutputUnits;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Add your docs here. */
@@ -135,5 +136,20 @@ public class Drive extends BreakerSwerveDrive {
     @Override
     public void toLog(LogTable table) {
         super.toLog(table);
+    }
+
+    public class ShootOnTheMovePercentSpeedRequest extends BreakerSwervePercentSpeedRequest {
+
+        public ShootOnTheMovePercentSpeedRequest() {
+            super(new ChassisPercentSpeeds());
+            
+        }
+
+        public ShootOnTheMovePercentSpeedRequest withChassisPercentSpeeds(ChassisPercentSpeeds speeds) {
+            percentSpeeds = 
+            return this;
+
+        }
+
     }
 }

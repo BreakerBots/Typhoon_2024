@@ -92,7 +92,7 @@ public final class Constants {
     public static final double PITCH_MAX_ROT = 0.25;
     public static final double PITCH_MIN_ROT = 0.01;
 
-    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.02);
+    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.012);
 
     public static final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> FIREING_MAP = getFireingMap();
 
