@@ -202,7 +202,7 @@ public final class Constants {
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);
     public static final double MODULE_WHEEL_SPEED_DEADBAND = 0.001;
     public static final double AZIMUTH_MOTOR_SUPPLY_CURRENT_LIMIT = 40.0;
-    public static final double DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT = 100.0;
+    public static final double DRIVE_MOTOR_SUPPLY_CURRENT_LIMIT = 10.0;
     public static final BreakerSwerveModuleConfig MODULE_CONFIG = new BreakerSwerveModuleConfig(
       DRIVE_MOTOR_GEAR_RATIO_TO_ONE, AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE, 
       WHEEL_DIAMETER, 

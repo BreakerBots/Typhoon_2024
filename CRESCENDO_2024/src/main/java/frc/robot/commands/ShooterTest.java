@@ -25,7 +25,7 @@ public class ShooterTest extends SequentialCommandGroup {
       new WaitUntilCommand(shooter::isAtGoal),
       new InstantCommand(() -> shooter.setState(ShooterState.SHOOT_TO_TARGET)),
       new WaitUntilCommndWithFallingEdgeDelayAndTimeout(() -> {return !shooter.hasNote();}, 0.5, 3.0),
-      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET))
+      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE))
     ); 
   }
 }

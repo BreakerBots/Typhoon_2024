@@ -178,6 +178,7 @@ public class Shooter extends SubsystemBase {
 
   public static enum ShooterState {
     TRACK_TARGET(ShooterHopperState.NEUTRAL),
+    TRACK_TARGET_IDLE(ShooterHopperState.NEUTRAL),
     SHOOT_TO_TARGET(ShooterHopperState.FORWARD),
     INTAKE_TO_SHOOTER_HANDOFF(ShooterHopperState.FORWARD),
     SHOOTER_TO_INTAKE_HANDOFF(ShooterHopperState.REVERSE),
@@ -226,13 +227,14 @@ public class Shooter extends SubsystemBase {
     switch (state) {
       case SHOOT_TO_TARGET:
       case TRACK_TARGET:
-        pushControlRequests(state.getHopperState().getDutyCycle(), latestFireingSolution.fireingVec().getVectorRotation().getRotations(), latestFireingSolution.fireingVec().getMagnitude());
+      case TRACK_TARGET_IDLE:
+        pushControlRequests(state.getHopperState().getDutyCycle(), latestFireingSolution.fireingVec().getVectorRotation().getRotations(), state == ShooterState.TRACK_TARGET_IDLE ? 2000.0 / 60.0 : latestFireingSolution.fireingVec().getMagnitude());
         break;
       case STOW:
       case INTAKE_TO_SHOOTER_HANDOFF:
       case SHOOTER_TO_INTAKE_HANDOFF:
       default:
-        pushControlRequests(state.getHopperState().getDutyCycle(), STOW_ANGLE.getRotations(), latestFireingSolution.fireingVec().getMagnitude());
+        pushControlRequests(state.getHopperState().getDutyCycle(), STOW_ANGLE.getRotations(), 2000.0 / 60.0);
         break;
 
     }

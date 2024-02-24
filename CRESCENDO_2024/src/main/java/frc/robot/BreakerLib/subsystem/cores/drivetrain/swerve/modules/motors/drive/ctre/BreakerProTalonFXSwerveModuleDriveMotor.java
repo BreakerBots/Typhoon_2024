@@ -71,9 +71,9 @@ public class BreakerProTalonFXSwerveModuleDriveMotor extends BreakerGenericSwerv
         driveConfig.Slot1.kV = config.getPIDConfig().kF;
         driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         if (controlOutputUnits != ProTalonFXControlOutputUnits.TORQUE_CURRENT) {
-            driveConfig.CurrentLimits.SupplyCurrentLimit = config.getSupplyCurrentLimit();
-            driveConfig.CurrentLimits.SupplyCurrentThreshold = config.getSupplyCurrentLimit();
-            driveConfig.CurrentLimits.SupplyTimeThreshold = 0.0;
+            driveConfig.CurrentLimits.SupplyCurrentLimit = 50;
+            driveConfig.CurrentLimits.SupplyCurrentThreshold = 60;
+            driveConfig.CurrentLimits.SupplyTimeThreshold = 0.1;
             driveConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         } else {
             driveConfig.TorqueCurrent.PeakForwardTorqueCurrent = config.getSupplyCurrentLimit();
