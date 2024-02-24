@@ -138,18 +138,18 @@ public class Drive extends BreakerSwerveDrive {
         super.toLog(table);
     }
 
-    public class ShootOnTheMovePercentSpeedRequest extends BreakerSwervePercentSpeedRequest {
+    // public class ShootOnTheMovePercentSpeedRequest extends BreakerSwervePercentSpeedRequest {
 
-        public ShootOnTheMovePercentSpeedRequest() {
-            super(new ChassisPercentSpeeds());
+    //     public ShootOnTheMovePercentSpeedRequest() {
+    //         super(new ChassisPercentSpeeds());
             
-        }
+    //     }
 
-        public ShootOnTheMovePercentSpeedRequest withChassisPercentSpeeds(ChassisPercentSpeeds speeds) {
-            percentSpeeds = 
-            return this;
+    //     public ShootOnTheMovePercentSpeedRequest withChassisPercentSpeeds(ChassisPercentSpeeds speeds) {
+    //         percentSpeeds = 
+    //         return this;
 
-        }
+    //     }
 
-    }
+    // }
 }

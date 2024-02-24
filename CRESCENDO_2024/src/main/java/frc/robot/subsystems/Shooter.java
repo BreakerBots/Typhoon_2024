@@ -163,7 +163,7 @@ public class Shooter extends SubsystemBase {
 
 
   public static enum ShooterHopperState {
-    FORWARD(-0.6),
+    FORWARD(-0.7),
     REVERSE(0.4),
     NEUTRAL(0.0);
     private double dutyCycle;

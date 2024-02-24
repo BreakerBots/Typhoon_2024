@@ -49,7 +49,7 @@ public class RobotContainer {
   private final Vision visionSys = new Vision(drivetrainSys);
 
   private final Intake intakeSys = new Intake();
-  private final Shooter shooterSys = new Shooter(() -> {return new FireingSolution(Rotation2d.fromDegrees(0.0), new BreakerVector2(Rotation2d.fromRotations(0.1525), 31.5));});
+  private final Shooter shooterSys = new Shooter(() -> {return new FireingSolution(Rotation2d.fromDegrees(0.0), new BreakerVector2(Rotation2d.fromDegrees(25.0), 100.0));});
   private final PastaRoller pastaRollerSys = new PastaRoller();
 
   public static final ClimbArm leftClimbSys = new ClimbArm(50, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
