@@ -27,6 +27,7 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.HandoffTest;
 import frc.robot.commands.HandoffToPastaRollerTest;
+import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ShooterTest;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.handoffs.HandoffFromShooterToIntake;
@@ -38,6 +39,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PastaRoller;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Shooter.ShooterState;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -102,18 +104,24 @@ public class RobotContainer {
     controllerSys.getLeftBumper().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false));
     controllerSys.getRightBumper().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
 
+    controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
+
     controllerSys.getButtonX()
       .and(intakeSys::hasNote)
       .and(()-> {return !shooterSys.hasNote();})
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
       .onTrue(new HandoffFromIntakeToShooter(shooterSys, intakeSys, false));
     controllerSys.getButtonX()
-      .debounce(0.1, DebounceType.kBoth)
+      .debounce(0.2, DebounceType.kBoth)
       .and(()-> {return !intakeSys.hasNote();})
       .and(shooterSys::hasNote)
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
       .onTrue(new ShooterTest(shooterSys));
-    controllerSys.getButtonX().and(()-> {return !intakeSys.hasNote();}).and(()-> {return !shooterSys.hasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
+    controllerSys.getButtonX()
+      .and(()-> {return !intakeSys.hasNote();})
+      .and(()-> {return !shooterSys.hasNote();})
+      .and(() -> {return shooterSys.getState() != ShooterState.TRACK_TARGET;})
+      .onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
 
   }
 
