@@ -30,7 +30,7 @@ public class IntakeFromGroundForShooter extends SequentialCommandGroup {
         new InstantCommand(() -> shooter.setState(ShooterState.STOW))
         .andThen(new WaitUntilCommand(shooter::isAtAngleGoal))
       ),
-      new InstantCommand(() -> shooter.setState(ShooterState.INTAKE_TO_SHOOTER_HANDOFF)),
+      new InstantCommand(() -> shooter.setState(ShooterState.INTAKE_TO_SHOOTER_HANDOFF), shooter),
       intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
       new WaitUntilCommand(shooter::hasNote),
       new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE)),

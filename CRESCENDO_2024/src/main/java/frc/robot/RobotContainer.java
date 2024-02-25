@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -27,6 +28,8 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameC
 import frc.robot.commands.HandoffTest;
 import frc.robot.commands.HandoffToPastaRollerTest;
 import frc.robot.commands.ShooterTest;
+import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
+import frc.robot.commands.handoffs.HandoffFromShooterToIntake;
 import frc.robot.commands.intake.IntakeFromGround;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.subsystems.ClimbArm;
@@ -49,7 +52,7 @@ public class RobotContainer {
   private final Vision visionSys = new Vision(drivetrainSys);
 
   private final Intake intakeSys = new Intake();
-  private final Shooter shooterSys = new Shooter(() -> {return new FireingSolution(Rotation2d.fromDegrees(0.0), new BreakerVector2(Rotation2d.fromDegrees(25.0), 100.0));});
+  private final Shooter shooterSys = new Shooter(Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_SOLUTION_SUPPLIER);
   private final PastaRoller pastaRollerSys = new PastaRoller();
 
   public static final ClimbArm leftClimbSys = new ClimbArm(50, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
@@ -67,9 +70,9 @@ public class RobotContainer {
   private void configureDriveControls() {
     BreakerLinearizedConstrainedExponential linearMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.3, 3.0);
     BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
-    controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.2, 0.2));
+    controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.1, 0.1));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
-    teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.3, -1.0, 0.5, -0.5, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
+    teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.3, -1.0, 1.0, -2.0, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
     drivetrainSys.setDefaultCommand(teleopDriveCommand);
     
   }
@@ -90,14 +93,28 @@ public class RobotContainer {
   private void configureBindings() {
     controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
     //controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
-    controllerSys.getButtonB().onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
-    controllerSys.getLeftBumper().onTrue(new ShooterTest(shooterSys));
-    controllerSys.getButtonX().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
+    //controllerSys.getButtonB().onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
+    //  controllerSys.getButtonX().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
 
 
-    controllerSys.getButtonY().onTrue(new HandoffToPastaRollerTest(intakeSys, pastaRollerSys));
-    // controllerSys.getButtonX().and(() -> {return !strictHasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
-    // controllerSys.getButtonX().and(intakeSys::hasNote).onTrue(new IntakeToShooterHandoff);
+    //controllerSys.getButtonY().onTrue(new HandoffToPastaRollerTest(intakeSys, pastaRollerSys));
+
+    controllerSys.getLeftBumper().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false));
+    controllerSys.getRightBumper().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
+
+    controllerSys.getButtonX()
+      .and(intakeSys::hasNote)
+      .and(()-> {return !shooterSys.hasNote();})
+      .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
+      .onTrue(new HandoffFromIntakeToShooter(shooterSys, intakeSys, false));
+    controllerSys.getButtonX()
+      .debounce(0.1, DebounceType.kBoth)
+      .and(()-> {return !intakeSys.hasNote();})
+      .and(shooterSys::hasNote)
+      .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
+      .onTrue(new ShooterTest(shooterSys));
+    controllerSys.getButtonX().and(()-> {return !intakeSys.hasNote();}).and(()-> {return !shooterSys.hasNote();}).onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
+
   }
 
   private void configureRobotManager() {

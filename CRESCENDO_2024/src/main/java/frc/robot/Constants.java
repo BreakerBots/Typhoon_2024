@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.function.Supplier;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
@@ -36,6 +39,7 @@ import frc.robot.BreakerLib.util.math.BreakerUnits;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolableDouble;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolablePair;
 import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
+import frc.robot.ShooterTarget.FireingSolution;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -52,6 +56,8 @@ public final class Constants {
   }
   public static class FieldConstants {
     public static final double FIELD_WIDTH = 16.4846;
+    public static final Translation3d BLUE_SPEAKER_AIM_POINT = new Translation3d(-0.038099999999999995, 5.547867999999999, 1.4511020000000001).plus(new Translation3d(Units.inchesToMeters(-10.0), Units.inchesToMeters(0), Units.inchesToMeters(30.322)));
+    public static final Translation3d RED_SPEAKER_AIM_POINT = new Translation3d( 16.579342, 5.547867999999999, 1.4511020000000001).plus(new Translation3d(Units.inchesToMeters(10.0), Units.inchesToMeters(0), Units.inchesToMeters(30.322)));
   }
 
   public static class IntakeConstants {
@@ -80,21 +86,25 @@ public final class Constants {
     public static final double PITCH_PINION_TEETH = 20;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 0.75;
+    public static final double PITCH_KP = 0.85;
     public static final double PITCH_KI = 0.0;
-    public static final double PITCH_KD = 0.75;
+    public static final double PITCH_KD = 0.8;
     public static final double PITCH_KS = 0.035;
-    public static final double PITCH_KA = 0.11;
-    public static final double PITCH_KV = 19.5;
-    public static final double PITCH_KG = 0.49;
+    public static final double PITCH_KA = 0.07;
+    public static final double PITCH_KV = 18.25;
+    public static final double PITCH_KG = 0.39;
     public static final double PITCH_ENCODER_OFFSET = -0.0234375+0.25;
 
-    public static final double PITCH_MAX_ROT = 0.25;
+    public static final double PITCH_MAX_ROT = 0.21;
     public static final double PITCH_MIN_ROT = 0.01;
 
     public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.012);
 
     public static final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> FIREING_MAP = getFireingMap();
+
+    public static final double SHOOTER_IDLE = 0.0;//1500.0 / 60.0;
+    public static final FireingSolution MANUAL_SPEAKER_SHOT_FIREING_SOLUTION = new FireingSolution(new Rotation2d(), new BreakerVector2(Rotation2d.fromRotations(0.145), 90.0));
+    public static final Supplier<FireingSolution> MANUAL_SPEAKER_SHOT_FIREING_SOLUTION_SUPPLIER = () -> {return MANUAL_SPEAKER_SHOT_FIREING_SOLUTION;};
 
     private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
        BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fm = new BreakerInterpolatingTreeMap<>();
@@ -104,21 +114,21 @@ public final class Constants {
   }
 
   public static class VisionConstants {
-    public static final String FRONT_CAMERA_NAME = "frontcam";
-    public static final Transform3d FRONT_CAMERA_TRANS = new Transform3d();
+    public static final String FRONT_CAMERA_NAME = "FrontCam";
+    public static final Transform3d FRONT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(5.459), Units.inchesToMeters(-0.238), Units.inchesToMeters(37.836), new Rotation3d(0.0, Math.toRadians(10.0), 0.0));
 
-    public static final String LEFT_CAMERA_NAME = "leftcam";
-    public static final Transform3d LEFT_CAMERA_TRANS = new Transform3d();
-
-
-    public static final String RIGHT_CAMERA_NAME = "rightcam";
-    public static final Transform3d RIGHT_CAMERA_TRANS = new Transform3d();
+    public static final String LEFT_CAMERA_NAME = "LeftCam";
+    public static final Transform3d LEFT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(1.968), Units.inchesToMeters(11.241), Units.inchesToMeters(35.564), new Rotation3d(0.0, Math.toRadians(10.0), 0.5*Math.PI));
 
 
-    public static final String BACK_CAMERA_NAME = "backcam";
-    public static final Transform3d BACK_CAMERA_TRANS = new Transform3d(0.0, 0.0, 0.0, new Rotation3d(0.0, 0.0, -Math.PI));
+    public static final String RIGHT_CAMERA_NAME = "RightCam";
+    public static final Transform3d RIGHT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(1.929), Units.inchesToMeters(-11.718), Units.inchesToMeters(35.564), new Rotation3d(0.0, Math.toRadians(10.0), -0.5*Math.PI));
 
-    public static final String LIMELIGHT_NAME = "limelight-note";
+
+    public static final String BACK_CAMERA_NAME = "BackCam";
+    public static final Transform3d BACK_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-1.578), Units.inchesToMeters(-0.238), Units.inchesToMeters(37.836), new Rotation3d(0.0, Math.toRadians(10.0), -Math.PI));
+
+    public static final String LIMELIGHT_NAME = "limelight";
     public static final Transform3d LIMELIGHT_TRANS = new Transform3d();
 
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = AprilTagFields.kDefaultField.loadAprilTagLayoutField();

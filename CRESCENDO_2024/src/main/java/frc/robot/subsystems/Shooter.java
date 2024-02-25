@@ -19,13 +19,16 @@ import static frc.robot.Constants.ShooterConstants.PITCH_MIN_ROT;
 import static frc.robot.Constants.ShooterConstants.PITCH_RATIO;
 import static frc.robot.Constants.ShooterConstants.PIVOT_ENCODER_ID;
 import static frc.robot.Constants.ShooterConstants.RIGHT_FLYWHEEL_ID;
+import static frc.robot.Constants.ShooterConstants.SHOOTER_IDLE;
 import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_ID;
 import static frc.robot.Constants.ShooterConstants.STOW_ANGLE;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -64,6 +67,7 @@ public class Shooter extends SubsystemBase {
   private MotionMagicVoltage pivotMotionMagicRequest;
   private FireingSolution latestFireingSolution;
   private BreakerBeamBreak beamBreak;
+  private CoastOut flywheelCoastRequest;
   
   public Shooter(Supplier<FireingSolution> defaultTarget) {
     target = defaultTarget;
@@ -72,10 +76,12 @@ public class Shooter extends SubsystemBase {
     flywheelLeft = new TalonFX(LEFT_FLYWHEEL_ID);
     flywheelRight = new TalonFX(RIGHT_FLYWHEEL_ID);
     hopper = new WPI_TalonSRX(HOPPER_ID);
+    hopper.setNeutralMode(NeutralMode.Brake);
     pivotEncoder = BreakerCANCoderFactory.createCANCoder(PIVOT_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PITCH_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
     configPivot();
     configFlywheel();
     state = ShooterState.STOW;
+    flywheelCoastRequest = new CoastOut();
   }
 
   private void configFlywheel() {
@@ -87,10 +93,10 @@ public class Shooter extends SubsystemBase {
     config.CurrentLimits.SupplyTimeThreshold = 3.0;
     config.CurrentLimits.StatorCurrentLimitEnable = false;
     flywheelRight.getConfigurator().apply(config);
-    config.Slot0.kP = 0.1;
+    config.Slot0.kP = 0.12;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.0;
-    config.Slot0.kV = 0.116;
+    config.Slot0.kV = 0.118;
     config.Slot0.kS = 0.19;
     config.Slot0.kA = 0.0;
     flywheelLeft.getConfigurator().apply(config);
@@ -137,6 +143,10 @@ public class Shooter extends SubsystemBase {
     this.state = state;
   }
 
+  public ShooterState getState() {
+    return state;
+  }
+
   public void setActiveTarget(Supplier<FireingSolution> target) {
     this.target = target;
   }
@@ -154,11 +164,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtAngleGoal() {
-    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), Units.degreesToRotations(10.0)) && MathUtil.isNear(0.0, pivotVelSup.get(),  Units.degreesToRotations(100000000.0));//0.5, 0.1
+    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.003) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.2);//0.5, 0.1
   }
 
   public boolean isAtFlywheelGoal() {
-    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 100.0 / 60.0) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 1000000000.0 / 60) ;//5.0, 0.5
+    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 0.75) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 1.0) ;//5.0, 0.5
   }
 
 
@@ -209,7 +219,11 @@ public class Shooter extends SubsystemBase {
   private void pushControlRequests(double hopperDutyCycle, double piviotPos, double flywheelVel) {
     hopper.set(hopperDutyCycle);
     piviotMotor.setControl(pivotMotionMagicRequest.withPosition(piviotPos));
-    flywheelLeft.setControl(flywheelVelRequest.withVelocity(flywheelVel));
+    if (flywheelVel > 0.0) {
+      flywheelLeft.setControl(flywheelVelRequest.withVelocity(flywheelVel));
+    } else {
+      flywheelLeft.setControl(flywheelCoastRequest);
+    }
     flywheelRight.setControl(flywheelFollowRequest);
   }
   
@@ -228,13 +242,13 @@ public class Shooter extends SubsystemBase {
       case SHOOT_TO_TARGET:
       case TRACK_TARGET:
       case TRACK_TARGET_IDLE:
-        pushControlRequests(state.getHopperState().getDutyCycle(), latestFireingSolution.fireingVec().getVectorRotation().getRotations(), state == ShooterState.TRACK_TARGET_IDLE ? 2000.0 / 60.0 : latestFireingSolution.fireingVec().getMagnitude());
+        pushControlRequests(state.getHopperState().getDutyCycle(), latestFireingSolution.fireingVec().getVectorRotation().getRotations(), state == ShooterState.TRACK_TARGET_IDLE ? SHOOTER_IDLE : latestFireingSolution.fireingVec().getMagnitude());
         break;
       case STOW:
       case INTAKE_TO_SHOOTER_HANDOFF:
       case SHOOTER_TO_INTAKE_HANDOFF:
       default:
-        pushControlRequests(state.getHopperState().getDutyCycle(), STOW_ANGLE.getRotations(), 2000.0 / 60.0);
+        pushControlRequests(state.getHopperState().getDutyCycle(), STOW_ANGLE.getRotations(), SHOOTER_IDLE);
         break;
 
     }

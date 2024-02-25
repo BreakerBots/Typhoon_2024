@@ -82,9 +82,6 @@ public class Robot extends BreakerTimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    double climbOut = RobotContainer.controllerSys.getLeftTrigger().get() - RobotContainer.controllerSys.getRightTrigger().get();
-    RobotContainer.leftClimbSys.setDutyCycle(climbOut);
-    RobotContainer.rigtClimbSys.setDutyCycle(climbOut);
   }
 
   @Override

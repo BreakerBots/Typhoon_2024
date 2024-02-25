@@ -69,8 +69,10 @@ public class Intake extends SubsystemBase {
     BreakerCANCoderFactory.configExistingCANCoder(piviotEncoder, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PIVOT_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
 
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
-    rollerConfig.CurrentLimits.SupplyCurrentLimit = 130;
-    rollerConfig.CurrentLimits.SupplyTimeThreshold = 3.5;
+    rollerConfig.CurrentLimits.SupplyCurrentLimit = 60;
+    rollerConfig.CurrentLimits.SupplyCurrentThreshold = 100;
+    rollerConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+
     rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     rollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;

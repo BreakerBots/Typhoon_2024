@@ -17,14 +17,14 @@ import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter.U
 public class BreakerHolonomicSlewRateLimiter {
     private double positiveLinearRateLimit, negitiveLinearRateLimit, positiveAngularRateLimit, negitiveAngularRateLimit;
     private UnitlessChassisSpeeds prevSpeeds;
-    private SlewRateLimiter omegaLimit, xLimit, yLimit;
+    //private SlewRateLimiter omegaLimit, xLimit, yLimit;
     private double prevTime;
     public BreakerHolonomicSlewRateLimiter(double positiveLinearRateLimit, double negitiveLinearRateLimit, double positiveAngularRateLimit, double negitiveAngularRateLimit, UnitlessChassisSpeeds initalSpeeds) {
         prevTime = MathSharedStore.getTimestamp();
         prevSpeeds = initalSpeeds;
-        omegaLimit = new SlewRateLimiter(positiveAngularRateLimit, negitiveAngularRateLimit, initalSpeeds.omega);
-        xLimit = new SlewRateLimiter(positiveLinearRateLimit, negitiveLinearRateLimit, initalSpeeds.x);
-        yLimit = new SlewRateLimiter(positiveLinearRateLimit, negitiveLinearRateLimit, initalSpeeds.y);
+        // omegaLimit = new SlewRateLimiter(positiveAngularRateLimit, negitiveAngularRateLimit, initalSpeeds.omega);
+        // xLimit = new SlewRateLimiter(positiveLinearRateLimit, negitiveLinearRateLimit, initalSpeeds.x);
+        // yLimit = new SlewRateLimiter(positiveLinearRateLimit, negitiveLinearRateLimit, initalSpeeds.y);
         this.positiveLinearRateLimit = positiveLinearRateLimit;
         this.negitiveLinearRateLimit = negitiveLinearRateLimit;
         this.positiveAngularRateLimit = positiveAngularRateLimit;
@@ -65,55 +65,41 @@ public class BreakerHolonomicSlewRateLimiter {
     }
 
     public UnitlessChassisSpeeds calculate(UnitlessChassisSpeeds input) {
-        // double currentTime = MathSharedStore.getTimestamp();
-        // double elapsedTime = currentTime - prevTime;
-        //calculateLinear(input, elapsedTime);
-        // BreakerVector2 linearVels = calculateLinear(input, elapsedTime);
-        // prevSpeeds.x = linearVels.getX();
-        // prevSpeeds.y = linearVels.getY();
+        double currentTime = MathSharedStore.getTimestamp();
+        double elapsedTime = currentTime - prevTime;
 
-        double x = xLimit.calculate(input.x);
-        if (input.x == 0.0) {
-            x = 0.0;
-            xLimit.reset(0.0);
-        }
+        double dx = input.x - prevSpeeds.x;
+        double dSigX = Math.signum(prevSpeeds.x - input.x);
+        double dy = input.y - prevSpeeds.y;
+        double dSigY = Math.signum(prevSpeeds.y - input.y);
+        double domega = input.omega - prevSpeeds.omega;
+        double dSigOmega = Math.signum(prevSpeeds.omega - input.omega);
 
-        double y = yLimit.calculate(input.y);
-        if (input.y == 0.0) {
-            y = 0.0;
-            yLimit.reset(0.0);
-        }
+        prevSpeeds.x +=
+        Math.signum(dx) * MathUtil.clamp(
+            Math.abs(dx) * dSigX,
+            negitiveLinearRateLimit * elapsedTime,
+            positiveLinearRateLimit * elapsedTime
+        );
+
+        prevSpeeds.y +=
+        Math.signum(dy) * MathUtil.clamp(
+            Math.abs(dy) * dSigY,
+            negitiveLinearRateLimit * elapsedTime,
+            positiveLinearRateLimit * elapsedTime
+        );
+
+        prevSpeeds.omega +=
+        Math.signum(domega) * MathUtil.clamp(
+            Math.abs(domega) * dSigOmega,
+            negitiveAngularRateLimit * elapsedTime,
+            positiveAngularRateLimit * elapsedTime
+        );
+
         
-        double o = omegaLimit.calculate(input.omega);
-        if (input.omega == 0.0) {
-            o = 0.0;
-            omegaLimit.reset(0.0);
-        }
-        // prevTime = currentTime;
-        return new UnitlessChassisSpeeds(x, y, o);
+        prevTime = currentTime;
+        return prevSpeeds;
     }
-
-    // protected void calculateLinear(UnitlessChassisSpeeds input, double elapsedTime) {
-    //     BreakerVector2 curVelVec = input.getLinearVelocityVector();
-    //     BreakerVector2 posLimVec = new BreakerVector2(curVelVec.getVectorRotation(), Math.abs(positiveLinearRateLimit));
-    //     BreakerVector2 negLimVec = new BreakerVector2(curVelVec.getVectorRotation(), Math.abs(negitiveLinearRateLimit));
-    //     prevSpeeds.x += MathUtil.clamp(
-    //             input.x - prevSpeeds.x,
-    //             -Math.abs(negLimVec.getX()) * elapsedTime,
-    //             Math.abs(posLimVec.getX()) * elapsedTime);
-        
-    //     prevSpeeds.y += MathUtil.clamp(
-    //             input.y - prevSpeeds.y,
-    //             -Math.abs(negLimVec.getY()) * elapsedTime,
-    //             Math.abs(posLimVec.getY()) * elapsedTime);
-
-    //             System.out.println(posLimVec);
-    // }
-
-    // protected BreakerVector2 calculateLinear(UnitlessChassisSpeeds input, double elapsedTime) {
-        
-          
-    // }
 
     public static class UnitlessChassisSpeeds {
         public double x, y, omega;

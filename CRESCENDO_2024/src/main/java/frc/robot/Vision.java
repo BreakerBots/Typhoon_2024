@@ -32,26 +32,24 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /** Add your docs here. */
 public class Vision extends SubsystemBase {
     public BreakerLimelight limelight;
-    public BreakerPhotonCamera frontCam, backCam;
-    private BreakerPhotonVisionPoseEstimator backPosSrc;
+    public BreakerPhotonCamera frontCam, leftCam, rightCam, backCam;
+    private BreakerPhotonVisionPoseEstimator frontPosSrc, leftPosSrc, rightPosSrc, backPosSrc;
     private Drive drivetrain;
    // private PhotonPoseEstimator poseEst;
 
     public Vision(Drive drivetrain) {
         limelight = new BreakerLimelight(LIMELIGHT_NAME, LIMELIGHT_TRANS);
-        //frontCam = new BreakerPhotonCamera(FRONT_CAMERA_NAME, FRONT_CAMERA_TRANS);
-        // backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
-        // backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
-        // this.drivetrain = drivetrain;
-        // drivetrain.getOdometryThread().registerEstimatedPoseSource(backPosSrc);
-    }
+        frontCam = new BreakerPhotonCamera(FRONT_CAMERA_NAME, FRONT_CAMERA_TRANS);
+        leftCam = new BreakerPhotonCamera(LEFT_CAMERA_NAME, LEFT_CAMERA_TRANS);
+        rightCam = new BreakerPhotonCamera(RIGHT_CAMERA_NAME, RIGHT_CAMERA_TRANS);
+        backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
 
-    public List<PhotonTrackedTarget> getFrontCamTrackedTargets() {
-        return null;
-    }
-
-    public List<PhotonTrackedTarget> getBackCamTrackedTargets() {
-        return backPosSrc.getTrackedTargets();
+        frontPosSrc = frontCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
+        leftPosSrc = leftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
+        rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
+        backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
+        this.drivetrain = drivetrain;
+        drivetrain.getOdometryThread().registerEstimatedPoseSources(frontPosSrc, /*leftPosSrc, rightPosSrc,*/ backPosSrc);
     }
 
     @Override
