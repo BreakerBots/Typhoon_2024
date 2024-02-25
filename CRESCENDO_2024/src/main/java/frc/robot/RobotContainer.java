@@ -47,8 +47,8 @@ import frc.robot.subsystems.Shooter.ShooterState;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final BreakerPigeon2 imuSys = new BreakerPigeon2(5, GeneralConstants.DRIVE_CANIVORE_NAME);
-  private final Drive drivetrainSys = new Drive(imuSys);
+  private static final BreakerPigeon2 imuSys = new BreakerPigeon2(5, GeneralConstants.DRIVE_CANIVORE_NAME);
+  private static final Drive drivetrainSys = new Drive(imuSys);
   public static final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private final Vision visionSys = new Vision(drivetrainSys);
@@ -59,6 +59,8 @@ public class RobotContainer {
 
   public static final ClimbArm leftClimbSys = new ClimbArm(50, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
   public static final ClimbArm rigtClimbSys = new ClimbArm(51, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
+
+  public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.FIREING_MAP);
 
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */

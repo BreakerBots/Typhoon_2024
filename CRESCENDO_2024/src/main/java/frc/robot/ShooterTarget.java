@@ -14,6 +14,8 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
+import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolableDouble;
+import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolablePair;
 import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
 import frc.robot.subsystems.Drive;
 import edu.wpi.first.math.interpolation.Interpolatable;
@@ -22,8 +24,8 @@ import edu.wpi.first.math.interpolation.Interpolatable;
 public class ShooterTarget {
     private Translation3d blueTargetPoint;
     private final Drive drivetrain;
-    private final BreakerInterpolatingTreeMap<Double, BreakerVector2> fireingTable;
-    public ShooterTarget(Drive drivetrain, Translation3d blueTargetPoint, BreakerInterpolatingTreeMap<Double, BreakerVector2> fireingTable) {
+    private final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fireingTable;
+    public ShooterTarget(Drive drivetrain, Translation3d blueTargetPoint, BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fireingTable) {
         this.blueTargetPoint = blueTargetPoint;
         this.drivetrain = drivetrain;
         this.fireingTable = fireingTable;
@@ -52,7 +54,7 @@ public class ShooterTarget {
         Translation2d deltaTrans = drivetrainTrans.minus(targetTrans);
         Rotation2d deltaTransVecAng = deltaTrans.getAngle();
         double distance = drivetrainTrans.getDistance(targetTrans);
-        BreakerVector2 fireingVec = fireingTable.getInterpolatedValue(distance);
+        BreakerVector2 fireingVec = fireingTable.getInterpolatedValue(distance).getFirst();
         return new FireingSolution(deltaTransVecAng, fireingVec);
     }
 
