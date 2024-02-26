@@ -167,11 +167,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtAngleGoal() {
-    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.003) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.2);//0.5, 0.1
+    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.003) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.01);//0.5, 0.1
   }
 
   public boolean isAtFlywheelGoal() {
-    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 0.75) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 1.0) ;//5.0, 0.5
+    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 0.1) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 0.1) ;//5.0, 0.5
   }
 
 

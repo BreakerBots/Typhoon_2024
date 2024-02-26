@@ -74,27 +74,42 @@ public class BreakerHolonomicSlewRateLimiter {
         double dSigY = Math.signum(prevSpeeds.y - input.y);
         double domega = input.omega - prevSpeeds.omega;
         double dSigOmega = Math.signum(prevSpeeds.omega - input.omega);
+       // System.out.printf("dx: %.2f, sx: %.2f, dy: %.2f, sy: %.2f", dx, dSigX, dy, dSigY);
 
-        prevSpeeds.x +=
-        Math.signum(dx) * MathUtil.clamp(
-            Math.abs(dx) * dSigX,
+        
+        if (!MathUtil.isNear(input.x, 0.0, 0.0001)) {
+            prevSpeeds.x +=
+        /*Math.signum(dx) * */ MathUtil.clamp(
+            dx,
             negitiveLinearRateLimit * elapsedTime,
             positiveLinearRateLimit * elapsedTime
         );
+        } else {
+            prevSpeeds.x = 0.0;
+        }
 
-        prevSpeeds.y +=
-        Math.signum(dy) * MathUtil.clamp(
-            Math.abs(dy) * dSigY,
-            negitiveLinearRateLimit * elapsedTime,
-            positiveLinearRateLimit * elapsedTime
-        );
+        if (!MathUtil.isNear(0.0, input.y, 0.0001)) {
+            prevSpeeds.y +=
+        /*Math.signum(dy) * */ MathUtil.clamp(
+                dy,
+                negitiveLinearRateLimit * elapsedTime,
+                positiveLinearRateLimit * elapsedTime
+            );
+        } else {
+            prevSpeeds.y = 0.0;
+        }
 
-        prevSpeeds.omega +=
-        Math.signum(domega) * MathUtil.clamp(
-            Math.abs(domega) * dSigOmega,
+
+        if (!MathUtil.isNear(0.0, input.y, 0.0001)) {
+            prevSpeeds.omega +=
+        /*Math.signum(domega) **/ MathUtil.clamp(
+            domega,
             negitiveAngularRateLimit * elapsedTime,
             positiveAngularRateLimit * elapsedTime
         );
+        } else {
+            prevSpeeds.omega = 0.0;
+        }
 
         
         prevTime = currentTime;

@@ -98,7 +98,7 @@ public final class Constants {
     public static final double PITCH_MAX_ROT = 0.21;
     public static final double PITCH_MIN_ROT = 0.01;
 
-    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.012);
+    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.01);
 
     public static final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> FIREING_MAP = getFireingMap();
 
@@ -108,7 +108,10 @@ public final class Constants {
 
     private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
        BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fm = new BreakerInterpolatingTreeMap<>();
-      fm.put(1.0, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(0.0), 0000), new BreakerInterpolableDouble(0.0)));
+       fm.put(1.197, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(52.2), 80.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(2.500, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(36.5), 85.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(3.885, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 92.5), new BreakerInterpolableDouble(0.0)));
+       fm.put(6.18, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.0), 100.0), new BreakerInterpolableDouble(0.0)));
       return fm;
     } 
   }
@@ -234,7 +237,7 @@ public final class Constants {
 
     //Physical Robot Constants
     public static final double MAX_ANGULAR_VEL = ((FL_TRANSLATION.getNorm() * 2.0 * Math.PI) / MAX_ATTAINABLE_MODULE_WHEEL_SPEED) * (2.0 * Math.PI); 
-    public static final double MAX_LINEAR_VEL = 5.35;
+    public static final double MAX_LINEAR_VEL = 5.35;//5.35
     public static final double HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND = 0.001;
     public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.05;
     public static final BreakerSwerveDriveConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveConfig(

@@ -4,18 +4,33 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
+import frc.robot.Constants;
+import frc.robot.BreakerLib.physics.vector.BreakerVector2;
+import frc.robot.ShooterTarget.FireingSolution;
+import frc.robot.commands.util.WaitUntilCommndWithFallingEdgeDelayAndTimeout;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreInAmp extends SequentialCommandGroup {
-  /** Creates a new ScoreInAmp. */
-  public ScoreInAmp() {
+  /** Creates a new ShootManualAllign. */
+  public ScoreInAmp(Shooter shooter) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      
+      new InstantCommand(() -> shooter.setActiveTarget(() -> {return new FireingSolution(new Rotation2d(0.0), new BreakerVector2(Rotation2d.fromRotations(0.135), 55));}), shooter),
+      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET)),
+      new WaitUntilCommand(shooter::isAtGoal),
+      new InstantCommand(() -> shooter.setState(ShooterState.SHOOT_TO_TARGET)),
+      new WaitUntilCommndWithFallingEdgeDelayAndTimeout(() -> {return !shooter.hasNote();}, 0.5, 3.0),
+      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE))
     );
+    
   }
 }

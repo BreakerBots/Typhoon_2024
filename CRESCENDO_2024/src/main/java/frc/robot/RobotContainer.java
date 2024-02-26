@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.util.HashMap;
+
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,9 +32,14 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameC
 import frc.robot.commands.HandoffTest;
 import frc.robot.commands.HandoffToPastaRollerTest;
 import frc.robot.commands.OrbitNote;
+import frc.robot.commands.ScoreInAmp;
 import frc.robot.commands.ShooterTest;
+import frc.robot.commands.StationaryShootFromAnywhere;
+import frc.robot.commands.auto.PathlessAutoTest;
+import frc.robot.commands.auto.PersueNote;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.handoffs.HandoffFromShooterToIntake;
+import frc.robot.commands.intake.ExtakeNote;
 import frc.robot.commands.intake.IntakeFromGround;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.subsystems.ClimbArm;
@@ -76,7 +85,7 @@ public class RobotContainer {
     BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
     controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.1, 0.1));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
-    teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.3, -1.0, 1.0, -2.0, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
+    //teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.3, -5.0, 3.0, -5.0, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
     drivetrainSys.setDefaultCommand(teleopDriveCommand);
     
   }
@@ -106,7 +115,9 @@ public class RobotContainer {
     controllerSys.getLeftBumper().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false));
     controllerSys.getRightBumper().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
 
-    controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
+    //controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
+    controllerSys.getButtonB().onTrue(new ExtakeNote(intakeSys));
+    controllerSys.getButtonY().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_INTAKEING, true).andThen(new PersueNote(visionSys, intakeSys, drivetrainSys), intakeSys.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true)));
 
     controllerSys.getButtonX()
       .and(intakeSys::hasNote)
@@ -114,17 +125,22 @@ public class RobotContainer {
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
       .onTrue(new HandoffFromIntakeToShooter(shooterSys, intakeSys, false));
     controllerSys.getButtonX()
-      .debounce(0.2, DebounceType.kBoth)
+      .debounce(0.1, DebounceType.kBoth)
       .and(()-> {return !intakeSys.hasNote();})
       .and(shooterSys::hasNote)
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
-      .onTrue(new ShooterTest(shooterSys));
+      .onTrue(new StationaryShootFromAnywhere(shooterSys, drivetrainSys));
     controllerSys.getButtonX()
       .and(()-> {return !intakeSys.hasNote();})
       .and(()-> {return !shooterSys.hasNote();})
       .and(() -> {return shooterSys.getState() != ShooterState.TRACK_TARGET;})
       .onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
 
+  }
+
+  private void registerNamedCommands() {
+    HashMap<String, Command> namedCommands = new HashMap<>();
+    namedCommands.put("IntakeFromGroundForShooter", new IntakeFromGroundForShooter(intakeSys, shooterSys));
   }
 
   private void configureRobotManager() {
@@ -153,6 +169,6 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
     // return AutoBuilder.followPath(path).beforeStarting(() -> {drivetrainSys.setOdometryPosition(path.getPreviewStartingHolonomicPose());});
-    return null;
+    return new PathlessAutoTest(shooterSys, drivetrainSys, intakeSys, visionSys);
   }
 }

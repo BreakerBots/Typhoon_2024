@@ -4,6 +4,8 @@
 
 package frc.robot.commands.intake;
 
+import com.pathplanner.lib.auto.NamedCommands;
+
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -20,16 +22,17 @@ public class IntakeFromGroundForShooter extends SequentialCommandGroup {
   /** Creates a new IntakeForShooter. */
   public IntakeFromGroundForShooter(Intake intake, Shooter shooter) {
     addCommands(
-      new ParallelCommandGroup(
-        intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true).andThen(
-          intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
-          new WaitUntilCommand(intake::hasNote)
-            .andThen(intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false))
-            .onlyWhile(()->{return !shooter.isAtAngleGoal();})
-        ),
-        new InstantCommand(() -> shooter.setState(ShooterState.STOW))
-        .andThen(new WaitUntilCommand(shooter::isAtAngleGoal))
-      ),
+      intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true),
+      // new ParallelCommandGroup(
+      //   intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true).andThen(
+      //     intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
+      //     new WaitUntilCommand(intake::hasNote)
+      //       .andThen(intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false))
+      //       .onlyWhile(()->{return !shooter.isAtAngleGoal();})
+      //   ),
+      //   new InstantCommand(() -> shooter.setState(ShooterState.STOW))
+      //   .andThen(new WaitUntilCommand(shooter::isAtAngleGoal))
+      // ),
       new InstantCommand(() -> shooter.setState(ShooterState.INTAKE_TO_SHOOTER_HANDOFF), shooter),
       intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
       new WaitUntilCommand(shooter::hasNote),

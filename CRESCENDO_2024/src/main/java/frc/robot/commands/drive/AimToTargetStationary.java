@@ -26,8 +26,9 @@ public class AimToTargetStationary extends Command {
   private Drive drive;
   private BreakerSwerveVelocityRequest velocityRequest;
   public AimToTargetStationary(Shooter shooter, Drive drive) {
-    anglePID = new ProfiledPIDController(2.8, 0.0, 0.1, new TrapezoidProfile.Constraints(2.0, 1.0));
-    anglePID.setTolerance(Math.toRadians(1.0), Math.toRadians(0.5));
+    anglePID = new ProfiledPIDController(1.6, 0.0, 0.1, new TrapezoidProfile.Constraints(2.0, 2.0));
+    anglePID.setTolerance(Math.toRadians(2.5), Math.toRadians(15.0));
+    anglePID.enableContinuousInput(-Math.PI, Math.PI);
     this.drive = drive;
     this.shooter = shooter;
     velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);
@@ -46,6 +47,7 @@ public class AimToTargetStationary extends Command {
   @Override
   public void execute() {
     FireingSolution fireingSolution = shooter.getActiveTargetFireingSolution();
+    System.out.println(fireingSolution.yaw());
     double omegaDemand = anglePID.calculate(drive.getOdometryPoseMeters().getRotation().getRadians(), fireingSolution.yaw().getRadians());
     drive.applyRequest(velocityRequest.withChassisSpeeds(new ChassisSpeeds(0.0, 0.0, omegaDemand)));
   }

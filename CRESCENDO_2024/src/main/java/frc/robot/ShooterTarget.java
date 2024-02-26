@@ -14,6 +14,7 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolableDouble;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolablePair;
 import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
@@ -55,6 +56,7 @@ public class ShooterTarget {
         Rotation2d deltaTransVecAng = deltaTrans.getAngle();
         double distance = drivetrainTrans.getDistance(targetTrans);
         BreakerVector2 fireingVec = fireingTable.getInterpolatedValue(distance).getFirst();
+        BreakerLog.recordOutput("Distance To Target", distance);
         return new FireingSolution(deltaTransVecAng, fireingVec);
     }
 

@@ -69,9 +69,9 @@ public class BreakerProTalonFXSwerveModuleAngleMotor extends BreakerGenericSwerv
         }
 
         turnConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        turnConfig.CurrentLimits.SupplyCurrentLimit = config.getSupplyCurrentLimit();
-        turnConfig.CurrentLimits.SupplyCurrentThreshold = config.getSupplyCurrentLimit();
-        turnConfig.CurrentLimits.SupplyTimeThreshold = 1.5;
+        turnConfig.CurrentLimits.SupplyCurrentLimit = 24;
+        turnConfig.CurrentLimits.SupplyCurrentThreshold = 40;
+        turnConfig.CurrentLimits.SupplyTimeThreshold = 0.1;
         turnConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         Optional<Double> outputRampPeriod = config.getOutputRampPeriod();
         if (outputRampPeriod.isPresent()) {

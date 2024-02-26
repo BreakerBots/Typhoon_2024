@@ -202,12 +202,14 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
         public Optional<BreakerEstimatedPose> getEstimatedPose(PoseOrigin origin) {
             Optional<EstimatedRobotPose> pvEstPoseOpt = poseEstimator.update();
             Optional<PoseCordinateSystem> chordSys = Optional.empty();
-            trackedTargets = pvEstPoseOpt.get().targetsUsed;
+            trackedTargets.clear();
             if (pvEstPoseOpt.isPresent()) {
                chordSys = origin.getCordinateSystem();
+                trackedTargets = pvEstPoseOpt.get().targetsUsed;
             } else {
                 return Optional.empty();
             }
+           
             if (chordSys.isPresent()) {
                Pose3d pos = chordSys.get().fromGlobal(pvEstPoseOpt.get().estimatedPose);
                BreakerEstimatedPose estPose = new BreakerEstimatedPose(pos,pvEstPoseOpt.get().timestampSeconds, chordSys.get(), pvFiducialTargetsToApriltagArray(pvEstPoseOpt.get().targetsUsed));

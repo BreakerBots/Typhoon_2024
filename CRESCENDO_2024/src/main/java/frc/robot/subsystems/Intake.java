@@ -70,8 +70,8 @@ public class Intake extends SubsystemBase {
 
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
     rollerConfig.CurrentLimits.SupplyCurrentLimit = 60;
-    rollerConfig.CurrentLimits.SupplyCurrentThreshold = 100;
-    rollerConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
+    rollerConfig.CurrentLimits.SupplyCurrentThreshold = 180;
+    rollerConfig.CurrentLimits.SupplyTimeThreshold = 1.0;
 
     rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     rollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;

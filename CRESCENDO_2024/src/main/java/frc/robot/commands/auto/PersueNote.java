@@ -6,6 +6,7 @@ package frc.robot.commands.auto;
 
 import java.util.Optional;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -27,8 +28,16 @@ public class PersueNote extends Command {
   private Drive drivetrain;
   private Intake intake;
   private double persuitVel;
-  public PersueNote() {
+  private boolean lock = false;
+  public PersueNote(Vision vision, Intake intake, Drive drivetrain) {
+    anglePID = new PIDController(0.05, 0.0, 0.01);
     velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);
+    this.drivetrain = drivetrain;
+    this.intake = intake;
+    this.vision = vision;
+    bestNoteTarget = Optional.empty();
+    persuitVel = 0.5;
+    addRequirements(intake, drivetrain);
   }
 
   // Called when the command is initially scheduled.
@@ -36,24 +45,31 @@ public class PersueNote extends Command {
   public void initialize() {
     anglePID.reset();
     updateVision();
+    lock = false;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     updateVision();
-    if (bestNoteTarget.isPresent()) {
+    ChassisSpeeds speeds = new ChassisSpeeds();
+    speeds.vxMetersPerSecond = persuitVel;
+    if (bestNoteTarget.isPresent() && !lock) {
       LimelightTarget_Detector tgt = bestNoteTarget.get();
-      ChassisSpeeds speeds = new ChassisSpeeds();
-      speeds.vxMetersPerSecond = persuitVel;
-      if (!(tgt.ty <= -15.0)) {
-        speeds.omegaRadiansPerSecond = anglePID.calculate(tgt.tx, 0.0);
+      if (!(tgt.ty <= -17.0) || Math.abs(tgt.tx) >= 4.0) {
+        speeds.omegaRadiansPerSecond = MathUtil.clamp(anglePID.calculate(tgt.tx, 0.0), -0.5, 0.5);
         velocityRequest.withHeadingCorrectionEnabled(false);
       } else {
+        if (tgt.ty <= -17.0) {
+          lock = true;
+        }
+        speeds.omegaRadiansPerSecond = 0.0;
         velocityRequest.withHeadingCorrectionEnabled(true);
       }
-      drivetrain.applyRequest(velocityRequest.withChassisSpeeds(speeds));
+    } else {
+      speeds.omegaRadiansPerSecond = 0.0;
     }
+    drivetrain.applyRequest(velocityRequest.withChassisSpeeds(speeds));
   }
 
   private void updateVision() {
@@ -62,14 +78,14 @@ public class PersueNote extends Command {
       if (bestNoteTarget.isPresent()) {
         LimelightTarget_Detector prevTgt = bestNoteTarget.get();
         LimelightTarget_Detector idealTgt = detectorTargets[0];
-        double idealDeltaTx = Math.abs(prevTgt.tx - idealTgt.tx);
-        for (LimelightTarget_Detector tgt : detectorTargets) {
-          double deltaTx = Math.abs(prevTgt.tx - tgt.tx);
-          if (deltaTx < idealDeltaTx) {
-            idealTgt = tgt;
-            idealDeltaTx = deltaTx;
-          }
-        }
+        // double idealDeltaTx = Math.abs(prevTgt.tx - idealTgt.tx);
+        // for (LimelightTarget_Detector tgt : detectorTargets) {
+        //   double deltaTx = Math.abs(prevTgt.tx - tgt.tx);
+        //   if (deltaTx < idealDeltaTx) {
+        //     idealTgt = tgt;
+        //     idealDeltaTx = deltaTx;
+        //   }
+        // }
         bestNoteTarget = Optional.of(idealTgt);
       } else {
          bestNoteTarget = Optional.of(detectorTargets[0]);

@@ -9,6 +9,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerGenericGamepad;
@@ -221,6 +222,14 @@ public class BreakerTeleopSwerveDriveController extends Command {
       percentSpeeds.vxPercentOfMax = controller.getLeftThumbstick().getY();
       percentSpeeds.vyPercentOfMax = controller.getLeftThumbstick().getX();
       percentSpeeds.omegaPercentOfMax = controller.getRightThumbstick().getX();
+    }
+
+    Optional<Alliance> allyOpt = DriverStation.getAlliance();
+    if (allyOpt.isPresent()) {
+      if (allyOpt.get() == Alliance.Red) {
+        percentSpeeds.vxPercentOfMax *= -1;
+        percentSpeeds.vyPercentOfMax *= -1;
+      }
     }
 
     // Speed curves are applied if overrides are not active.

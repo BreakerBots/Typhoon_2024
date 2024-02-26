@@ -82,6 +82,8 @@ public class Robot extends BreakerTimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    RobotContainer.leftClimbSys.setDutyCycle(RobotContainer.controllerSys.getLeftTrigger().get() * (RobotContainer.controllerSys.getButtonY().getAsBoolean() ? -1 : 1));
+    RobotContainer.rigtClimbSys.setDutyCycle(RobotContainer.controllerSys.getRightTrigger().get() * (RobotContainer.controllerSys.getButtonY().getAsBoolean() ? -1 : 1));
   }
 
   @Override
