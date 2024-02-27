@@ -152,8 +152,8 @@ public class RobotContainer {
         new BreakerRobotNameConfig(),
         //  .addRobot(MiscConstants.ROBORIO_SN, "Plop"), 
         2024, 
-        "v1",
-        "Roman Abrahamson, Sebastian Rueda"
+        "v1.5",
+        "Roman Abrahamson, Sebastian Rueda, and Aiden Copiaco"
         )
       );
       robotConfig.setLogFilePaths("/U/logs", "");

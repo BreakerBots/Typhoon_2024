@@ -40,8 +40,8 @@ public class ShooterTarget {
         Optional<Alliance> allainceOpt =  DriverStation.getAlliance();
         if (allainceOpt.isPresent()) {
             if (allainceOpt.get() == Alliance.Red) {
-                final double halfFieldWidth = Constants.FieldConstants.FIELD_WIDTH/2.0;
-                double deltaX = halfFieldWidth -  blueTargetPoint.getX();
+                final double halfFieldWidth = 16.541/2.0;//Constants.FieldConstants.FIELD_WIDTH
+                double deltaX = halfFieldWidth - -0.29209999; //blueTargetPoint.getX();
                 double redX = halfFieldWidth + deltaX;
                 return new Translation3d(redX, blueTargetPoint.getY(), blueTargetPoint.getZ());
             }

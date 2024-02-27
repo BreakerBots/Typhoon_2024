@@ -55,7 +55,7 @@ public final class Constants {
     public static final String DRIVE_CANIVORE_NAME = "drive_canivore";
   }
   public static class FieldConstants {
-    public static final double FIELD_WIDTH = 16.4846;
+    public static final double FIELD_WIDTH = 16.541;//16.4846
     public static final Translation3d BLUE_SPEAKER_AIM_POINT = new Translation3d(-0.038099999999999995, 5.547867999999999, 1.4511020000000001).plus(new Translation3d(Units.inchesToMeters(-10.0), Units.inchesToMeters(0), Units.inchesToMeters(30.322)));
     public static final Translation3d RED_SPEAKER_AIM_POINT = new Translation3d( 16.579342, 5.547867999999999, 1.4511020000000001).plus(new Translation3d(Units.inchesToMeters(10.0), Units.inchesToMeters(0), Units.inchesToMeters(30.322)));
   }
@@ -108,10 +108,10 @@ public final class Constants {
 
     private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
        BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fm = new BreakerInterpolatingTreeMap<>();
-       fm.put(1.197, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(52.2), 80.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(2.500, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(36.5), 85.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(3.885, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 92.5), new BreakerInterpolableDouble(0.0)));
-       fm.put(6.18, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.0), 100.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(1.197 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(52.2), 80.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(2.500 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(36.5), 85.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(3.885 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 92.5), new BreakerInterpolableDouble(0.0)));
+       fm.put(6.18 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.0), 100.0), new BreakerInterpolableDouble(0.0)));
       return fm;
     } 
   }
