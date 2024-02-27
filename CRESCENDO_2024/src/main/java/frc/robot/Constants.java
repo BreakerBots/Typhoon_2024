@@ -6,7 +6,7 @@ package frc.robot;
 
 import java.util.function.Supplier;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
@@ -24,13 +24,14 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
+import frc.robot.ShooterTarget.FireingSolution;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread.BreakerSwerveOdometryConfig;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveConfig;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.BreakerPathplannerSwerveAutoConfig.BreakerPathplannerStandardSwerveAutoConfig;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDriveConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule.BreakerSwerveMotorPIDConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder.BreakerSwerveModuleConfig;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
@@ -39,7 +40,6 @@ import frc.robot.BreakerLib.util.math.BreakerUnits;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolableDouble;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolablePair;
 import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
-import frc.robot.ShooterTarget.FireingSolution;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -231,6 +231,19 @@ public final class Constants {
       public static final double HEADING_COMPENSATION_PID_KD = 0.0;
       public static final PIDController HEADING_COMPENSATION_PID = new PIDController(HEADING_COMPENSATION_PID_KP, HEADING_COMPENSATION_PID_KI, HEADING_COMPENSATION_PID_KD);
 
+    //heading snap constants
+    public static final double HEADING_SNAP_VEL_RAD_PER_SEC = 2*Math.PI;
+    public static final double HEADING_SNAP_ACCEL_RAD_PER_SEC_SQ = 10.0;
+    public static final double HEADING_SNAP_POSITIONAL_TOLERENCE_RAD = Math.toRadians(1.5);
+    public static final double HEADING_SNAP_VELOCITY_TOLERENCE_RAD_PER_SEC = Math.toRadians(9999);
+    public static final double HEADING_SNAP_TIMEOUT_SEC = 5.0;
+    public static final double HEADING_SNAP_PID_KP = 3.5;
+    public static final double HEADING_SNAP_PID_KI = 0.0;
+    public static final double HEADING_SNAP_PID_KD = 0.0;
+    public static final Constraints HEADING_SNAP_PID_CONSTRAINTS = new Constraints(HEADING_SNAP_VEL_RAD_PER_SEC, HEADING_SNAP_ACCEL_RAD_PER_SEC_SQ);
+    public static final ProfiledPIDController HEADING_SNAP_PID = new ProfiledPIDController(HEADING_SNAP_PID_KP,  HEADING_SNAP_PID_KI,  HEADING_SNAP_PID_KD, HEADING_SNAP_PID_CONSTRAINTS);
+
+
     //Slow mode constants
     public static final double SLOW_MODE_LINEAR_MULTIPLIER = 0.5;
     public static final double SLOW_MODE_TURN_MULTIPLIER = 0.5;
@@ -272,5 +285,9 @@ public final class Constants {
 
     
     public static final BreakerSwerveVelocityRequest MOVE_TO_POSE_REQUEST = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.FIELD_RELATIVE_WITHOUT_OFFSET, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);
+  }
+
+  public static class AutoConstants {
+    public static final PathConstraints PATHFIND_TO_AUTOPATH_START_CONSTRAINTS = new PathConstraints(1.5, 2.5, DriveConstants.MAX_ANGULAR_VEL, 5.0);
   }
 }
