@@ -4,31 +4,24 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.VisionConstants.APRIL_TAG_FIELD_LAYOUT;
+import static frc.robot.Constants.VisionConstants.BACK_CAMERA_NAME;
+import static frc.robot.Constants.VisionConstants.BACK_CAMERA_TRANS;
+import static frc.robot.Constants.VisionConstants.FRONT_CAMERA_NAME;
+import static frc.robot.Constants.VisionConstants.FRONT_CAMERA_TRANS;
+import static frc.robot.Constants.VisionConstants.LIMELIGHT_NAME;
+import static frc.robot.Constants.VisionConstants.LIMELIGHT_TRANS;
+
+import java.util.Optional;
+
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.vision.limelight.BreakerLimelight;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera.BreakerPhotonVisionPoseEstimator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPose;
-import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPoseSource;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerPoseEstimationStandardDevationCalculator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
-import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.subsystems.Drive;
-import static frc.robot.Constants.VisionConstants.*;
-
-import java.util.List;
-import java.util.Optional;
-
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
-import org.photonvision.targeting.PhotonTrackedTarget;
-
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.estimator.PoseEstimator;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** Add your docs here. */
 public class Vision extends SubsystemBase {

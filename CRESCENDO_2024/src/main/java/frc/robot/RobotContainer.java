@@ -6,48 +6,34 @@ package frc.robot;
 
 import java.util.HashMap;
 
-import com.pathplanner.lib.auto.NamedCommands;
-
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
-import frc.robot.ShooterTarget.FireingSolution;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalogDeadbandConfig;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
-import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
 import frc.robot.BreakerLib.util.math.functions.BreakerLinearizedConstrainedExponential;
-import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter;
-import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter.UnitlessChassisSpeeds;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
-import frc.robot.commands.HandoffTest;
-import frc.robot.commands.HandoffToPastaRollerTest;
-import frc.robot.commands.OrbitNote;
-import frc.robot.commands.ScoreInAmp;
-import frc.robot.commands.ShooterTest;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.PathlessAutoTest;
 import frc.robot.commands.auto.PersueNote;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
-import frc.robot.commands.handoffs.HandoffFromShooterToIntake;
 import frc.robot.commands.intake.ExtakeNote;
-import frc.robot.commands.intake.IntakeFromGround;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.PastaRoller;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter.ShooterState;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
