@@ -8,7 +8,6 @@ import java.util.HashMap;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
@@ -24,8 +23,6 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.HandoffToPastaRollerTest;
 import frc.robot.commands.StationaryShootFromAnywhere;
-import frc.robot.commands.auto.PathlessAutoTest;
-import frc.robot.commands.auto.PersueNote;
 import frc.robot.commands.auto.ThreeNoteSpeakerTest;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.intake.ExtakeNote;

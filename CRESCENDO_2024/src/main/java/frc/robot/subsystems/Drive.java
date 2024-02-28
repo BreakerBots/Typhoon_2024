@@ -38,18 +38,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
-import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
-import frc.robot.BreakerLib.physics.vector.BreakerVector2;
-import frc.robot.BreakerLib.position.odometry.swerve.BreakerPhoenixTimesyncSwerveOdometryThread;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread;
-import frc.robot.BreakerLib.position.odometry.swerve.BreakerPhoenixTimesyncSwerveOdometryThread.CTREGyroYawStatusSignals;
-import frc.robot.BreakerLib.position.odometry.swerve.BreakerPhoenixTimesyncSwerveOdometryThread.CTRESwerveModuleStatusSignals;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModule;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.BreakerSwerveModuleBuilder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.encoders.BreakerSwerveCANcoder;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.motors.drive.ctre.BreakerProTalonFXSwerveModuleDriveMotor.ProTalonFXControlOutputUnits;
-import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwervePercentSpeedRequest;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 
 /** Add your docs here. */

@@ -23,7 +23,6 @@ import static frc.robot.Constants.ShooterConstants.SHOOTER_IDLE;
 import static frc.robot.Constants.ShooterConstants.SHOOTER_PIVOT_ID;
 import static frc.robot.Constants.ShooterConstants.STOW_ANGLE;
 
-import java.time.InstantSource;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -44,9 +43,6 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShooterTarget.FireingSolution;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;

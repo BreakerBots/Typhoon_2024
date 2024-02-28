@@ -4,40 +4,32 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import static frc.robot.Constants.IntakeConstants.PIVIOT_EXTENDED_THRESHOLD;
+import static frc.robot.Constants.IntakeConstants.PIVIOT_RETRACTED_THRESHOLD;
+import static frc.robot.Constants.IntakeConstants.PIVOT_ENCODER_ID;
+import static frc.robot.Constants.IntakeConstants.PIVOT_ENCODER_OFFSET;
+import static frc.robot.Constants.IntakeConstants.PIVOT_LEFT_ID;
+import static frc.robot.Constants.IntakeConstants.PIVOT_RIGHT_ID;
+import static frc.robot.Constants.IntakeConstants.ROLLER_MOTOR_ID;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
-import com.ctre.phoenix6.signals.ForwardLimitSourceValue;
-import com.ctre.phoenix6.signals.ForwardLimitTypeValue;
-import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.ReverseLimitSourceValue;
-import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
-import com.ctre.phoenix6.signals.ReverseLimitValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
-
-import static frc.robot.Constants.IntakeConstants.*;
-
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class Intake extends SubsystemBase {
   private TalonFX rollerMotor;  
