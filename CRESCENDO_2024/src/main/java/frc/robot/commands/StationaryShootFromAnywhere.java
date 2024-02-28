@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.commands.drive.AimToTargetStationary;
 import frc.robot.commands.util.WaitUntilCommndWithFallingEdgeDelayAndTimeout;
 import frc.robot.subsystems.Drive;
@@ -25,7 +26,7 @@ public class StationaryShootFromAnywhere extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> shooter.setActiveTarget(RobotContainer.SPEAKER_TARGET::getFireingSolution)),
-      new AimToTargetStationary(shooter, drive),
+      new AimToTargetStationary(shooter, drive).onlyWhile(RobotContainer.getGlobalOverride().negate()),
       new InstantCommand(() -> shooter.setState(ShooterState.SHOOT_TO_TARGET)),
       new WaitUntilCommndWithFallingEdgeDelayAndTimeout(() -> {return !shooter.hasNote();}, 0.5, 3.0),
       new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE))

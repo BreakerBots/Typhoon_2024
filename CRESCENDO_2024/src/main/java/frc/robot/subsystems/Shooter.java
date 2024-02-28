@@ -96,12 +96,12 @@ public class Shooter extends SubsystemBase {
     config.CurrentLimits.SupplyTimeThreshold = 3.0;
     config.CurrentLimits.StatorCurrentLimitEnable = false;
     flywheelRight.getConfigurator().apply(config);
-    config.Slot0.kP = 0.12;
+    config.Slot0.kP = 0.005;
     config.Slot0.kI = 0.0;
-    config.Slot0.kD = 0.0;
-    config.Slot0.kV = 0.118;
-    config.Slot0.kS = 0.19;
-    config.Slot0.kA = 0.0;
+    config.Slot0.kD = 0.01;
+    config.Slot0.kV = 0.1168;
+    config.Slot0.kS = 0.17;
+    config.Slot0.kA = 0.1168;
     flywheelLeft.getConfigurator().apply(config);
     flywheelVelRequest = new VelocityVoltage(0.0);
     flywheelFollowRequest = new Follower(LEFT_FLYWHEEL_ID, true);
@@ -171,7 +171,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtFlywheelGoal() {
-    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 0.1) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 0.1) ;//5.0, 0.5
+    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 0.2) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 0.2) ;//5.0, 0.5
   }
 
 

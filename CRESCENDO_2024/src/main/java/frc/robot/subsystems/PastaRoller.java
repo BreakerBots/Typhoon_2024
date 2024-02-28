@@ -32,7 +32,7 @@ public class PastaRoller extends SubsystemBase {
   }
 
   public static enum PastaRollerState {
-    EXTAKE(1.0),
+    EXTAKE(0.45),
     NEUTRAL(0.0);
     private double dutyCycle;
     private PastaRollerState(double dutyCycle) {

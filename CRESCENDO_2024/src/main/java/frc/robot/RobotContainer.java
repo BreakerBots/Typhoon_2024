@@ -22,11 +22,14 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
+import frc.robot.commands.HandoffToPastaRollerTest;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.PathlessAutoTest;
 import frc.robot.commands.auto.PersueNote;
+import frc.robot.commands.auto.ThreeNoteSpeakerTest;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.intake.ExtakeNote;
+import frc.robot.commands.intake.IntakeFromGround;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
@@ -46,6 +49,7 @@ public class RobotContainer {
   private static final Drive drivetrainSys = new Drive(imuSys);
   public static final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
+  private static final Trigger globalOverride = controllerSys.getStartButton() ;
   private final Vision visionSys = new Vision(drivetrainSys);
 
   private final Intake intakeSys = new Intake();
@@ -90,20 +94,20 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
+    //controllerSys.getButtonA().onTrue(new InstantCommand(drivetrainSys::resetOdometryRotation));
     //controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
     //controllerSys.getButtonB().onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
     //  controllerSys.getButtonX().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
 
-
-    //controllerSys.getButtonY().onTrue(new HandoffToPastaRollerTest(intakeSys, pastaRollerSys));
+    controllerSys.getButtonA().onTrue(new IntakeFromGround(intakeSys));
+    controllerSys.getButtonY().onTrue(new HandoffToPastaRollerTest(intakeSys, pastaRollerSys));
 
     controllerSys.getLeftBumper().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false));
     controllerSys.getRightBumper().onTrue(intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false));
 
     //controllerSys.getButtonB().toggleOnTrue(new OrbitNote(drivetrainSys, visionSys, controllerSys));
     controllerSys.getButtonB().onTrue(new ExtakeNote(intakeSys));
-    controllerSys.getButtonY().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_INTAKEING, true).andThen(new PersueNote(visionSys, intakeSys, drivetrainSys), intakeSys.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true)));
+    //controllerSys.getButtonY().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_INTAKEING, true).andThen(new PersueNote(visionSys, intakeSys, drivetrainSys), intakeSys.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true)));
 
     controllerSys.getButtonX()
       .and(intakeSys::hasNote)
@@ -122,6 +126,10 @@ public class RobotContainer {
       .and(() -> {return shooterSys.getState() != ShooterState.TRACK_TARGET;})
       .onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
 
+  }
+
+  public static Trigger getGlobalOverride() {
+    return globalOverride;
   }
 
   private void registerNamedCommands() {
@@ -155,6 +163,6 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
     // return AutoBuilder.followPath(path).beforeStarting(() -> {drivetrainSys.setOdometryPosition(path.getPreviewStartingHolonomicPose());});
-    return new PathlessAutoTest(shooterSys, drivetrainSys, intakeSys, visionSys);
+    return new ThreeNoteSpeakerTest(shooterSys, drivetrainSys, intakeSys, visionSys);
   }
 }
