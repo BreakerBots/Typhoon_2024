@@ -23,6 +23,10 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.HandoffToPastaRollerTest;
 import frc.robot.commands.StationaryShootFromAnywhere;
+import frc.robot.commands.auto.CenterShoot4InWing;
+import frc.robot.commands.auto.CenterThenGoDeepShoot3;
+import frc.robot.commands.auto.SourceShoot3GoToCenter;
+import frc.robot.commands.auto.ThreeNoteAgainstSpeaker;
 import frc.robot.commands.auto.ThreeNoteSpeakerTest;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.intake.ExtakeNote;
@@ -160,6 +164,10 @@ public class RobotContainer {
     // An example command will be run in autonomous
     // PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
     // return AutoBuilder.followPath(path).beforeStarting(() -> {drivetrainSys.setOdometryPosition(path.getPreviewStartingHolonomicPose());});
-    return new ThreeNoteSpeakerTest(shooterSys, drivetrainSys, intakeSys, visionSys);
+
+    //return new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys);
+    //return new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys);
+    //return new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys);
+    return new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys);
   }
 }

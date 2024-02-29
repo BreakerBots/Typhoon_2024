@@ -30,13 +30,13 @@ public class PersueNote extends Command {
   private double persuitVel;
   private boolean lock = false;
   public PersueNote(Vision vision, Intake intake, Drive drivetrain) {
-    anglePID = new PIDController(0.05, 0.0, 0.01);
+    anglePID = new PIDController(0.5, 0.0, 0.01);
     velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);
     this.drivetrain = drivetrain;
     this.intake = intake;
     this.vision = vision;
     bestNoteTarget = Optional.empty();
-    persuitVel = 0.5;
+    persuitVel = 1.0;
     addRequirements(intake, drivetrain);
   }
 
