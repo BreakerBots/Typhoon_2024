@@ -43,6 +43,7 @@ import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShooterTarget.FireingSolution;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
@@ -229,11 +230,9 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     BreakerLog.recordOutput("Shooter Has Note", hasNote());
-    // if (RobotState.isDisabled()) {
-    //   hopper.set(0.0);
-    //   flywheelLeft.set(0.0);
-    //   flywheelRight.set(0.0);
-    // }
+    if (RobotState.isDisabled()) {
+      hopper.set(0.0);
+    }
     // flywheelLeft.setControl(flywheelVelRequest.withVelocity(30));
     // flywheelRight.setControl(flywheelFollowRequest);
     latestFireingSolution = target.get();
