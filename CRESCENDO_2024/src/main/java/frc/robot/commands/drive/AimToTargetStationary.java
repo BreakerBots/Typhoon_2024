@@ -28,7 +28,7 @@ public class AimToTargetStationary extends Command {
   private BreakerSwerveVelocityRequest velocityRequest;
   private final Timer timer = new Timer();
   public AimToTargetStationary(Shooter shooter, Drive drive) {
-    anglePID = new ProfiledPIDController(2.0, 0.0, 0.1, new TrapezoidProfile.Constraints(5.0, 4.0));
+    anglePID = new ProfiledPIDController(3.0, 0.0, 0.1, new TrapezoidProfile.Constraints(6.0, 6.0));
     anglePID.setTolerance(Math.toRadians(1.0), Math.toRadians(20.0));
     anglePID.enableContinuousInput(-Math.PI, Math.PI);
     this.drive = drive;
@@ -75,6 +75,6 @@ public class AimToTargetStationary extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (shooter.isAtGoal() && anglePID.atSetpoint()) || timer.hasElapsed(3.0);
+    return (shooter.isAtGoal() && anglePID.atSetpoint()) || timer.hasElapsed(2.0);
   }
 }

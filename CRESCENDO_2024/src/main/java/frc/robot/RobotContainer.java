@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
+import frc.robot.BreakerLib.auto.BreakerAutoPath;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalogDeadbandConfig;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
@@ -127,8 +128,14 @@ public class RobotContainer {
       .and(() -> intakeSys.getState() == IntakeState.EXTENDED_INTAKEING)
       .toggleOnTrue(
         new OrbitNote(drivetrainSys, visionSys, controllerSys)
-        .onlyWhile(() -> !(intakeSys.hasNote() || shooterSys.hasNote()))
+        .onlyWhile(() -> !(intakeSys.hasNote() || shooterSys.hasNote()) && (intakeSys.getState() == IntakeState.EXTENDED_EXTAKEING))
       );
+
+      // controllerSys.getButtonY()
+      //   .and(() -> shooterSys.hasNote())
+      //   .and(() -> !intakeSys.hasNote())
+      //   .debounce(0.1, DebounceType.kBoth)
+      //   .onTrue(new ScoreInAmpWithShooter(shooterSys));
 
     controllerSys.getButtonY()
       .and(() -> shooterSys.hasNote())
@@ -187,6 +194,12 @@ public class RobotContainer {
         )
       );
       robotConfig.setLogFilePaths("/U/logs", "");
+      robotConfig.setAutoPaths(
+        new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys))
+      );
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
@@ -203,6 +216,6 @@ public class RobotContainer {
     //return new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys);
     //return new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys);
     //return new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys);
-    return new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys);
+    return BreakerRobotManager.getSelectedAutoPath();
   }
 }

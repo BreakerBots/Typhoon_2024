@@ -32,8 +32,8 @@ public class ClimbArm extends SubsystemBase {
     dutyCycleRequest = new DutyCycleOut(0.0);
     positionRequest = new MotionMagicVoltage(0.0);
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits.SupplyCurrentLimit = 120;
-    config.CurrentLimits.SupplyCurrentThreshold = 200;
+    config.CurrentLimits.SupplyCurrentLimit = 10;
+    config.CurrentLimits.SupplyCurrentThreshold = 30;
     config.CurrentLimits.SupplyTimeThreshold = 3.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.Slot0.kP = 0.0;

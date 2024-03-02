@@ -4,13 +4,7 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.VisionConstants.APRIL_TAG_FIELD_LAYOUT;
-import static frc.robot.Constants.VisionConstants.BACK_CAMERA_NAME;
-import static frc.robot.Constants.VisionConstants.BACK_CAMERA_TRANS;
-import static frc.robot.Constants.VisionConstants.FRONT_CAMERA_NAME;
-import static frc.robot.Constants.VisionConstants.FRONT_CAMERA_TRANS;
-import static frc.robot.Constants.VisionConstants.LIMELIGHT_NAME;
-import static frc.robot.Constants.VisionConstants.LIMELIGHT_TRANS;
+import static frc.robot.Constants.VisionConstants.*;
 
 import java.util.Optional;
 
@@ -34,13 +28,13 @@ public class Vision extends SubsystemBase {
     public Vision(Drive drivetrain) {
         limelight = new BreakerLimelight(LIMELIGHT_NAME, LIMELIGHT_TRANS);
         frontCam = new BreakerPhotonCamera(FRONT_CAMERA_NAME, FRONT_CAMERA_TRANS);
-        // leftCam = new BreakerPhotonCamera(LEFT_CAMERA_NAME, LEFT_CAMERA_TRANS);
-        // rightCam = new BreakerPhotonCamera(RIGHT_CAMERA_NAME, RIGHT_CAMERA_TRANS);
+        leftCam = new BreakerPhotonCamera(LEFT_CAMERA_NAME, LEFT_CAMERA_TRANS);
+        rightCam = new BreakerPhotonCamera(RIGHT_CAMERA_NAME, RIGHT_CAMERA_TRANS);
         backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
 
         frontPosSrc = frontCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
-        // leftPosSrc = leftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
-        // rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
+        leftPosSrc = leftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
+        rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
         backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
         this.drivetrain = drivetrain;
     }
@@ -61,6 +55,18 @@ public class Vision extends SubsystemBase {
         Optional<BreakerEstimatedPose> backPosOpt = backPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
         if (backPosOpt.isPresent()) {
             drivetrain.getOdometryThread().addVisionPoseEstimate(backPosOpt.get());
+        }
+
+
+        Optional<BreakerEstimatedPose> leftPosOpt = leftPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
+        if (leftPosOpt.isPresent()) {
+            drivetrain.getOdometryThread().addVisionPoseEstimate(leftPosOpt.get());
+        }
+
+        
+        Optional<BreakerEstimatedPose> rightPosOpt = rightPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
+        if (rightPosOpt.isPresent()) {
+            drivetrain.getOdometryThread().addVisionPoseEstimate(rightPosOpt.get());
         }
         
         // Optional<BreakerEstimatedPose> estPosOpt = backPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
