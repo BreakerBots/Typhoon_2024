@@ -61,7 +61,7 @@ public class RobotContainer {
   public static final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private static final Trigger globalOverride = controllerSys.getStartButton() ;
-  private final Vision visionSys = new Vision(drivetrainSys);
+  private final Vision visionSys = new Vision(drivetrainSys, false);
 
   private final Intake intakeSys = new Intake();
   private final Shooter shooterSys = new Shooter(Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_SOLUTION_SUPPLIER);

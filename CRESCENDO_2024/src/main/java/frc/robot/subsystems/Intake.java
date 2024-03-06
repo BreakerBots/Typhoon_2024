@@ -126,8 +126,8 @@ public class Intake extends SubsystemBase {
   }
 
   public static enum IntakePivotState {
-    EXTENDED(0.1),
-    RETRACTED(-0.15),
+    EXTENDED(0.1),//0.1
+    RETRACTED(-0.15),//-0.15
     NEUTRAL(0.0);
     private double motorDutyCycle;
     private IntakePivotState(double motorDutyCycle) {

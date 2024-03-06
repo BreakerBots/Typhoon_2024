@@ -181,24 +181,24 @@ public interface BreakerEstimatedPoseSourceProvider {
         }  
     }
 
-    public static class BreakerPoseEstimationStandardDevationCalculator implements Function<BreakerEstimatedPose, Matrix<N3, N1>> {
+    public static class BreakerPoseEstimationStandardDeviationCalculator implements Function<BreakerEstimatedPose, Matrix<N3, N1>> {
 
         private Matrix<N3, N1> singleTagStdDevs;
         private Matrix<N3, N1> multiTagStdDevs;
         private double maxDist, distanceScaleFactor;
 
-        public BreakerPoseEstimationStandardDevationCalculator() {
-            this(VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1), 4.0, 30.0);
+        public BreakerPoseEstimationStandardDeviationCalculator() {
+            this(VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
         }
 
-        public BreakerPoseEstimationStandardDevationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs) {
+        public BreakerPoseEstimationStandardDeviationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs) {
             this(singleTagStdDevs, multiTagStdDevs, 4.0, 30.0);
         }
 
-        public BreakerPoseEstimationStandardDevationCalculator(double maxDist, double distanceScaleFactor) {
+        public BreakerPoseEstimationStandardDeviationCalculator(double maxDist, double distanceScaleFactor) {
             this(VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1), maxDist, distanceScaleFactor);
         }
-        public BreakerPoseEstimationStandardDevationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs, double maxDist, double distanceScaleFactor) {
+        public BreakerPoseEstimationStandardDeviationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs, double maxDist, double distanceScaleFactor) {
             this.multiTagStdDevs = multiTagStdDevs;
             this.singleTagStdDevs = singleTagStdDevs;
             this.maxDist = maxDist;

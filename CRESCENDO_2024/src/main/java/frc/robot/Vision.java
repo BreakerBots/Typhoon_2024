@@ -6,14 +6,18 @@ package frc.robot;
 
 import static frc.robot.Constants.VisionConstants.*;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.vision.limelight.BreakerLimelight;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera.BreakerPhotonVisionPoseEstimator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPose;
-import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerPoseEstimationStandardDevationCalculator;
+import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerPoseEstimationStandardDeviationCalculator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
 import frc.robot.subsystems.Drive;
 
@@ -23,59 +27,100 @@ public class Vision extends SubsystemBase {
     public BreakerPhotonCamera frontCam, leftCam, rightCam, backCam;
     private BreakerPhotonVisionPoseEstimator frontPosSrc, leftPosSrc, rightPosSrc, backPosSrc;
     private Drive drivetrain;
-   // private PhotonPoseEstimator poseEst;
+    private boolean odometryHasBeenSeededCashed;
+    private BreakerPhotonVisionPoseEstimator[] poseSources;
+    private ArrayList<BreakerEstimatedPose> estimatedPoses;
+    private boolean enable;
 
-    public Vision(Drive drivetrain) {
+    public Vision(Drive drivetrain, boolean enable) {
         limelight = new BreakerLimelight(LIMELIGHT_NAME, LIMELIGHT_TRANS);
         frontCam = new BreakerPhotonCamera(FRONT_CAMERA_NAME, FRONT_CAMERA_TRANS);
         leftCam = new BreakerPhotonCamera(LEFT_CAMERA_NAME, LEFT_CAMERA_TRANS);
         rightCam = new BreakerPhotonCamera(RIGHT_CAMERA_NAME, RIGHT_CAMERA_TRANS);
         backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
 
-        frontPosSrc = frontCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
-        leftPosSrc = leftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
-        rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
-        backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDevationCalculator());
+        frontPosSrc = frontCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        leftPosSrc = leftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        poseSources = new BreakerPhotonVisionPoseEstimator[]{frontPosSrc, backPosSrc, leftPosSrc, rightPosSrc};
+        estimatedPoses = new ArrayList<>();
         this.drivetrain = drivetrain;
+        odometryHasBeenSeededCashed = false;
+        this.enable = enable;
     }
 
     @Override
     public void periodic() {
-        // Optional<EstimatedRobotPose> posOpt = poseEst.update();
-        // if (posOpt.isPresent()) {
-        //     BreakerLog.recordOutput("NewVisPos", Pose2d.struct, posOpt.get().estimatedPose.toPose2d());
-        // }
+        if (enable) {
+            Pose2d odometryRefPos = drivetrain.getOdometryPoseMeters();
+            estimatedPoses.clear();
 
-        Optional<BreakerEstimatedPose> frontPosOpt = frontPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
-        if (frontPosOpt.isPresent()) {
-            drivetrain.getOdometryThread().addVisionPoseEstimate(frontPosOpt.get());
+
+            if (!odometryHasBeenSeededCashed) {
+                if (drivetrain.getOdometryThread().hasBeenVisionSeeded()) {
+                    odometryHasBeenSeededCashed = true;
+                    for (BreakerPhotonVisionPoseEstimator est: poseSources) {
+                        est.getPoseEstimator().setMultiTagFallbackStrategy(PoseStrategy.CLOSEST_TO_REFERENCE_POSE);
+                    }
+                } else {
+                    odometryHasBeenSeededCashed = false;
+                }
+            }
+            
+
+            for (BreakerPhotonVisionPoseEstimator est: poseSources) {
+                if (odometryHasBeenSeededCashed) {
+                    est.getPoseEstimator().setReferencePose(odometryRefPos);
+                } 
+
+                Optional<BreakerEstimatedPose> posOpt = est.getEstimatedPose(PoseOrigin.ofGlobal());
+                if (posOpt.isPresent()) {
+                    for (int i = 0; i < estimatedPoses.size(); i++) {
+                        estimatedPoses.add(posOpt.get());
+                    }
+                    
+                }
+            }
+
+            sortByStandardDeviation(estimatedPoses);
+
+            for (BreakerEstimatedPose estPos: estimatedPoses) {
+                drivetrain.getOdometryThread().addVisionPoseEstimate(estPos);
+            }
         }
+    }
 
-        
-        Optional<BreakerEstimatedPose> backPosOpt = backPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
-        if (backPosOpt.isPresent()) {
-            drivetrain.getOdometryThread().addVisionPoseEstimate(backPosOpt.get());
+    private void sortByStandardDeviation(ArrayList<BreakerEstimatedPose> poses) {
+        int i, j;
+        BreakerEstimatedPose temp;
+        boolean swapped;
+
+        for (i = 0; i < poses.size() - 1; i++) {
+            swapped = false;
+            for (j = 0; j < poses.size() - i - 1; j++) {
+                BreakerEstimatedPose jEstpos = poses.get(j);
+                BreakerEstimatedPose j1Estpos = poses.get(j);
+
+                if (jEstpos.estimationStandardDevations.isPresent() && j1Estpos.estimationStandardDevations.isPresent()) {
+                    if (jEstpos.estimationStandardDevations.get().get(0, 2) < j1Estpos.estimationStandardDevations.get().get(0, 2)) {
+                        temp = poses.get(j);
+                        poses.set(poses.indexOf(jEstpos), j1Estpos);
+                        poses.set(poses.indexOf(j1Estpos), temp);
+                        swapped = true;
+                    }
+                }
+                // Nones get moved to front of list
+                else if (jEstpos.estimationStandardDevations.isPresent() && !j1Estpos.estimationStandardDevations.isPresent()) {
+                    temp = poses.get(j);
+                    poses.set(poses.indexOf(jEstpos), j1Estpos);
+                    poses.set(poses.indexOf(j1Estpos), temp);
+                    swapped = true;
+                }
+            }
+ 
+            if (swapped == false)
+                break;
         }
-
-
-        Optional<BreakerEstimatedPose> leftPosOpt = leftPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
-        if (leftPosOpt.isPresent()) {
-            drivetrain.getOdometryThread().addVisionPoseEstimate(leftPosOpt.get());
-        }
-
-        
-        Optional<BreakerEstimatedPose> rightPosOpt = rightPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
-        if (rightPosOpt.isPresent()) {
-            drivetrain.getOdometryThread().addVisionPoseEstimate(rightPosOpt.get());
-        }
-        
-        // Optional<BreakerEstimatedPose> estPosOpt = backPosSrc.getEstimatedPose(PoseOrigin.ofGlobal());
-        // if (estPosOpt.isPresent()) {
-        //     BreakerEstimatedPose estPos = estPosOpt.get();
-        //     BreakerLog.recordOutput("pose", Pose2d.struct, estPos.estimatedPose.toPose2d());
-        //     Matrix<N3, N1> devMatrix = estPos.estimationStandardDevations.get();
-        //     BreakerLog.recordOutput("StdDevs", new double[]{devMatrix.get(0, 0), devMatrix.get(1, 0), devMatrix.get(2, 0)});
-        // }
-        
     }
 }

@@ -192,7 +192,12 @@ public class BreakerPhotonCamera extends BreakerGenericDevice implements Breaker
             this.stdDevCalculation = stdDevCalculation;
             PoseStrategy poseStrategy = (pnpOnCoprocessor ? PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR : PoseStrategy.MULTI_TAG_PNP_ON_RIO);
             poseEstimator = new PhotonPoseEstimator(apriltagFieldLayout, poseStrategy, camera, cameraPositionRelativeToRobot);
+            poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
             trackedTargets = new ArrayList<PhotonTrackedTarget>();
+        }
+
+        public PhotonPoseEstimator getPoseEstimator() {
+            return poseEstimator;
         }
 
         public List<PhotonTrackedTarget> getTrackedTargets() {
