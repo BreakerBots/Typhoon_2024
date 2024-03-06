@@ -71,7 +71,7 @@ public class Shooter extends SubsystemBase {
   
   public Shooter(Supplier<FireingSolution> defaultTarget) {
     target = defaultTarget;
-    beamBreak = new BreakerBeamBreak(0, true);
+    beamBreak = new BreakerBeamBreak(3, true);
     piviotMotor = new TalonFX(SHOOTER_PIVOT_ID);
     flywheelLeft = new TalonFX(LEFT_FLYWHEEL_ID);
     flywheelRight = new TalonFX(RIGHT_FLYWHEEL_ID);

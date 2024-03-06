@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -32,9 +33,9 @@ public class ClimbArm extends SubsystemBase {
     dutyCycleRequest = new DutyCycleOut(0.0);
     positionRequest = new MotionMagicVoltage(0.0);
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.CurrentLimits.SupplyCurrentLimit = 10;
-    config.CurrentLimits.SupplyCurrentThreshold = 30;
-    config.CurrentLimits.SupplyTimeThreshold = 3.0;
+    config.CurrentLimits.SupplyCurrentLimit = 8;
+    config.CurrentLimits.SupplyCurrentThreshold = 15;
+    config.CurrentLimits.SupplyTimeThreshold = 1.0;
     config.CurrentLimits.SupplyCurrentLimitEnable = true;
     config.Slot0.kP = 0.0;
     config.Slot0.kI = 0.0;
@@ -47,6 +48,7 @@ public class ClimbArm extends SubsystemBase {
     config.MotorOutput.Inverted = invert ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
     config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ClimbConstants.EXTENDED_POSITION_ROTATIONS;
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+    config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     motor.getConfigurator().apply(config);
 
   }

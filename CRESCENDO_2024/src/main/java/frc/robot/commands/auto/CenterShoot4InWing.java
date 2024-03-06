@@ -37,7 +37,7 @@ public class CenterShoot4InWing extends SequentialCommandGroup {
       new StationaryShootFromAnywhere(shooter, drivetrain),
       new ConditionalCommand(
         new AutoAngleSnap(Rotation2d.fromDegrees(-90.0), drivetrain),
-        new AutoAngleSnap(Rotation2d.fromDegrees(90.0), drivetrain), () -> {
+        new AutoAngleSnap(Rotation2d.fromDegrees(-90.0), drivetrain), () -> {
           Optional<Alliance> allyOpt = DriverStation.getAlliance();
           return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
         }),
