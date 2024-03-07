@@ -185,23 +185,24 @@ public interface BreakerEstimatedPoseSourceProvider {
 
         private Matrix<N3, N1> singleTagStdDevs;
         private Matrix<N3, N1> multiTagStdDevs;
-        private double maxDist, distanceScaleFactor;
+        private double maxSingleTagDist, maxMultiTagDist, distanceScaleFactor;
 
         public BreakerPoseEstimationStandardDeviationCalculator() {
             this(VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
         }
 
         public BreakerPoseEstimationStandardDeviationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs) {
-            this(singleTagStdDevs, multiTagStdDevs, 4.0, 30.0);
+            this(singleTagStdDevs, multiTagStdDevs, 3.5, 6.5, 25.0);
         }
 
-        public BreakerPoseEstimationStandardDeviationCalculator(double maxDist, double distanceScaleFactor) {
-            this(VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1), maxDist, distanceScaleFactor);
+        public BreakerPoseEstimationStandardDeviationCalculator(double maxSingleTagDist, double maxMultiTagDist, double distanceScaleFactor) {
+            this(VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1), maxSingleTagDist, maxMultiTagDist, distanceScaleFactor);
         }
-        public BreakerPoseEstimationStandardDeviationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs, double maxDist, double distanceScaleFactor) {
+        public BreakerPoseEstimationStandardDeviationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs, double maxSingleTagDist, double maxMultiTagDist, double distanceScaleFactor) {
             this.multiTagStdDevs = multiTagStdDevs;
             this.singleTagStdDevs = singleTagStdDevs;
-            this.maxDist = maxDist;
+            this.maxSingleTagDist = maxSingleTagDist;
+            this.maxMultiTagDist = maxMultiTagDist;
             this.distanceScaleFactor = distanceScaleFactor;
         }
         @Override
@@ -221,7 +222,7 @@ public interface BreakerEstimatedPoseSourceProvider {
             // Decrease std devs if multiple targets are visible
             if (numTags > 1) estStdDevs = multiTagStdDevs;
             // Increase std devs based on (average) distance
-            if (numTags == 1 && avgDist > maxDist)//4
+            if ((numTags == 1 && avgDist > maxSingleTagDist) || (numTags > 1 && avgDist > maxMultiTagDist) )//4
                 estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
             else estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / distanceScaleFactor)); //30
 

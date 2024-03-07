@@ -55,8 +55,8 @@ public class AimToTargetStationary extends Command {
     BreakerLog.recordOutput("ATT: FLY GOL", shooter.isAtFlywheelGoal());
     BreakerLog.recordOutput("ATT: SHT ANG GOL", shooter.isAtAngleGoal());
     BreakerLog.recordOutput("ATT: RBT ANG GOL", anglePID.atSetpoint());
-   System.out.println(fireingSolution.fireingVec());
-   System.out.println(!anglePID.atSetpoint());
+    System.out.println(fireingSolution.fireingVec());
+    System.out.println(!anglePID.atSetpoint());
     double omegaDemand = anglePID.calculate(drive.getOdometryPoseMeters().getRotation().getRadians(), fireingSolution.yaw().getRadians());
     if (!anglePID.atSetpoint()) {
       drive.applyRequest(velocityRequest.withChassisSpeeds(new ChassisSpeeds(0.0, 0.0, omegaDemand)));

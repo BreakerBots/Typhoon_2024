@@ -26,7 +26,6 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ScoreInAmp;
-import frc.robot.commands.ScoreInAmpWithShooter;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.CenterShoot4InWing;
 import frc.robot.commands.auto.CenterThenGoDeepShoot3;
@@ -41,6 +40,7 @@ import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.commands.intake.StopIntaking;
 import frc.robot.commands.intake.StowIntake;
+import frc.robot.commands.shooter.ScoreInAmpWithShooter;
 import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
@@ -64,7 +64,7 @@ public class RobotContainer {
   private final Vision visionSys = new Vision(drivetrainSys, false);
 
   private final Intake intakeSys = new Intake();
-  private final Shooter shooterSys = new Shooter(Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_SOLUTION_SUPPLIER);
+  private final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
   private final PastaRoller pastaRollerSys = new PastaRoller();
 
   public static final ClimbArm leftClimbSys = new ClimbArm(50, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
