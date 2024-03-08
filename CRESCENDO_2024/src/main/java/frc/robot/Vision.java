@@ -76,9 +76,7 @@ public class Vision extends SubsystemBase {
 
                 Optional<BreakerEstimatedPose> posOpt = est.getEstimatedPose(PoseOrigin.ofGlobal());
                 if (posOpt.isPresent()) {
-                    for (int i = 0; i < estimatedPoses.size(); i++) {
-                        estimatedPoses.add(posOpt.get());
-                    }
+                    estimatedPoses.add(posOpt.get());
                     
                 }
             }
@@ -103,7 +101,7 @@ public class Vision extends SubsystemBase {
                 BreakerEstimatedPose j1Estpos = poses.get(j);
 
                 if (jEstpos.estimationStandardDevations.isPresent() && j1Estpos.estimationStandardDevations.isPresent()) {
-                    if (jEstpos.estimationStandardDevations.get().get(0, 2) < j1Estpos.estimationStandardDevations.get().get(0, 2)) {
+                    if (jEstpos.estimationStandardDevations.get().get(2, 0) < j1Estpos.estimationStandardDevations.get().get(2, 0)) {
                         temp = poses.get(j);
                         poses.set(poses.indexOf(jEstpos), j1Estpos);
                         poses.set(poses.indexOf(j1Estpos), temp);

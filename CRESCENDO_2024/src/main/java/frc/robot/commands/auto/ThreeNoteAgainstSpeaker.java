@@ -48,10 +48,8 @@ public class ThreeNoteAgainstSpeaker extends SequentialCommandGroup {
       new StationaryShootFromAnywhere(shooter, drivetrain),
       AutoBuilder.followPath(goToB5),
 
-      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain).alongWith(
-        new WaitUntilCommand(intake::hasNote)
-        .andThen(AutoBuilder.followPath(goAgainstSpeaker))
-      ),
+      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
+      AutoBuilder.followPath(goAgainstSpeaker),
       new StationaryShootFromAnywhere(shooter, drivetrain)
 
     );

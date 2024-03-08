@@ -9,12 +9,11 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Vision;
+import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
-import frc.robot.commands.StationaryShootFromAnywhere;
 
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -26,7 +25,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
 
-    var centerToBottomNote = PathPlannerPath.fromPathFile("Center_To_bottom_note");
+    var centerToBottomNote = PathPlannerPath.fromPathFile("Center_to_bottom_note");
     var bottomNoteBackup = PathPlannerPath.fromPathFile("CenterNotebackup");
     var a3_b5 = PathPlannerPath.fromPathFile("A3-B5");
     var b5_speaker = PathPlannerPath.fromPathFile("B5-AgainstSpeaker");
@@ -45,10 +44,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
       new AutoAngleSnap(Rotation2d.fromDegrees(90), drivetrain),
-      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain).alongWith(
-        new WaitUntilCommand(intake::hasNote)
-        .andThen(AutoBuilder.followPath(a3_b5))
-      ),
+      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
       AutoBuilder.followPath(a3_b5),
