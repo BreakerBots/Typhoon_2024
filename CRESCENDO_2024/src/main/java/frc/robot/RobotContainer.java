@@ -41,6 +41,7 @@ import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.commands.intake.StopIntaking;
 import frc.robot.commands.intake.StowIntake;
 import frc.robot.commands.shooter.ScoreInAmpWithShooter;
+import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
@@ -178,6 +179,7 @@ public class RobotContainer {
   private void registerNamedCommands() {
     HashMap<String, Command> namedCommands = new HashMap<>();
     namedCommands.put("IntakeFromGroundForShooter", new IntakeFromGroundForShooter(intakeSys, shooterSys));
+    namedCommands.put("SpoolShooter", new SpoolShooterForSpeakerShot(shooterSys));
   }
 
   private void configureRobotManager() {
