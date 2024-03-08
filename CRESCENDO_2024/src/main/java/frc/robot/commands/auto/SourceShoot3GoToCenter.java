@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Vision;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.subsystems.Drive;
@@ -28,8 +29,10 @@ public class SourceShoot3GoToCenter extends SequentialCommandGroup {
     addCommands(
       new StationaryShootFromAnywhere(shooter, drivetrain),
       AutoBuilder.followPath(goOut),
-      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      AutoBuilder.followPath(goBack),
+      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain).alongWith(
+        new WaitUntilCommand(intake::hasNote)
+        .andThen(AutoBuilder.followPath(goBack))
+      ),
       new StationaryShootFromAnywhere(shooter, drivetrain)
     );
   }
