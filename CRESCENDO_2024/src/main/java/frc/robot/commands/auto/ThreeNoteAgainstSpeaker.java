@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Vision;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.StationaryShootFromAnywhere;
@@ -46,8 +47,11 @@ public class ThreeNoteAgainstSpeaker extends SequentialCommandGroup {
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
       AutoBuilder.followPath(goToB5),
-      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      AutoBuilder.followPath(goAgainstSpeaker),
+
+      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain).alongWith(
+        new WaitUntilCommand(intake::hasNote)
+        .andThen(AutoBuilder.followPath(goAgainstSpeaker))
+      ),
       new StationaryShootFromAnywhere(shooter, drivetrain)
 
     );

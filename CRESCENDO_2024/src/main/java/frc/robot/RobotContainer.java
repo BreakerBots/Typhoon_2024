@@ -29,6 +29,7 @@ import frc.robot.commands.ScoreInAmp;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.CenterShoot4InWing;
 import frc.robot.commands.auto.CenterThenGoDeepShoot3;
+import frc.robot.commands.auto.FiveNoteAuto;
 import frc.robot.commands.auto.SourceShoot3GoToCenter;
 import frc.robot.commands.auto.ThreeNoteAgainstSpeaker;
 import frc.robot.commands.auto.ThreeNoteSpeakerTest;
@@ -200,7 +201,8 @@ public class RobotContainer {
         new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys))
+        new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("FiveNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys))
       );
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }

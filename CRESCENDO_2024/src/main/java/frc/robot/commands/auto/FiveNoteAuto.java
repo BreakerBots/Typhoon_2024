@@ -9,6 +9,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Vision;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
@@ -44,7 +45,10 @@ public class FiveNoteAuto extends SequentialCommandGroup {
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
       new AutoAngleSnap(Rotation2d.fromDegrees(90), drivetrain),
-      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
+      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain).alongWith(
+        new WaitUntilCommand(intake::hasNote)
+        .andThen(AutoBuilder.followPath(a3_b5))
+      ),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
       AutoBuilder.followPath(a3_b5),
