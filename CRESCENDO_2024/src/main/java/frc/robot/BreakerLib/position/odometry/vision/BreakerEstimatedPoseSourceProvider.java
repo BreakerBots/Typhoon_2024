@@ -188,15 +188,15 @@ public interface BreakerEstimatedPoseSourceProvider {
         private double maxSingleTagDist, maxMultiTagDist, distanceScaleFactor;
 
         public BreakerPoseEstimationStandardDeviationCalculator() {
-            this(VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1));
+            this(VecBuilder.fill(8, 8, 8), VecBuilder.fill(0.5, 0.5, 1));
         }
 
         public BreakerPoseEstimationStandardDeviationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs) {
-            this(singleTagStdDevs, multiTagStdDevs, 3.5, 6.5, 25.0);
+            this(singleTagStdDevs, multiTagStdDevs, 3.0, 5.5, 5.0);
         }
 
         public BreakerPoseEstimationStandardDeviationCalculator(double maxSingleTagDist, double maxMultiTagDist, double distanceScaleFactor) {
-            this(VecBuilder.fill(4, 4, 8), VecBuilder.fill(0.5, 0.5, 1), maxSingleTagDist, maxMultiTagDist, distanceScaleFactor);
+            this(VecBuilder.fill(6, 6, 8), VecBuilder.fill(0.5, 0.5, 1), maxSingleTagDist, maxMultiTagDist, distanceScaleFactor);
         }
         public BreakerPoseEstimationStandardDeviationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs, double maxSingleTagDist, double maxMultiTagDist, double distanceScaleFactor) {
             this.multiTagStdDevs = multiTagStdDevs;

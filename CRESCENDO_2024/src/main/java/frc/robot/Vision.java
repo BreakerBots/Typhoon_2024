@@ -19,6 +19,7 @@ import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera.BreakerPho
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPose;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerPoseEstimationStandardDeviationCalculator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
+import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.subsystems.Drive;
 
 /** Add your docs here. */
@@ -52,6 +53,10 @@ public class Vision extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+
+
+
         if (enable) {
             Pose2d odometryRefPos = drivetrain.getOdometryPoseMeters();
             estimatedPoses.clear();
@@ -77,7 +82,7 @@ public class Vision extends SubsystemBase {
                 Optional<BreakerEstimatedPose> posOpt = est.getEstimatedPose(PoseOrigin.ofGlobal());
                 if (posOpt.isPresent()) {
                     estimatedPoses.add(posOpt.get());
-                    
+                   
                 }
             }
 

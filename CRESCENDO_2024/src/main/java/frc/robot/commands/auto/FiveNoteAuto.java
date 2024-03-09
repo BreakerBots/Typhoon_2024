@@ -11,9 +11,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Vision;
 import frc.robot.commands.StationaryShootFromAnywhere;
+import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Intake.IntakeState;
 
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -33,9 +35,10 @@ public class FiveNoteAuto extends SequentialCommandGroup {
 
     addCommands(
       new StationaryShootFromAnywhere(shooter, drivetrain),
-
+      intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false),
       AutoBuilder.followPath(centerToBottomNote),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
+      new SpoolShooterForSpeakerShot(shooter, false),
       AutoBuilder.followPath(bottomNoteBackup),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
@@ -49,6 +52,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
 
       AutoBuilder.followPath(a3_b5),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
+      new SpoolShooterForSpeakerShot(shooter, false),
       AutoBuilder.followPath(b5_speaker),
       new StationaryShootFromAnywhere(shooter, drivetrain)
     );

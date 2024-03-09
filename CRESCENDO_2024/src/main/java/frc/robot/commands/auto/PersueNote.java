@@ -36,7 +36,7 @@ public class PersueNote extends Command {
     this.intake = intake;
     this.vision = vision;
     bestNoteTarget = Optional.empty();
-    persuitVel = 1.0;
+    persuitVel = 1.5;
     addRequirements(intake, drivetrain);
   }
 
@@ -78,14 +78,14 @@ public class PersueNote extends Command {
       if (bestNoteTarget.isPresent()) {
         LimelightTarget_Detector prevTgt = bestNoteTarget.get();
         LimelightTarget_Detector idealTgt = detectorTargets[0];
-        // double idealDeltaTx = Math.abs(prevTgt.tx - idealTgt.tx);
-        // for (LimelightTarget_Detector tgt : detectorTargets) {
-        //   double deltaTx = Math.abs(prevTgt.tx - tgt.tx);
-        //   if (deltaTx < idealDeltaTx) {
-        //     idealTgt = tgt;
-        //     idealDeltaTx = deltaTx;
-        //   }
-        // }
+        double idealDeltaTx = Math.abs(prevTgt.tx - idealTgt.tx);
+        for (LimelightTarget_Detector tgt : detectorTargets) {
+          double deltaTx = Math.abs(prevTgt.tx - tgt.tx);
+          if (deltaTx < idealDeltaTx) {
+            idealTgt = tgt;
+            idealDeltaTx = deltaTx;
+          }
+        }
         bestNoteTarget = Optional.of(idealTgt);
       } else {
          bestNoteTarget = Optional.of(detectorTargets[0]);

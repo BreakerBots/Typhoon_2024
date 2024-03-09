@@ -7,6 +7,7 @@ package frc.robot.BreakerLib.position.odometry.swerve;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import org.ejml.equation.Symbol;
 import org.littletonrobotics.junction.LogTable;
 
 import edu.wpi.first.math.MathUtil;
@@ -85,10 +86,10 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
     public void addVisionPoseEstimate(BreakerEstimatedPose estimatedPose) {
         odometryLock.lock();
         Optional<PoseCordinateSystem> cordSysOpt = poseOrigin.getCordinateSystem();
-        if (cordSysOpt.isPresent()) {
+        //if (cordSysOpt.isPresent()) {
             PoseCordinateSystem chordSys = cordSysOpt.get();
             privateAddVisionPoseEstimate(new BreakerEstimatedPose(estimatedPose, chordSys));
-        }
+        //}
         odometryLock.unlock();
     }
 
@@ -96,6 +97,7 @@ public class BreakerSwerveOdometryThread extends BreakerOdometryThread {
         Optional<Matrix<N3, N1>> estStdDevsOpt = estimatedPose.estimationStandardDevations;
         Matrix<N3, N1> stdDevs =  defaultVisionDevs;
         if (estStdDevsOpt.isPresent()) {
+
             Matrix<N3, N1> estStdDevs = estStdDevsOpt.get();
             if (estStdDevs.isEqual(DOUBLE_MAX_VAL_MATRIX, 1e-5)) {
                 return;

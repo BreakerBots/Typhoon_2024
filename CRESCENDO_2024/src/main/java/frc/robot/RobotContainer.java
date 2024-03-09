@@ -77,10 +77,10 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
     configureDriveControls();
     configureBindings();
     configureRobotManager();
+    registerNamedCommands();
   }
 
   private void configureDriveControls() {
@@ -180,7 +180,7 @@ public class RobotContainer {
   private void registerNamedCommands() {
     HashMap<String, Command> namedCommands = new HashMap<>();
     namedCommands.put("IntakeFromGroundForShooter", new IntakeFromGroundForShooter(intakeSys, shooterSys));
-    namedCommands.put("SpoolShooter", new SpoolShooterForSpeakerShot(shooterSys));
+    namedCommands.put("SpoolShooter", new SpoolShooterForSpeakerShot(shooterSys, false));
   }
 
   private void configureRobotManager() {

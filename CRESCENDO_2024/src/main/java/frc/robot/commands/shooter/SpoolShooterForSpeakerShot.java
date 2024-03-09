@@ -16,14 +16,18 @@ import frc.robot.subsystems.Shooter.ShooterState;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class SpoolShooterForSpeakerShot extends SequentialCommandGroup {
   /** Creates a new PrepareShooterForShot. */
-  public SpoolShooterForSpeakerShot(Shooter shooter) {
+  public SpoolShooterForSpeakerShot(Shooter shooter, boolean enableBlockingTimeout) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new InstantCommand(() -> shooter.setActiveTarget(RobotContainer.SPEAKER_TARGET::getFireingSolution), shooter),
-      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET), shooter),
-      new WaitCommand(10.0),
-      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE), shooter)
+      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET), shooter)
     );
+    if (enableBlockingTimeout) {
+      addCommands(
+        new WaitCommand(10.0),
+        new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE), shooter)
+      );
+    }
   }
 }
