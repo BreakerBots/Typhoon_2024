@@ -22,12 +22,12 @@ public class HandoffFromIntakeToShooter extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-        new ParallelCommandGroup(
-            new InstantCommand(() -> shooter.setState(ShooterState.STOW), shooter)
-                .andThen(new WaitUntilCommand(shooter::isAtAngleGoal)),
-            intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true)
-        ),
-        intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
+        // new ParallelCommandGroup(
+        //     new InstantCommand(() -> shooter.setState(ShooterState.STOW), shooter)
+        //         .andThen(new WaitUntilCommand(shooter::isAtAngleGoal)),
+        //     intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true)
+        // ),
+        intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, true),
         new InstantCommand(() -> shooter.setState(ShooterState.INTAKE_TO_SHOOTER_HANDOFF), shooter),
         new WaitUntilCommand(shooter::hasNote),
         intake.setStateCommand(retractAtEnd ? IntakeState.RETRACTED_NEUTRAL : IntakeState.EXTENDED_NEUTRAL, false),

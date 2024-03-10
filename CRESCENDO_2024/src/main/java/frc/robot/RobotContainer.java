@@ -20,16 +20,20 @@ import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxControl
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
 import frc.robot.BreakerLib.util.math.functions.BreakerLinearizedConstrainedExponential;
+import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter;
+import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter.UnitlessChassisSpeeds;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
+import frc.robot.commands.AllignToAmp;
 import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ScoreInAmp;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.CenterShoot4InWing;
 import frc.robot.commands.auto.CenterThenGoDeepShoot3;
 import frc.robot.commands.auto.FiveNoteAuto;
+import frc.robot.commands.auto.LeaveShootOneSource;
 import frc.robot.commands.auto.SourceShoot3GoToCenter;
 import frc.robot.commands.auto.ThreeNoteAgainstSpeaker;
 import frc.robot.commands.auto.ThreeNoteSpeakerTest;
@@ -88,7 +92,7 @@ public class RobotContainer {
     BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
     controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.1, 0.1));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
-    //teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.3, -5.0, 3.0, -5.0, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
+    //teleopDriveCommand.addSlewRateLimiter(new BreakerHolonomicSlewRateLimiter(0.5, -100.0, 10.0, -10.0, new UnitlessChassisSpeeds(0.0, 0.0, 0.0)), AppliedModifierUnits.PERCENT_OF_MAX);
     drivetrainSys.setDefaultCommand(teleopDriveCommand);
     
   }
@@ -109,8 +113,9 @@ public class RobotContainer {
   private void configureBindings() {
 
     controllerSys.getButtonB()
-      .and(() -> intakeSys.getState().getPivotState() != IntakePivotState.RETRACTED)
-      .onTrue(new ExtakeNote(intakeSys));
+      // .and(() -> intakeSys.getState().getPivotState() != IntakePivotState.RETRACTED)
+      // .onTrue(new ExtakeNote(intakeSys, shooterSys));
+      .onTrue(new AllignToAmp(drivetrainSys));
 
     controllerSys.getLeftBumper()
       .and(() -> intakeSys.getState() != IntakeState.RETRACTED_EXTAKEING)
@@ -202,7 +207,8 @@ public class RobotContainer {
         new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("FiveNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys))
+        new BreakerAutoPath("FiveNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys))
       );
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }

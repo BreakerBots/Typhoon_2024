@@ -53,11 +53,11 @@ public class MoveToPose extends Command {
     this.goalPose = goalPose;
     this.useAllianceColor = useAllianceColor;
 
-    xController = new ProfiledPIDController(X_PID_KP, X_PID_KI, X_PID_KD, xyConstraints);
-    yController = new ProfiledPIDController(Y_PID_KP, Y_PID_KI, Y_PID_KD, xyConstraints);
+    xController = new ProfiledPIDController(5.0, 0.0, 0.01, xyConstraints);
+    yController = new ProfiledPIDController(5.0, 0.0, 0.01, xyConstraints);
     xController.setTolerance(TRANSLATION_TOLERANCE);
     yController.setTolerance(TRANSLATION_TOLERANCE);
-    thetaController = new ProfiledPIDController(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD, omegaConstraints);
+    thetaController = new ProfiledPIDController(2.5, THETA_PID_KI, THETA_PID_KD, omegaConstraints);
     thetaController.enableContinuousInput(-Math.PI, Math.PI);
     thetaController.setTolerance(THETA_TOLERANCE);
 

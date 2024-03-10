@@ -100,7 +100,7 @@ public class BreakerHolonomicSlewRateLimiter {
         }
 
 
-        if (!MathUtil.isNear(0.0, input.y, 0.0001)) {
+        if (!MathUtil.isNear(0.0, input.omega, 0.001)) {
             prevSpeeds.omega +=
         /*Math.signum(domega) **/ MathUtil.clamp(
             domega,

@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
     config.Slot0.kP = 0.006;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.01;
-    config.Slot0.kV = 0.12;
+    config.Slot0.kV = 0.1205;
     config.Slot0.kS = 0.17;
     config.Slot0.kA = 0.1168;
     flywheelLeft.getConfigurator().apply(config);
@@ -175,17 +175,17 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtAngleGoal() {
-    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.006) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.01);//0.5, 0.1
+    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.015/*0.006 */) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.01);//0.5, 0.1
   }
 
   public boolean isAtFlywheelGoal() {
-    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 3.0) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 1.0) ;//5.0, 0.5
+    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 3.0) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 1.5) ;//5.0, 0.5
   }
 
 
   public static enum ShooterHopperState {
     FORWARD(-0.7),
-    REVERSE(0.4),
+    REVERSE(1.0),
     NEUTRAL(0.0);
     private double dutyCycle;
     private ShooterHopperState(double dutyCycle) {
@@ -242,7 +242,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     BreakerLog.recordOutput("Shooter Has Note", hasNote());
     if (RobotState.isDisabled()) {
-      hopper.set(0.0);
+      state = ShooterState.STOW;
     }
     // flywheelLeft.setControl(flywheelVelRequest.withVelocity(30));
     // flywheelRight.setControl(flywheelFollowRequest);

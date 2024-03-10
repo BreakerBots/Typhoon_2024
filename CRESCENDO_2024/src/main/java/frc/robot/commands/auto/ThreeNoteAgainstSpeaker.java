@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Vision;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.StationaryShootFromAnywhere;
+import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -35,20 +36,21 @@ public class ThreeNoteAgainstSpeaker extends SequentialCommandGroup {
     var initalOffset = PathPlannerPath.fromPathFile("Inital Offset Path");
     
     addCommands(
+      new SpoolShooterForSpeakerShot(shooter,false),
       AutoBuilder.followPath(initalOffset),
       new StationaryShootFromAnywhere(shooter, drivetrain),
-      new ConditionalCommand(
-        new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
-        new AutoAngleSnap(Rotation2d.fromDegrees(180.0), drivetrain), () -> {
-          Optional<Alliance> allyOpt = DriverStation.getAlliance();
-          return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
-        }),
+      // new ConditionalCommand(
+      //   new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
+      //   new AutoAngleSnap(Rotation2d.fromDegrees(180.0), drivetrain), () -> {
+      //     Optional<Alliance> allyOpt = DriverStation.getAlliance();
+      //     return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
+      //   }),
 
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
       AutoBuilder.followPath(goToB5),
-
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
+      new SpoolShooterForSpeakerShot(shooter, false),
       AutoBuilder.followPath(goAgainstSpeaker),
       new StationaryShootFromAnywhere(shooter, drivetrain)
 

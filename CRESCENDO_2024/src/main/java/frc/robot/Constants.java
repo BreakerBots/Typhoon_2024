@@ -91,8 +91,8 @@ public final class Constants {
     public static final double PITCH_KD = 0.8;
     public static final double PITCH_KS = 0.035;
     public static final double PITCH_KA = 0.07;
-    public static final double PITCH_KV = 18.25;
-    public static final double PITCH_KG = 0.39;
+    public static final double PITCH_KV = 18.0;
+    public static final double PITCH_KG = 0.375;
     public static final double PITCH_ENCODER_OFFSET = -0.0234375+0.25;
 
     public static final double PITCH_MAX_ROT = 0.21;
@@ -264,12 +264,12 @@ public final class Constants {
 
     public static final BreakerSwerveOdometryConfig ODOMETRY_CONFIG = new BreakerSwerveOdometryConfig(1.0/200.0,  VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.9, 0.9, 0.9), PoseOrigin.ofGlobal(), new Pose2d(), 5);
 
-    public static final double X_PID_KP = 0.0008;//0.000001
+    public static final double X_PID_KP = 0.0009;//0.000001
     public static final double X_PID_KI = 0.0;
     public static final double X_PID_KD = 0.008;
 
     //Y-axis positional PID
-    public static final double Y_PID_KP = 0.0008;
+    public static final double Y_PID_KP = 0.0009;
     public static final double Y_PID_KI = 0.0;
     public static final double Y_PID_KD = 0.008;
 

@@ -4,23 +4,28 @@
 
 package frc.robot.commands.intake;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.util.WaitUntilCommndWithFallingEdgeDelayAndTimeout;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ExtakeNote extends SequentialCommandGroup {
   /** Creates a new ExtakeNote. */
-  public ExtakeNote(Intake intake) {
+  public ExtakeNote(Intake intake, Shooter shooter) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       intake.setStateCommand(IntakeState.EXTENDED_EXTAKEING, true),
+      new InstantCommand(() -> shooter.setState(ShooterState.SHOOTER_TO_INTAKE_HANDOFF), shooter),
       new WaitUntilCommndWithFallingEdgeDelayAndTimeout(() -> intake.hasNote(), 1.0, 3.5),
-      intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false)
+      intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false),
+      new InstantCommand(() -> shooter.setState(ShooterState.STOW), shooter)
 
     );
   }

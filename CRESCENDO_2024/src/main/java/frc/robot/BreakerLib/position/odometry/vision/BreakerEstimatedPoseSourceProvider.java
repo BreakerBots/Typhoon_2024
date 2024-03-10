@@ -192,7 +192,7 @@ public interface BreakerEstimatedPoseSourceProvider {
         }
 
         public BreakerPoseEstimationStandardDeviationCalculator(Matrix<N3, N1> singleTagStdDevs, Matrix<N3, N1> multiTagStdDevs) {
-            this(singleTagStdDevs, multiTagStdDevs, 3.0, 5.5, 5.0);
+            this(singleTagStdDevs, multiTagStdDevs, 3.5, 6.5, 5.0);
         }
 
         public BreakerPoseEstimationStandardDeviationCalculator(double maxSingleTagDist, double maxMultiTagDist, double distanceScaleFactor) {
