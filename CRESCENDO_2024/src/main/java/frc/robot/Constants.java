@@ -86,7 +86,7 @@ public final class Constants {
     public static final double PITCH_PINION_TEETH = 20;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 0.85;
+    public static final double PITCH_KP = 0.8;
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.8;
     public static final double PITCH_KS = 0.035;
