@@ -6,12 +6,22 @@ package frc.robot;
 
 import static frc.robot.Constants.VisionConstants.*;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.numbers.N5;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.vision.limelight.BreakerLimelight;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera;
@@ -19,7 +29,10 @@ import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera.BreakerPho
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPose;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerPoseEstimationStandardDeviationCalculator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
+import frc.robot.BreakerLib.util.BreakerTriplet;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolatableDoubleArray;
+import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
 import frc.robot.subsystems.Drive;
 
 /** Add your docs here. */
@@ -126,4 +139,34 @@ public class Vision extends SubsystemBase {
                 break;
         }
     }
+
+    private AprilTagFieldLayout solveForFieldTagPositionsParalax(BreakerPhotonCamera left, BreakerPhotonCamera right, AprilTagFieldLayout idealLayout, ArrayList<VisionCalibrationFrame> calibrationFrames, int... knownGoodTagIDs) {
+        
+        ArrayList<BreakerTriplet<Double, VisionCalibrationCameraCapture, VisionCalibrationCameraCapture>> paralaxCaptures = new ArrayList<>();
+        for (VisionCalibrationFrame frame:calibrationFrames) {
+            Optional<VisionCalibrationCameraCapture> leftCapOpt = Optional.empty();
+            Optional<VisionCalibrationCameraCapture> rightCapOpt = Optional.empty();
+            for (VisionCalibrationCameraCapture capture :frame.cameraCaptures) {
+                if (capture.camName.equals(left.getDeviceName())) {
+                    leftCapOpt = Optional.of(capture);
+                } else if (capture.camName.equals(right.getDeviceName())) {
+                    rightCapOpt = Optional.of(capture);
+                }
+            }
+            if (leftCapOpt.isPresent() && rightCapOpt.isPresent()) {
+                 VisionCalibrationCameraCapture leftCap = leftCapOpt.get();
+                 VisionCalibrationCameraCapture rightCap = rightCapOpt.get();
+                 double frameTimestamp = (leftCap.pipelineResult.getTimestampSeconds() + rightCap.pipelineResult.getTimestampSeconds()) / 2.0;
+                 paralaxCaptures.add(new BreakerTriplet<Double,Vision.VisionCalibrationCameraCapture,Vision.VisionCalibrationCameraCapture>(frameTimestamp, leftCap, rightCap));
+            }
+        }
+        
+    }
+    
+    private Transform3d solveForRobotToTargetTransformParalax(BreakerTriplet<Double, VisionCalibrationCameraCapture, VisionCalibrationCameraCapture>> paralaxCapture) {
+
+    }
+
+    public static record VisionCalibrationFrame(double frameTimestamp, ArrayList<VisionCalibrationCameraCapture> cameraCaptures) {};
+    public static record VisionCalibrationCameraCapture(String camName, Transform3d robotToCamTransform, Matrix<N3, N3> cameraMatrix, Matrix<N5, N1> distCoeffs, PhotonPipelineResult pipelineResult) {};
 }
