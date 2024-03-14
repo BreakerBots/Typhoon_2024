@@ -141,7 +141,7 @@ public class Intake extends SubsystemBase {
 
   public static enum IntakeRollerState {
     INTAKEING(-0.8),
-    EXTAKEING(0.3),
+    EXTAKEING(1.0),
     NEUTRAL(0.0);
     private double motorDutyCycle;
     private IntakeRollerState(double motorDutyCycle) {

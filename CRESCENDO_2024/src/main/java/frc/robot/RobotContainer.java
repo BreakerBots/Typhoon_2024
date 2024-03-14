@@ -10,6 +10,7 @@ import com.ctre.phoenix.time.StopWatch;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
@@ -144,20 +145,22 @@ public class RobotContainer {
       //   .debounce(0.1, DebounceType.kBoth)
       //   .onTrue(new ScoreInAmpWithShooter(shooterSys));
 
-    controllerSys.getButtonY()
-      .and(() -> shooterSys.hasNote())
-      .and(() -> !intakeSys.hasNote())
-      .onTrue(new HandoffFromShooterToIntake(shooterSys, intakeSys, true));
-    controllerSys.getButtonY()
-      .debounce(0.1, DebounceType.kBoth)
-      .and(() -> intakeSys.hasNote())
-      .and(() -> !shooterSys.hasNote())
-      .and(() -> intakeSys.getState().getPivotState() == IntakePivotState.RETRACTED)
-      .onTrue(new ScoreInAmp(intakeSys, pastaRollerSys));
-    controllerSys.getButtonY()
-      .and(() -> !intakeSys.hasNote())
-      .and(() -> !shooterSys.hasNote())
-      .onTrue(new IntakeFromGroundForPastaRoller(intakeSys));
+       controllerSys.getButtonY().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_EXTAKEING, false).andThen(new WaitCommand(3.0),intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false)));
+
+    // controllerSys.getButtonY()
+    //   .and(() -> shooterSys.hasNote())
+    //   .and(() -> !intakeSys.hasNote())
+    //   .onTrue(new HandoffFromShooterToIntake(shooterSys, intakeSys, true));
+    // controllerSys.getButtonY()
+    //   .debounce(0.1, DebounceType.kBoth)
+    //   .and(() -> intakeSys.hasNote())
+    //   .and(() -> !shooterSys.hasNote())
+    //   .and(() -> intakeSys.getState().getPivotState() == IntakePivotState.RETRACTED)
+    //   .onTrue(new ScoreInAmp(intakeSys, pastaRollerSys));
+    // controllerSys.getButtonY()
+    //   .and(() -> !intakeSys.hasNote())
+    //   .and(() -> !shooterSys.hasNote())
+    //   .onTrue(new IntakeFromGroundForPastaRoller(intakeSys));
 
     controllerSys.getButtonX()
       .and(intakeSys::hasNote)
