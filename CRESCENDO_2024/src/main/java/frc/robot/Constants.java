@@ -294,4 +294,10 @@ public final class Constants {
   public static class AutoConstants {
     public static final PathConstraints PATHFIND_TO_AUTOPATH_START_CONSTRAINTS = new PathConstraints(1.5, 2.5, DriveConstants.MAX_ANGULAR_VEL, 5.0);
   }
+
+  public static class AmpBarConstants {
+    public static final Rotation2d EXTENDED_ANGLE_THRESHOLD = Rotation2d.fromDegrees(60.0); // temporary
+    public static final Rotation2d RETRACTED_ANGLE_THRESHOLD = Rotation2d.fromDegrees(5.0); // temporary
+    public static final Rotation2d ENCODER_OFFSET = Rotation2d.fromRotations(0.0); // temporary
+  }
 }

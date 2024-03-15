@@ -5,17 +5,32 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.RobotState;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
+import frc.robot.subsystems.Intake.IntakeState;
 
-public class AmpBar extends SubsystemBase { // 👍
+import static frc.robot.Constants.AmpBarConstants.*;
+
+import java.util.function.Supplier;
+
+public class AmpBar extends SubsystemBase {
   enum AmpBarState {
     RETRACTED(-0.7),
-    EXTENDED(0.7);
+    EXTENDED(0.7),
+    NEUTRAL(0.0)
+    ;
 
     private double motorDutyCycle;
 
@@ -31,10 +46,9 @@ public class AmpBar extends SubsystemBase { // 👍
   private CANSparkFlex sparkFlex;
   private CANcoder canCoder;
   private AmpBarState currentState;
-
-  private static final double MAX_ANGLE_THRESHOLD = 60.0; // temporary
-  private static final double MIN_ANGLE_THRESHOLD = 10.0; // temporary
-
+  private Supplier<Double> pivotAbsPosSupplier;
+  private boolean prevThermalProtectionState;
+  private final Timer thermalProtectionTimer = new Timer();
   public Command setStateCommand(AmpBarState desiredState, boolean waitToFinish) {
     return new FunctionalCommand(
       () -> {
@@ -52,24 +66,72 @@ public class AmpBar extends SubsystemBase { // 👍
   }
 
   public boolean isAtTargetAngle() {
-    double value = canCoder.getAbsolutePosition().getValueAsDouble();
     return switch (currentState) {
-      case EXTENDED -> value > MAX_ANGLE_THRESHOLD;
-      case RETRACTED -> value < MIN_ANGLE_THRESHOLD;
+      case EXTENDED -> isExtendLimitTriggered();
+      case RETRACTED -> isRetractLimitTriggered();
+      case NEUTRAL -> true;
     };
+  }
+
+  public boolean isExtendLimitTriggered() {
+    return getPivotPosition().getRotations() >= EXTENDED_ANGLE_THRESHOLD.getRotations();
+  }
+
+  public boolean isRetractLimitTriggered() {
+    return getPivotPosition().getRotations() >= RETRACTED_ANGLE_THRESHOLD.getRotations();
+  }
+
+
+  public Rotation2d getPivotPosition() {
+    return Rotation2d.fromRotations(pivotAbsPosSupplier.get());
   }
 
   /** Creates a new AmpBar. */
   public AmpBar() {
     sparkFlex = new CANSparkFlex(0, MotorType.kBrushless); // TOOD fill in device id
-    canCoder = new CANcoder(0); // TODO fill device id
+    sparkFlex.setIdleMode(IdleMode.kBrake);
+    sparkFlex.setInverted(false);
+    sparkFlex.setSmartCurrentLimit(100, 30);
+    sparkFlex.setSecondaryCurrentLimit(50, 25);
+    sparkFlex.burnFlash();
+    canCoder = BreakerCANCoderFactory.createCANCoder(0, AbsoluteSensorRangeValue.Unsigned_0To1, ENCODER_OFFSET.getRotations(), SensorDirectionValue.Clockwise_Positive); //check sensor dir based on cancoder pos
+    pivotAbsPosSupplier = canCoder.getAbsolutePosition().asSupplier();
+    prevThermalProtectionState = false;
+  }
+
+  public boolean isInThermalProtection() {
+    boolean overCutoff = sparkFlex.getMotorTemperature() >= 60.0;
+    if (overCutoff) {
+      prevThermalProtectionState = true;
+      thermalProtectionTimer.stop();
+      thermalProtectionTimer.reset();
+      return true;
+    } else if (!overCutoff && prevThermalProtectionState) {
+      thermalProtectionTimer.restart();
+      prevThermalProtectionState = false;
+    } else if (!overCutoff && !prevThermalProtectionState && thermalProtectionTimer.hasElapsed(5.0)) {
+      return false;
+    }
+    return false;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if (!isAtTargetAngle()) {
+
+    if (RobotState.isDisabled()) {
+      if (isExtendLimitTriggered()) {
+        setState(AmpBarState.EXTENDED);
+      } else { 
+        setState(AmpBarState.RETRACTED);
+      }
+    }
+
+    boolean thermalProtection = isInThermalProtection();
+    if (!isAtTargetAngle() && !thermalProtection) {
       sparkFlex.set(currentState.motorDutyCycle);
+    } else {
+      sparkFlex.set(0.0);
     }
   }
 }
