@@ -8,6 +8,8 @@ import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AmpBar extends SubsystemBase { // 👍
@@ -33,7 +35,17 @@ public class AmpBar extends SubsystemBase { // 👍
   private static final double MAX_ANGLE_THRESHOLD = 60.0; // temporary
   private static final double MIN_ANGLE_THRESHOLD = 10.0; // temporary
 
-
+  public Command setStateCommand(AmpBarState desiredState, boolean waitToFinish) {
+    return new FunctionalCommand(
+      () -> {
+        setState(desiredState);
+      }, 
+      () -> {}, 
+      (i) -> {},
+      () -> !waitToFinish || isAtTargetAngle(),
+      this
+    );
+  }
 
   public void setState(AmpBarState state) {
     currentState = state;
