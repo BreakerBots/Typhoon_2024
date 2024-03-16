@@ -4,13 +4,18 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.AmpBarConstants.ENCODER_OFFSET;
+import static frc.robot.Constants.AmpBarConstants.EXTENDED_ANGLE_THRESHOLD;
+import static frc.robot.Constants.AmpBarConstants.RETRACTED_ANGLE_THRESHOLD;
+
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
-import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotState;
@@ -19,18 +24,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
-import frc.robot.subsystems.Intake.IntakeState;
-
-import static frc.robot.Constants.AmpBarConstants.*;
-
-import java.util.function.Supplier;
 
 public class AmpBar extends SubsystemBase {
-  enum AmpBarState {
+  public enum AmpBarState {
     RETRACTED(-0.7),
     EXTENDED(0.7),
-    NEUTRAL(0.0)
-    ;
+    NEUTRAL(0.0);
 
     private double motorDutyCycle;
 
@@ -49,6 +48,7 @@ public class AmpBar extends SubsystemBase {
   private Supplier<Double> pivotAbsPosSupplier;
   private boolean prevThermalProtectionState;
   private final Timer thermalProtectionTimer = new Timer();
+  
   public Command setStateCommand(AmpBarState desiredState, boolean waitToFinish) {
     return new FunctionalCommand(
       () -> {

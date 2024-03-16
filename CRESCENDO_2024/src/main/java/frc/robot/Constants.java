@@ -73,6 +73,9 @@ public final class Constants {
     /*0deg is 20 deg behind fully retracted*/
     public static final double PIVIOT_EXTENDED_THRESHOLD = Units.degreesToRotations(5.0);
 
+    public static final double PIVOT_AGAINST_AMP_ANGLE_THRESHOLD = Units.degreesToRotations(15.0); // temporary
+
+
   }
 
   public static class ShooterConstants {

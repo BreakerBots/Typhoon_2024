@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.IntakeConstants.PIVOT_AGAINST_AMP_ANGLE_THRESHOLD;
 import static frc.robot.Constants.IntakeConstants.PIVIOT_EXTENDED_THRESHOLD;
 import static frc.robot.Constants.IntakeConstants.PIVIOT_RETRACTED_THRESHOLD;
 import static frc.robot.Constants.IntakeConstants.PIVOT_ENCODER_ID;
@@ -12,6 +13,7 @@ import static frc.robot.Constants.IntakeConstants.PIVOT_LEFT_ID;
 import static frc.robot.Constants.IntakeConstants.PIVOT_RIGHT_ID;
 import static frc.robot.Constants.IntakeConstants.ROLLER_MOTOR_ID;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -39,6 +41,11 @@ public class Intake extends SubsystemBase {
   private DutyCycleOut piviotDutyCycleControlRequest;
   private Follower pivotFollowerRequest;
   private BreakerBeamBreak beamBreak;
+
+  private boolean isPivotAmpCurrentLimited = false;
+  private final CurrentLimitsConfigs normalCurrentPivotConfig;
+  private final CurrentLimitsConfigs ampCurrentPivotConfig = new CurrentLimitsConfigs();
+
  
 
   /** Creates a new Intake. */
@@ -57,6 +64,12 @@ public class Intake extends SubsystemBase {
     pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     pivotLeft.getConfigurator().apply(pivotConfig);
     pivotRight.getConfigurator().apply(pivotConfig);
+
+    normalCurrentPivotConfig = pivotConfig.CurrentLimits;
+
+    ampCurrentPivotConfig.SupplyCurrentLimit = 5;
+    ampCurrentPivotConfig.SupplyTimeThreshold = 0.0;
+    ampCurrentPivotConfig.SupplyCurrentLimitEnable = true;
 
     BreakerCANCoderFactory.configExistingCANCoder(piviotEncoder, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PIVOT_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
 
@@ -107,6 +120,11 @@ public class Intake extends SubsystemBase {
     RETRACTED_NEUTRAL(IntakePivotState.RETRACTED, IntakeRollerState.NEUTRAL),
     RETRACTED_EXTAKEING(IntakePivotState.RETRACTED, IntakeRollerState.EXTAKEING),
     RETRACTED_INTAKEING(IntakePivotState.RETRACTED, IntakeRollerState.INTAKEING),
+
+    AMP_EXTAKING(IntakePivotState.AMP, IntakeRollerState.EXTAKEING),
+    AMP_INTAKING(IntakePivotState.AMP, IntakeRollerState.INTAKEING),
+    AMP_NEUTRAL(IntakePivotState.AMP, IntakeRollerState.NEUTRAL),
+    
     NEUTRAL(IntakePivotState.NEUTRAL, IntakeRollerState.NEUTRAL);
     
     private IntakePivotState pivotState;
@@ -123,10 +141,15 @@ public class Intake extends SubsystemBase {
     public IntakeRollerState getRollerState() {
         return rollerState;
     }
+
+    public boolean isInAmpState() {
+      return getPivotState() == IntakePivotState.AMP;
+    }
   }
 
   public static enum IntakePivotState {
     EXTENDED(0.1),//0.1
+    AMP(0.1),
     RETRACTED(-0.15),//-0.15
     NEUTRAL(0.0);
     private double motorDutyCycle;
@@ -161,6 +184,9 @@ public class Intake extends SubsystemBase {
     return piviotEncoder.getAbsolutePosition().getValue() >= PIVIOT_RETRACTED_THRESHOLD;
   }
 
+  public boolean isAmpLimitTriggered() {
+    return piviotEncoder.getAbsolutePosition().getValue() <= PIVOT_AGAINST_AMP_ANGLE_THRESHOLD;
+  }
 
 
   @Override
@@ -171,6 +197,16 @@ public class Intake extends SubsystemBase {
       } else { 
         setState(IntakeState.RETRACTED_NEUTRAL);
       }
+    }
+
+    if (!isPivotAmpCurrentLimited && targetState.isInAmpState() && isAmpLimitTriggered()) {
+      pivotLeft.getConfigurator().apply(ampCurrentPivotConfig);
+      pivotRight.getConfigurator().apply(ampCurrentPivotConfig);
+      isPivotAmpCurrentLimited = true;
+    } else if (isPivotAmpCurrentLimited && !targetState.isInAmpState()) {
+      pivotLeft.getConfigurator().apply(normalCurrentPivotConfig);
+      pivotRight.getConfigurator().apply(normalCurrentPivotConfig);
+      isPivotAmpCurrentLimited = false;
     }
 
     piviotDutyCycleControlRequest.withOutput(targetState.getPivotState().getMotorDutyCycle());
