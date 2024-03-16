@@ -29,7 +29,7 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.AllignToAmp;
 import frc.robot.commands.OrbitNote;
-import frc.robot.commands.ScoreInAmp;
+import frc.robot.commands.ScoreInAmpPastaRoller;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.CenterShoot4InWing;
 import frc.robot.commands.auto.CenterThenGoDeepShoot3;
