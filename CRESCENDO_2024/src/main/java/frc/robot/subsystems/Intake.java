@@ -105,6 +105,7 @@ public class Intake extends SubsystemBase {
     return switch(targetState.getPivotState()) {
       case EXTENDED -> isExtendLimitTriggered();
       case RETRACTED -> isRetractLimitTriggered();
+      case AMP -> isAmpLimitTriggered();
       default -> true;
     };
   }
