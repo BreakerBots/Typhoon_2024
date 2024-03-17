@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.auto;
+package frc.robot.commands.auto.paths;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -11,6 +11,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Vision;
 import frc.robot.commands.StationaryShootFromAnywhere;
+import frc.robot.commands.auto.actions.AutoAngleSnap;
+import frc.robot.commands.auto.actions.PersueAndIntakeNote;
+import frc.robot.commands.auto.actions.PersueAndIntakeNoteForShooter;
+import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
@@ -37,12 +41,17 @@ public class FiveNoteAuto extends SequentialCommandGroup {
       new StationaryShootFromAnywhere(shooter, drivetrain),
       intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false),
       AutoBuilder.followPath(centerToBottomNote),
-      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      new SpoolShooterForSpeakerShot(shooter, false),
-      AutoBuilder.followPath(bottomNoteBackup),
+      new PersueAndIntakeNote(vision, shooter, intake, drivetrain),
+      AutoBuilder.followPath(bottomNoteBackup)
+        .alongWith(
+          new HandoffFromIntakeToShooter(shooter, intake, false)
+          .andThen(
+            new SpoolShooterForSpeakerShot(shooter, false)
+          )
+        ),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
-      new AutoAngleSnap(Rotation2d.fromDegrees(50), drivetrain), // roman fix this if its wrong
+      new AutoAngleSnap(Rotation2d.fromDegrees(50), drivetrain), 
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 

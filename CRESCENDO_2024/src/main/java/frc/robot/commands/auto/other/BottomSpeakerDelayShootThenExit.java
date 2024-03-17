@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Vision;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.StationaryShootFromAnywhere;
-import frc.robot.commands.auto.AutoAngleSnap;
+import frc.robot.commands.auto.actions.AutoAngleSnap;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;

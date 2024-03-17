@@ -27,7 +27,7 @@ import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 
 public class AmpBar extends SubsystemBase {
   public enum AmpBarState {
-    RETRACTED(-0.7),
+    RETRACTED(-0.5),
     EXTENDED(0.7),
     NEUTRAL(0.0);
 
@@ -89,10 +89,11 @@ public class AmpBar extends SubsystemBase {
   /** Creates a new AmpBar. */
   public AmpBar() {
     sparkFlex = new CANSparkFlex(0, MotorType.kBrushless); // TOOD fill in device id
+    sparkFlex.restoreFactoryDefaults();
     sparkFlex.setIdleMode(IdleMode.kBrake);
     sparkFlex.setInverted(false);
-    sparkFlex.setSmartCurrentLimit(100, 30);
-    sparkFlex.setSecondaryCurrentLimit(50, 25);
+    sparkFlex.setSmartCurrentLimit(60, 15);
+    sparkFlex.setSecondaryCurrentLimit(100, 50);
     sparkFlex.burnFlash();
     canCoder = BreakerCANCoderFactory.createCANCoder(0, AbsoluteSensorRangeValue.Unsigned_0To1, ENCODER_OFFSET.getRotations(), SensorDirectionValue.Clockwise_Positive); //check sensor dir based on cancoder pos
     pivotAbsPosSupplier = canCoder.getAbsolutePosition().asSupplier();
