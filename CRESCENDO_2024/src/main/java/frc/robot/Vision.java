@@ -219,7 +219,7 @@ public class Vision extends SubsystemBase {
             Rotation2d rightCameraYaw = new Rotation2d(rightAngArr.getValue()[0], rightAngArr.getValue()[1]).minus(Rotation2d.fromRadians(rightCamTransform.getRotation().getZ()));
             Rotation2d rightCameraPitch = new Rotation2d(rightAngArr.getValue()[2], rightAngArr.getValue()[3]).minus(Rotation2d.fromRadians(rightCamTransform.getRotation().getY()));
             
-
+            
 
         }
     }
