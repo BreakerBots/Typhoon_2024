@@ -6,10 +6,9 @@ package frc.robot;
 
 import java.util.HashMap;
 
-import com.ctre.phoenix.time.StopWatch;
-
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -21,15 +20,12 @@ import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxControl
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerTeleopSwerveDriveController.AppliedModifierUnits;
 import frc.robot.BreakerLib.util.math.functions.BreakerLinearizedConstrainedExponential;
-import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter;
-import frc.robot.BreakerLib.util.math.slewrate.BreakerHolonomicSlewRateLimiter.UnitlessChassisSpeeds;
 import frc.robot.BreakerLib.util.robot.BreakerRobotConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotManager;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.AllignToAmp;
 import frc.robot.commands.OrbitNote;
-import frc.robot.commands.ScoreInAmpPastaRoller;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.paths.CenterShoot4InWing;
 import frc.robot.commands.auto.paths.CenterThenGoDeepShoot3;
@@ -37,23 +33,18 @@ import frc.robot.commands.auto.paths.FiveNoteAuto;
 import frc.robot.commands.auto.paths.LeaveShootOneSource;
 import frc.robot.commands.auto.paths.SourceShoot3GoToCenter;
 import frc.robot.commands.auto.paths.ThreeNoteAgainstSpeaker;
-import frc.robot.commands.auto.paths.ThreeNoteSpeakerTest;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
-import frc.robot.commands.handoffs.HandoffFromShooterToIntake;
-import frc.robot.commands.intake.ExtakeNote;
 import frc.robot.commands.intake.IntakeFromGround;
-import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.commands.intake.StopIntaking;
 import frc.robot.commands.intake.StowIntake;
-import frc.robot.commands.shooter.ScoreInAmpWithShooter;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
+import frc.robot.subsystems.AmpBar;
+import frc.robot.subsystems.AmpBar.AmpBarState;
 import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Intake.IntakePivotState;
 import frc.robot.subsystems.Intake.IntakeState;
-import frc.robot.subsystems.PastaRoller;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
 /**
@@ -72,10 +63,11 @@ public class RobotContainer {
 
   private final Intake intakeSys = new Intake();
   private final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
-  private final PastaRoller pastaRollerSys = new PastaRoller();
+  // private final PastaRoller pastaRollerSys = new PastaRoller();
+  private final AmpBar ampBar = new AmpBar();
 
-  public static final ClimbArm leftClimbSys = new ClimbArm(50, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
-  public static final ClimbArm rigtClimbSys = new ClimbArm(51, Constants.GeneralConstants.DRIVE_CANIVORE_NAME, true);
+  public static final ClimbArm leftClimbSys = new ClimbArm(50, "", true);
+  public static final ClimbArm rigtClimbSys = new ClimbArm(51, "", true);
 
   public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.FIREING_MAP);
 
@@ -145,7 +137,16 @@ public class RobotContainer {
       //   .debounce(0.1, DebounceType.kBoth)
       //   .onTrue(new ScoreInAmpWithShooter(shooterSys));
 
-       controllerSys.getButtonY().onTrue(intakeSys.setStateCommand(IntakeState.EXTENDED_EXTAKEING, false).andThen(new WaitCommand(3.0),intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false)));
+       controllerSys.getButtonY()
+        .onTrue(new SequentialCommandGroup(
+          intakeSys.setStateCommand(IntakeState.EXTENDED_EXTAKEING, false),
+          ampBar.setStateCommand(AmpBarState.EXTENDED, false)
+        )
+        .andThen(
+          new WaitCommand(3.0), 
+          intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false),
+          ampBar.setStateCommand(AmpBarState.RETRACTED, false)
+        ));
 
     // controllerSys.getButtonY()
     //   .and(() -> shooterSys.hasNote())

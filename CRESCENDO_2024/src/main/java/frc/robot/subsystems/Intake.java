@@ -13,6 +13,8 @@ import static frc.robot.Constants.IntakeConstants.PIVOT_LEFT_ID;
 import static frc.robot.Constants.IntakeConstants.PIVOT_RIGHT_ID;
 import static frc.robot.Constants.IntakeConstants.ROLLER_MOTOR_ID;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
@@ -20,8 +22,11 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.ForwardLimitValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.ReverseLimitValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.wpilibj.RobotState;
@@ -45,15 +50,18 @@ public class Intake extends SubsystemBase {
   private boolean isPivotAmpCurrentLimited = false;
   private final CurrentLimitsConfigs normalCurrentPivotConfig;
   private final CurrentLimitsConfigs ampCurrentPivotConfig = new CurrentLimitsConfigs();
-
+  private Supplier<ForwardLimitValue> forwardLimitSupplier;
+  private Supplier<ReverseLimitValue> reverseLimitSupplier;
  
 
   /** Creates a new Intake. */
   public Intake() {
-    rollerMotor = new TalonFX(ROLLER_MOTOR_ID, Constants.GeneralConstants.DRIVE_CANIVORE_NAME);
-    pivotLeft = new TalonFX(PIVOT_LEFT_ID, Constants.GeneralConstants.DRIVE_CANIVORE_NAME);
-    pivotRight = new TalonFX(PIVOT_RIGHT_ID, Constants.GeneralConstants.DRIVE_CANIVORE_NAME);
-    piviotEncoder = new CANcoder(PIVOT_ENCODER_ID, Constants.GeneralConstants.DRIVE_CANIVORE_NAME);
+    rollerMotor = new TalonFX(ROLLER_MOTOR_ID);
+    pivotLeft = new TalonFX(PIVOT_LEFT_ID);
+    pivotRight = new TalonFX(PIVOT_RIGHT_ID);
+    piviotEncoder = new CANcoder(PIVOT_ENCODER_ID);
+
+    BreakerCANCoderFactory.configExistingCANCoder(piviotEncoder, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PIVOT_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
     
     TalonFXConfiguration pivotConfig = new TalonFXConfiguration();
     pivotConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -62,6 +70,18 @@ public class Intake extends SubsystemBase {
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     pivotConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
     pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+
+    pivotConfig.Feedback.FeedbackRemoteSensorID = piviotEncoder.getDeviceID();
+    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    pivotConfig.Feedback.RotorToSensorRatio = 12.0;
+    pivotConfig.Feedback.SensorToMechanismRatio = 1.0;
+
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVIOT_EXTENDED_THRESHOLD;
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVIOT_RETRACTED_THRESHOLD;
+    pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
+
     pivotLeft.getConfigurator().apply(pivotConfig);
     pivotRight.getConfigurator().apply(pivotConfig);
 
@@ -71,7 +91,7 @@ public class Intake extends SubsystemBase {
     ampCurrentPivotConfig.SupplyTimeThreshold = 0.0;
     ampCurrentPivotConfig.SupplyCurrentLimitEnable = true;
 
-    BreakerCANCoderFactory.configExistingCANCoder(piviotEncoder, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PIVOT_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
+    
 
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
     rollerConfig.CurrentLimits.SupplyCurrentLimit = 60;
@@ -87,6 +107,9 @@ public class Intake extends SubsystemBase {
     pivotFollowerRequest = new Follower(PIVOT_LEFT_ID, true);
 
     beamBreak = new BreakerBeamBreak(1, false);
+
+    forwardLimitSupplier = pivotLeft.getForwardLimit().asSupplier();
+    reverseLimitSupplier = pivotLeft.getReverseLimit().asSupplier();
   }
 
   public Command setStateCommand(IntakeState stateToSet, boolean waitForSuccess) {
@@ -179,11 +202,11 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isExtendLimitTriggered() {
-    return piviotEncoder.getAbsolutePosition().getValue() <= PIVIOT_EXTENDED_THRESHOLD;
+    return forwardLimitSupplier.get() == ForwardLimitValue.ClosedToGround;
   }
 
   public boolean isRetractLimitTriggered() {
-    return piviotEncoder.getAbsolutePosition().getValue() >= PIVIOT_RETRACTED_THRESHOLD;
+    return reverseLimitSupplier.get() == ReverseLimitValue.ClosedToGround;
   }
 
   public boolean isAmpLimitTriggered() {
@@ -212,8 +235,6 @@ public class Intake extends SubsystemBase {
     }
 
     piviotDutyCycleControlRequest.withOutput(targetState.getPivotState().getMotorDutyCycle());
-    piviotDutyCycleControlRequest.withLimitForwardMotion(isExtendLimitTriggered());
-    piviotDutyCycleControlRequest.withLimitReverseMotion(isRetractLimitTriggered());
     BreakerLog.recordOutput("EXT LIM", isExtendLimitTriggered());
     BreakerLog.recordOutput("RET LIM", isRetractLimitTriggered());
     BreakerLog.recordOutput("INTK HAS NOTE", hasNote());

@@ -24,11 +24,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
+import frc.robot.Constants.AmpBarConstants;
 
 public class AmpBar extends SubsystemBase {
   public enum AmpBarState {
     RETRACTED(-0.5),
-    EXTENDED(0.7),
+    EXTENDED(1.0),
     NEUTRAL(0.0);
 
     private double motorDutyCycle;
@@ -129,9 +130,10 @@ public class AmpBar extends SubsystemBase {
     }
 
     boolean thermalProtection = isInThermalProtection();
-    if (!isAtTargetAngle() && !thermalProtection) {
+    if ((!isAtTargetAngle() || currentState == AmpBarState.EXTENDED) && !thermalProtection) {
       sparkFlex.set(currentState.motorDutyCycle);
-    } else {
+    }
+    else {
       sparkFlex.set(0.0);
     }
   }

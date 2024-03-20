@@ -62,6 +62,8 @@ import frc.robot.ShooterTarget.FireingSolution;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.GeneralConstants;
 
 public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
@@ -85,9 +87,9 @@ public class Shooter extends SubsystemBase {
   public Shooter(Supplier<FireingSolution> defaultTarget) {
     target = defaultTarget;
     //beamBreak = new BreakerBeamBreak(3, true);
-    piviotMotor = new TalonFX(SHOOTER_PIVOT_ID);
-    flywheelLeft = new TalonFX(LEFT_FLYWHEEL_ID);
-    flywheelRight = new TalonFX(RIGHT_FLYWHEEL_ID);
+    piviotMotor = new TalonFX(SHOOTER_PIVOT_ID, GeneralConstants.DRIVE_CANIVORE_NAME);
+    flywheelLeft = new TalonFX(LEFT_FLYWHEEL_ID, GeneralConstants.DRIVE_CANIVORE_NAME);
+    flywheelRight = new TalonFX(RIGHT_FLYWHEEL_ID, GeneralConstants.DRIVE_CANIVORE_NAME);
     hopper = new WPI_TalonSRX(HOPPER_ID);
     hopper.setNeutralMode(NeutralMode.Brake);
     hopper.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);

@@ -70,9 +70,6 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
 
-
-
-
         if (enable) {
             Pose2d odometryRefPos = drivetrain.getOdometryPoseMeters();
             estimatedPoses.clear();
@@ -143,86 +140,86 @@ public class Vision extends SubsystemBase {
         }
     }
 
-    private AprilTagFieldLayout solveForFieldTagPositionsParalax(BreakerPhotonCamera left, BreakerPhotonCamera right, AprilTagFieldLayout idealLayout, ArrayList<VisionCalibrationFrame> calibrationFrames, int... knownGoodTagIDs) {
+    // private AprilTagFieldLayout solveForFieldTagPositionsParalax(BreakerPhotonCamera left, BreakerPhotonCamera right, AprilTagFieldLayout idealLayout, ArrayList<VisionCalibrationFrame> calibrationFrames, int... knownGoodTagIDs) {
         
-        ArrayList<BreakerTriplet<Double, FieldCalibrationCameraCapture, FieldCalibrationCameraCapture>> paralaxCaptures = new ArrayList<>();
-        for (VisionCalibrationFrame frame:calibrationFrames) {
-            Optional<FieldCalibrationCameraCapture> leftCapOpt = Optional.empty();
-            Optional<FieldCalibrationCameraCapture> rightCapOpt = Optional.empty();
-            for (FieldCalibrationCameraCapture capture :frame.cameraCaptures) {
-                if (capture.camName.equals(left.getDeviceName())) {
-                    leftCapOpt = Optional.of(capture);
-                } else if (capture.camName.equals(right.getDeviceName())) {
-                    rightCapOpt = Optional.of(capture);
-                }
-            }
-            if (leftCapOpt.isPresent() && rightCapOpt.isPresent()) {
-                 FieldCalibrationCameraCapture leftCap = leftCapOpt.get();
-                 FieldCalibrationCameraCapture rightCap = rightCapOpt.get();
-                 double frameTimestamp = (leftCap.pipelineResult.getTimestampSeconds() + rightCap.pipelineResult.getTimestampSeconds()) / 2.0;
-                 paralaxCaptures.add(new BreakerTriplet<Double,FieldCalibrationCameraCapture, FieldCalibrationCameraCapture>(frameTimestamp, leftCap, rightCap));
-            }
-        }
-        return null;
-    }
+    //     ArrayList<BreakerTriplet<Double, FieldCalibrationCameraCapture, FieldCalibrationCameraCapture>> paralaxCaptures = new ArrayList<>();
+    //     for (VisionCalibrationFrame frame:calibrationFrames) {
+    //         Optional<FieldCalibrationCameraCapture> leftCapOpt = Optional.empty();
+    //         Optional<FieldCalibrationCameraCapture> rightCapOpt = Optional.empty();
+    //         for (FieldCalibrationCameraCapture capture :frame.cameraCaptures) {
+    //             if (capture.camName.equals(left.getDeviceName())) {
+    //                 leftCapOpt = Optional.of(capture);
+    //             } else if (capture.camName.equals(right.getDeviceName())) {
+    //                 rightCapOpt = Optional.of(capture);
+    //             }
+    //         }
+    //         if (leftCapOpt.isPresent() && rightCapOpt.isPresent()) {
+    //              FieldCalibrationCameraCapture leftCap = leftCapOpt.get();
+    //              FieldCalibrationCameraCapture rightCap = rightCapOpt.get();
+    //              double frameTimestamp = (leftCap.pipelineResult.getTimestampSeconds() + rightCap.pipelineResult.getTimestampSeconds()) / 2.0;
+    //              paralaxCaptures.add(new BreakerTriplet<Double,FieldCalibrationCameraCapture, FieldCalibrationCameraCapture>(frameTimestamp, leftCap, rightCap));
+    //         }
+    //     }
+    //     return null;
+    // }
     
-    private static Optional<RobotToTargetStereoSolution> getRobotToTargetTransformSolution(AprilTag idealTag, Transform3d leftCamTransform, Transform3d rightCamTransform, ArrayList<BreakerTriplet<Double, FieldCalibrationCameraCapture, FieldCalibrationCameraCapture>> stereoCaptures) {
-        BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> leftAngles = new BreakerInterpolatingTreeMap<>();
-        BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> rightAngles = new BreakerInterpolatingTreeMap<>();
-        for (BreakerTriplet<Double, FieldCalibrationCameraCapture, FieldCalibrationCameraCapture> stereoCap : stereoCaptures) {
-            for (PhotonTrackedTarget tgt : stereoCap.getMiddle().pipelineResult.targets) {
-                if (tgt.getFiducialId() == idealTag.ID) {
-                    Rotation2d yaw = Rotation2d.fromDegrees(-tgt.getYaw());
-                    Rotation2d pitch = Rotation2d.fromDegrees(tgt.getPitch());
-                    leftAngles.put(stereoCap.getMiddle().pipelineResult.getTimestampSeconds(), new BreakerInterpolatableDoubleArray(yaw.getCos(), yaw.getSin(), pitch.getCos(), pitch.getSin()));
-                    break;
-                }
-            }
-            for (PhotonTrackedTarget tgt : stereoCap.getRight().pipelineResult.targets) {
-                if (tgt.getFiducialId() == idealTag.ID) {
-                    Rotation2d yaw = Rotation2d.fromDegrees(-tgt.getYaw());
-                    Rotation2d pitch = Rotation2d.fromDegrees(tgt.getPitch());
-                    leftAngles.put(stereoCap.getMiddle().pipelineResult.getTimestampSeconds(), new BreakerInterpolatableDoubleArray(yaw.getCos(), yaw.getSin(), pitch.getCos(), pitch.getSin()));
-                    break;
-                }
-            }
-        }
-        if (leftAngles.size() != rightAngles.size() || leftAngles.size() < 50) {
-            return Optional.empty();
-        }
-        return Optional.of(new RobotToTargetStereoSolution(idealTag, leftCamTransform, rightCamTransform, leftAngles, rightAngles));
-    }
+    // private static Optional<RobotToTargetStereoSolution> getRobotToTargetTransformSolution(AprilTag idealTag, Transform3d leftCamTransform, Transform3d rightCamTransform, ArrayList<BreakerTriplet<Double, FieldCalibrationCameraCapture, FieldCalibrationCameraCapture>> stereoCaptures) {
+    //     BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> leftAngles = new BreakerInterpolatingTreeMap<>();
+    //     BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> rightAngles = new BreakerInterpolatingTreeMap<>();
+    //     for (BreakerTriplet<Double, FieldCalibrationCameraCapture, FieldCalibrationCameraCapture> stereoCap : stereoCaptures) {
+    //         for (PhotonTrackedTarget tgt : stereoCap.getMiddle().pipelineResult.targets) {
+    //             if (tgt.getFiducialId() == idealTag.ID) {
+    //                 Rotation2d yaw = Rotation2d.fromDegrees(-tgt.getYaw());
+    //                 Rotation2d pitch = Rotation2d.fromDegrees(tgt.getPitch());
+    //                 leftAngles.put(stereoCap.getMiddle().pipelineResult.getTimestampSeconds(), new BreakerInterpolatableDoubleArray(yaw.getCos(), yaw.getSin(), pitch.getCos(), pitch.getSin()));
+    //                 break;
+    //             }
+    //         }
+    //         for (PhotonTrackedTarget tgt : stereoCap.getRight().pipelineResult.targets) {
+    //             if (tgt.getFiducialId() == idealTag.ID) {
+    //                 Rotation2d yaw = Rotation2d.fromDegrees(-tgt.getYaw());
+    //                 Rotation2d pitch = Rotation2d.fromDegrees(tgt.getPitch());
+    //                 leftAngles.put(stereoCap.getMiddle().pipelineResult.getTimestampSeconds(), new BreakerInterpolatableDoubleArray(yaw.getCos(), yaw.getSin(), pitch.getCos(), pitch.getSin()));
+    //                 break;
+    //             }
+    //         }
+    //     }
+    //     if (leftAngles.size() != rightAngles.size() || leftAngles.size() < 50) {
+    //         return Optional.empty();
+    //     }
+    //     return Optional.of(new RobotToTargetStereoSolution(idealTag, leftCamTransform, rightCamTransform, leftAngles, rightAngles));
+    // }
 
-    public static class RobotToTargetStereoSolution {
-        private AprilTag idealTag;
-        private Transform3d leftCamTransform;
-        private Transform3d rightCamTransform;
-        private BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> leftAngles;
-        private BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> rightAngles;
-        private double baseDist;
-        public RobotToTargetStereoSolution(AprilTag idealTag, Transform3d leftCamTransform, Transform3d rightCamTransform, BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> leftAngles,  BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> rightAngles) {
+    // public static class RobotToTargetStereoSolution {
+    //     private AprilTag idealTag;
+    //     private Transform3d leftCamTransform;
+    //     private Transform3d rightCamTransform;
+    //     private BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> leftAngles;
+    //     private BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> rightAngles;
+    //     private double baseDist;
+    //     public RobotToTargetStereoSolution(AprilTag idealTag, Transform3d leftCamTransform, Transform3d rightCamTransform, BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> leftAngles,  BreakerInterpolatingTreeMap<Double, BreakerInterpolatableDoubleArray> rightAngles) {
 
-        }
-        //              C
-        //             /\
-        //          a /  \ b
-        //           /    \
-        //         B ------ A
-        //             c
+    //     }
+    //     //              C
+    //     //             /\
+    //     //          a /  \ b
+    //     //           /    \
+    //     //         B ------ A
+    //     //             c
 
-        public Transform3d getTransformAtTime(double time) {
+    //     public Transform3d getTransformAtTime(double time) {
 
-            BreakerInterpolatableDoubleArray leftAngArr = leftAngles.getInterpolatedValue(time);
-            Rotation2d leftCameraYaw = new Rotation2d(leftAngArr.getValue()[0], leftAngArr.getValue()[1]).minus(Rotation2d.fromRadians(leftCamTransform.getRotation().getZ()));
-            Rotation2d leftCameraPitch = new Rotation2d(leftAngArr.getValue()[2], leftAngArr.getValue()[3]).minus(Rotation2d.fromDegrees(leftCamTransform.getRotation().getY()));
-            BreakerInterpolatableDoubleArray rightAngArr = rightAngles.getInterpolatedValue(time);
-            Rotation2d rightCameraYaw = new Rotation2d(rightAngArr.getValue()[0], rightAngArr.getValue()[1]).minus(Rotation2d.fromRadians(rightCamTransform.getRotation().getZ()));
-            Rotation2d rightCameraPitch = new Rotation2d(rightAngArr.getValue()[2], rightAngArr.getValue()[3]).minus(Rotation2d.fromRadians(rightCamTransform.getRotation().getY()));
+    //         BreakerInterpolatableDoubleArray leftAngArr = leftAngles.getInterpolatedValue(time);
+    //         Rotation2d leftCameraYaw = new Rotation2d(leftAngArr.getValue()[0], leftAngArr.getValue()[1]).minus(Rotation2d.fromRadians(leftCamTransform.getRotation().getZ()));
+    //         Rotation2d leftCameraPitch = new Rotation2d(leftAngArr.getValue()[2], leftAngArr.getValue()[3]).minus(Rotation2d.fromDegrees(leftCamTransform.getRotation().getY()));
+    //         BreakerInterpolatableDoubleArray rightAngArr = rightAngles.getInterpolatedValue(time);
+    //         Rotation2d rightCameraYaw = new Rotation2d(rightAngArr.getValue()[0], rightAngArr.getValue()[1]).minus(Rotation2d.fromRadians(rightCamTransform.getRotation().getZ()));
+    //         Rotation2d rightCameraPitch = new Rotation2d(rightAngArr.getValue()[2], rightAngArr.getValue()[3]).minus(Rotation2d.fromRadians(rightCamTransform.getRotation().getY()));
             
             
 
-        }
-    }
+    //     }
+    // }
     public static record VisionCalibrationFrame(double frameTimestamp, ArrayList<FieldCalibrationCameraCapture> cameraCaptures) {};
     public static record FieldCalibrationCameraCapture(String camName, Transform3d robotToCamTransform, Matrix<N3, N3> cameraMatrix, Matrix<N5, N1> distCoeffs, PhotonPipelineResult pipelineResult) {};
 }
