@@ -304,5 +304,6 @@ public final class Constants {
     public static final Rotation2d ENCODER_OFFSET = Rotation2d.fromRotations(0.473876953125);
   
     public static final int AMP_BAR_ENCODER_ID = 35;
+    public static final int AMP_BAR_MOTOR_ID = 60;
   }
 }
