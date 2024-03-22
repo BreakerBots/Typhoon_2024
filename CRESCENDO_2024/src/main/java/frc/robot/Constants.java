@@ -66,7 +66,7 @@ public final class Constants {
     public static final int PIVOT_RIGHT_ID = 42;
     public static final int PIVOT_ENCODER_ID = 43;
     
-    public static final double PIVOT_ENCODER_OFFSET = 0.292236328125;
+    public static final double PIVOT_ENCODER_OFFSET = 0.448974609375;
 
     /*0deg is 15 deg behind fully retracted*/
     public static final double PIVIOT_RETRACTED_THRESHOLD = 0.35;
@@ -96,7 +96,7 @@ public final class Constants {
     public static final double PITCH_KA = 0.07;
     public static final double PITCH_KV = 18.0;
     public static final double PITCH_KG = 0.375;
-    public static final double PITCH_ENCODER_OFFSET = -0.0234375+0.25;
+    public static final double PITCH_ENCODER_OFFSET = -0.463623046875+0.25;
 
     public static final double PITCH_MAX_ROT = 0.21;
     public static final double PITCH_MIN_ROT = 0.01;
@@ -186,10 +186,10 @@ public final class Constants {
     public static final int BR_ENCODER_ID = 23;
 
     //Azimuth encoder angle offets
-    public static final double FL_ENCODER_OFFSET = 0.1943359375;
-    public static final double FR_ENCODER_OFFSET = 0.39306640625;
-    public static final double BL_ENCODER_OFFSET = -0.05224609375;
-    public static final double BR_ENCODER_OFFSET = -0.43212890625;
+    public static final double FL_ENCODER_OFFSET = -0.223388671875;
+    public static final double FR_ENCODER_OFFSET = -0.181640625;
+    public static final double BL_ENCODER_OFFSET = -0.318359375;
+    public static final double BR_ENCODER_OFFSET = 0.3876953125;
 
     //Module wheel centerpoint locations relative to robot origin (center)
     public static final Translation2d FL_TRANSLATION = new Translation2d(0.314325, 0.314325);
@@ -299,8 +299,10 @@ public final class Constants {
   }
 
   public static class AmpBarConstants {
-    public static final Rotation2d EXTENDED_ANGLE_THRESHOLD = Rotation2d.fromDegrees(60.0); // temporary
-    public static final Rotation2d RETRACTED_ANGLE_THRESHOLD = Rotation2d.fromDegrees(5.0); // temporary
-    public static final Rotation2d ENCODER_OFFSET = Rotation2d.fromRotations(0.0); // temporary
+    public static final Rotation2d EXTENDED_ANGLE_THRESHOLD = Rotation2d.fromRotations(0.366211);
+    public static final Rotation2d RETRACTED_ANGLE_THRESHOLD = Rotation2d.fromRotations(0.050537);
+    public static final Rotation2d ENCODER_OFFSET = Rotation2d.fromRotations(0.473876953125);
+  
+    public static final int AMP_BAR_ENCODER_ID = 35;
   }
 }

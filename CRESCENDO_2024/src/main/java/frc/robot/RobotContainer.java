@@ -5,11 +5,10 @@
 package frc.robot;
 
 import java.util.HashMap;
+import java.util.ResourceBundle.Control;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
@@ -26,6 +25,7 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig;
 import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameConfig;
 import frc.robot.commands.AllignToAmp;
 import frc.robot.commands.OrbitNote;
+import frc.robot.commands.ScoreInAmp;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.paths.CenterShoot4InWing;
 import frc.robot.commands.auto.paths.CenterThenGoDeepShoot3;
@@ -34,16 +34,17 @@ import frc.robot.commands.auto.paths.LeaveShootOneSource;
 import frc.robot.commands.auto.paths.SourceShoot3GoToCenter;
 import frc.robot.commands.auto.paths.ThreeNoteAgainstSpeaker;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
+import frc.robot.commands.handoffs.HandoffFromShooterToIntake;
 import frc.robot.commands.intake.IntakeFromGround;
+import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
-import frc.robot.commands.intake.StopIntaking;
 import frc.robot.commands.intake.StowIntake;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.AmpBar;
-import frc.robot.subsystems.AmpBar.AmpBarState;
 import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Intake.IntakePivotState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -63,11 +64,11 @@ public class RobotContainer {
 
   private final Intake intakeSys = new Intake();
   private final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
-  // private final PastaRoller pastaRollerSys = new PastaRoller();
-  private final AmpBar ampBar = new AmpBar();
+  private final AmpBar ampBarSys = new AmpBar();
 
-  public static final ClimbArm leftClimbSys = new ClimbArm(50, "", true);
-  public static final ClimbArm rigtClimbSys = new ClimbArm(51, "", true);
+
+  public static final ClimbArm leftClimbSys = new ClimbArm(50, "rio", true);
+  public static final ClimbArm rigtClimbSys = new ClimbArm(51, "rio", true);
 
   public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.FIREING_MAP);
 
@@ -112,9 +113,6 @@ public class RobotContainer {
 
     controllerSys.getLeftBumper()
       .and(() -> intakeSys.getState() != IntakeState.RETRACTED_EXTAKEING)
-      .onTrue(new StopIntaking(intakeSys, shooterSys));
-    controllerSys.getRightBumper()
-      .and(() -> intakeSys.getState() != IntakeState.RETRACTED_EXTAKEING)
       .onTrue(new StowIntake(intakeSys, shooterSys));
 
     controllerSys.getButtonA()
@@ -131,37 +129,20 @@ public class RobotContainer {
         .onlyWhile(() -> !(intakeSys.hasNote() || shooterSys.hasNote()) && (intakeSys.getState() == IntakeState.EXTENDED_EXTAKEING))
       );
 
-      // controllerSys.getButtonY()
-      //   .and(() -> shooterSys.hasNote())
-      //   .and(() -> !intakeSys.hasNote())
-      //   .debounce(0.1, DebounceType.kBoth)
-      //   .onTrue(new ScoreInAmpWithShooter(shooterSys));
-
-       controllerSys.getButtonY()
-        .onTrue(new SequentialCommandGroup(
-          intakeSys.setStateCommand(IntakeState.EXTENDED_EXTAKEING, false),
-          ampBar.setStateCommand(AmpBarState.EXTENDED, false)
-        )
-        .andThen(
-          new WaitCommand(3.0), 
-          intakeSys.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false),
-          ampBar.setStateCommand(AmpBarState.RETRACTED, false)
-        ));
-
-    // controllerSys.getButtonY()
-    //   .and(() -> shooterSys.hasNote())
-    //   .and(() -> !intakeSys.hasNote())
-    //   .onTrue(new HandoffFromShooterToIntake(shooterSys, intakeSys, true));
-    // controllerSys.getButtonY()
-    //   .debounce(0.1, DebounceType.kBoth)
-    //   .and(() -> intakeSys.hasNote())
-    //   .and(() -> !shooterSys.hasNote())
-    //   .and(() -> intakeSys.getState().getPivotState() == IntakePivotState.RETRACTED)
-    //   .onTrue(new ScoreInAmp(intakeSys, pastaRollerSys));
-    // controllerSys.getButtonY()
-    //   .and(() -> !intakeSys.hasNote())
-    //   .and(() -> !shooterSys.hasNote())
-    //   .onTrue(new IntakeFromGroundForPastaRoller(intakeSys));
+    controllerSys.getButtonY()
+      .and(() -> shooterSys.hasNote())
+      .and(() -> !intakeSys.hasNote())
+      .onTrue(new HandoffFromShooterToIntake(shooterSys, intakeSys, true));
+    controllerSys.getButtonY()
+      .debounce(0.1, DebounceType.kBoth)
+      .and(() -> intakeSys.hasNote())
+      .and(() -> !shooterSys.hasNote())
+      .and(() -> intakeSys.getState().getPivotState() == IntakePivotState.RETRACTED)
+      .onTrue(new ScoreInAmp(intakeSys, ampBarSys));
+    controllerSys.getButtonY()
+      .and(() -> !intakeSys.hasNote())
+      .and(() -> !shooterSys.hasNote())
+      .onTrue(new IntakeFromGroundForPastaRoller(intakeSys));
 
     controllerSys.getButtonX()
       .and(intakeSys::hasNote)
@@ -179,6 +160,12 @@ public class RobotContainer {
       .and(()-> {return !shooterSys.hasNote();})
       .and(() -> {return shooterSys.getState() != ShooterState.TRACK_TARGET;})
       .onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
+
+    controllerSys.getRightThumbstick().getJoystickButton()
+      .and(() -> shooterSys.hasNote())
+      .and(() -> !intakeSys.hasNote())
+      .and(() -> intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING)
+      .toggleOnTrue(new SpoolShooterForSpeakerShot(shooterSys, true));
 
   }
 

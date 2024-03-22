@@ -72,7 +72,7 @@ public class Intake extends SubsystemBase {
     pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     pivotConfig.Feedback.FeedbackRemoteSensorID = piviotEncoder.getDeviceID();
-    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.SyncCANcoder;
+    pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
     pivotConfig.Feedback.RotorToSensorRatio = 12.0;
     pivotConfig.Feedback.SensorToMechanismRatio = 1.0;
 

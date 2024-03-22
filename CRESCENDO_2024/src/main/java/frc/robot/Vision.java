@@ -19,6 +19,7 @@ import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
@@ -26,12 +27,14 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.BreakerLib.devices.vision.limelight.BreakerLimelight;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera.BreakerPhotonVisionPoseEstimator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPose;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerPoseEstimationStandardDeviationCalculator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
+import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin.PoseOriginType;
 import frc.robot.BreakerLib.util.BreakerTriplet;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolatableDoubleArray;
@@ -94,8 +97,28 @@ public class Vision extends SubsystemBase {
 
                 Optional<BreakerEstimatedPose> posOpt = est.getEstimatedPose(PoseOrigin.ofGlobal());
                 if (posOpt.isPresent()) {
-                    estimatedPoses.add(posOpt.get());
-                   
+                    BreakerEstimatedPose pos = posOpt.get();
+                    List<PhotonTrackedTarget> targets = est.getTrackedTargets();
+                    if (targets.size() == 1) {
+                        PhotonTrackedTarget tgt = targets.get(0);
+                        if (tgt.getPoseAmbiguity() <= 0.15) {
+                            continue;
+                        }
+                        
+                        final Pose3d actual = pos.estimatedPose;
+                        final double fieldBorderMargin = 0.5;
+                        final double zMargin = 0.75;
+
+                        if (actual.getX() < -fieldBorderMargin
+                            || actual.getX() > Constants.VisionConstants.APRIL_TAG_FIELD_LAYOUT.getFieldLength() + fieldBorderMargin
+                            || actual.getY() < -fieldBorderMargin
+                            || actual.getY() > Constants.VisionConstants.APRIL_TAG_FIELD_LAYOUT.getFieldWidth() + fieldBorderMargin
+                            || actual.getZ() < -zMargin
+                            || actual.getZ() > zMargin) {
+                                continue;
+                        }
+                    }                    
+                    estimatedPoses.add(pos);
                 }
             }
 
