@@ -9,6 +9,7 @@ import java.util.ResourceBundle.Control;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
@@ -44,8 +45,10 @@ import frc.robot.subsystems.AmpBar;
 import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Intake.IntakePivotState;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.LED.LEDState;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
 /**
@@ -66,13 +69,14 @@ public class RobotContainer {
   private final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
   private final AmpBar ampBarSys = new AmpBar();
 
+  private final LED led = new LED(intakeSys);
+
 
   public static final ClimbArm leftClimbSys = new ClimbArm(50, "rio", true);
   public static final ClimbArm rigtClimbSys = new ClimbArm(51, "rio", true);
 
   public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.FIREING_MAP);
 
-  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureDriveControls();
@@ -154,12 +158,16 @@ public class RobotContainer {
       .and(()-> {return !intakeSys.hasNote();})
       .and(shooterSys::hasNote)
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
-      .onTrue(new StationaryShootFromAnywhere(shooterSys, drivetrainSys));
+      .onTrue(new SequentialCommandGroup(
+        led.returnToRestState(), // shooting is typically the end of a state
+        new StationaryShootFromAnywhere(shooterSys, drivetrainSys)));
     controllerSys.getButtonX()
       .and(()-> {return !intakeSys.hasNote();})
       .and(()-> {return !shooterSys.hasNote();})
       .and(() -> {return shooterSys.getState() != ShooterState.TRACK_TARGET;})
-      .onTrue(new IntakeFromGroundForShooter(intakeSys, shooterSys));
+      .onTrue(new SequentialCommandGroup(
+        led.setStateCommand(LEDState.INTAKING_FOR_SHOOTER),
+        new IntakeFromGroundForShooter(intakeSys, shooterSys)));
 
     controllerSys.getRightThumbstick().getJoystickButton()
       .and(() -> shooterSys.hasNote())

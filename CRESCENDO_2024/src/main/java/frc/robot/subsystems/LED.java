@@ -4,13 +4,11 @@
 
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.BreakerLib.devices.cosmetic.led.BreakerRevBlinkin;
 import frc.robot.BreakerLib.devices.cosmetic.led.BreakerRevBlinkin.FixedPalettePattern;
-import frc.robot.BreakerLib.devices.cosmetic.led.BreakerRevBlinkin.SolidColor;
 
 public class LED extends SubsystemBase {
   public enum LEDState {
@@ -23,7 +21,7 @@ public class LED extends SubsystemBase {
     PERSUING_NOTE(FixedPalettePattern.RAINBOW_GLITTER),
     
     ENABLED_WITH_NOTE(FixedPalettePattern.FIRE_MEDIUM),
-    ENABLED(FixedPalettePattern.BREATH_BLUE),
+    ENABLED(FixedPalettePattern.BREATH_BLUE), // should be 'default' state
     
     SPOOLING_FLYWHEEL(FixedPalettePattern.CONFETTI),
 
@@ -45,14 +43,33 @@ public class LED extends SubsystemBase {
   private final BreakerRevBlinkin blinkin;
   private LEDState currentState;
 
-  /** Creates a new LED. */
-  public LED() {
+  private Intake intake;
+
+  /** Subsystem for managing LED lights on the robot using a state machine. */
+  public LED(Intake intake) {
     blinkin = new BreakerRevBlinkin(0);
     currentState = LEDState.ENABLED;
+    this.intake = intake; // does not need requirement
+    updateBlinkin();
   }
 
   public Command setStateCommand(LEDState state) {
     return runOnce(() -> setState(state));
+  }
+
+  /**
+   * Returns to the 'default' state, which is either {@code LEDState.ENABLED} or {@code LEDState.ENABLED_WITH_NOTE}
+   * 
+   * @return nothing
+   */
+  public Command returnToRestState() {
+    return runOnce(() -> {
+      if (intake.hasNote()) {
+        setState(LEDState.ENABLED_WITH_NOTE);
+      } else {
+        setState(LEDState.ENABLED);
+      }
+    });
   }
 
   public void setState(LEDState state) {
