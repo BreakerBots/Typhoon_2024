@@ -69,11 +69,11 @@ public final class Constants {
     public static final double PIVOT_ENCODER_OFFSET = 0.448974609375;
 
     /*0deg is 15 deg behind fully retracted*/
-    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.35;
+    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.30;
     /*0deg is 20 deg behind fully retracted*/
-    public static final double PIVIOT_EXTENDED_THRESHOLD = Units.degreesToRotations(5.0);
+    public static final double PIVIOT_EXTENDED_THRESHOLD = 0.008;
 
-    public static final double PIVOT_AGAINST_AMP_ANGLE_THRESHOLD = Units.degreesToRotations(15.0); // temporary
+    public static final double PIVOT_AGAINST_AMP_ANGLE_THRESHOLD = 0.31; // temporary
 
 
   }
@@ -89,19 +89,19 @@ public final class Constants {
     public static final double PITCH_PINION_TEETH = 20;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 0.8;
+    public static final double PITCH_KP = 1.75;
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.8;
-    public static final double PITCH_KS = 0.035;
-    public static final double PITCH_KA = 0.07;
-    public static final double PITCH_KV = 18.0;
-    public static final double PITCH_KG = 0.375;
-    public static final double PITCH_ENCODER_OFFSET = -0.463623046875+0.25;
+    public static final double PITCH_KS = 0.025;
+    public static final double PITCH_KA = 0.15;
+    public static final double PITCH_KV = 17.75;
+    public static final double PITCH_KG = 0.453;
+    public static final double PITCH_ENCODER_OFFSET = -0.40625+0.125;
 
     public static final double PITCH_MAX_ROT = 0.21;
     public static final double PITCH_MIN_ROT = 0.01;
 
-    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.01);
+    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.016);
 
     public static final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> FIREING_MAP = getFireingMap();
 
@@ -299,9 +299,9 @@ public final class Constants {
   }
 
   public static class AmpBarConstants {
-    public static final Rotation2d EXTENDED_ANGLE_THRESHOLD = Rotation2d.fromRotations(0.366211);
-    public static final Rotation2d RETRACTED_ANGLE_THRESHOLD = Rotation2d.fromRotations(0.050537);
-    public static final Rotation2d ENCODER_OFFSET = Rotation2d.fromRotations(0.473876953125);
+    public static final Rotation2d EXTENDED_ANGLE_THRESHOLD = Rotation2d.fromRotations(0.39);
+    public static final Rotation2d RETRACTED_ANGLE_THRESHOLD = Rotation2d.fromRotations(0.1);
+    public static final Rotation2d ENCODER_OFFSET = Rotation2d.fromRotations(-0.523681640625);
   
     public static final int AMP_BAR_ENCODER_ID = 35;
     public static final int AMP_BAR_MOTOR_ID = 60;

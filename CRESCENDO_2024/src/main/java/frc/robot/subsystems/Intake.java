@@ -37,6 +37,7 @@ import frc.robot.Constants;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
+import frc.robot.Constants.IntakeConstants;
 
 public class Intake extends SubsystemBase {
   private TalonFX rollerMotor;  
@@ -50,8 +51,7 @@ public class Intake extends SubsystemBase {
   private boolean isPivotAmpCurrentLimited = false;
   private final CurrentLimitsConfigs normalCurrentPivotConfig;
   private final CurrentLimitsConfigs ampCurrentPivotConfig = new CurrentLimitsConfigs();
-  private Supplier<ForwardLimitValue> forwardLimitSupplier;
-  private Supplier<ReverseLimitValue> reverseLimitSupplier;
+  private Supplier<Double> intakePosSupplier;
  
 
   /** Creates a new Intake. */
@@ -69,16 +69,16 @@ public class Intake extends SubsystemBase {
     pivotConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     pivotConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
-    pivotConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     pivotConfig.Feedback.FeedbackRemoteSensorID = piviotEncoder.getDeviceID();
     pivotConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    pivotConfig.Feedback.RotorToSensorRatio = 12.0;
+    pivotConfig.Feedback.RotorToSensorRatio = 8.4375;
     pivotConfig.Feedback.SensorToMechanismRatio = 1.0;
 
-    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = PIVIOT_EXTENDED_THRESHOLD;
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =  PIVIOT_RETRACTED_THRESHOLD;
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVIOT_RETRACTED_THRESHOLD;
+    pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVIOT_EXTENDED_THRESHOLD;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
 
@@ -108,8 +108,7 @@ public class Intake extends SubsystemBase {
 
     beamBreak = new BreakerBeamBreak(1, false);
 
-    forwardLimitSupplier = pivotLeft.getForwardLimit().asSupplier();
-    reverseLimitSupplier = pivotLeft.getReverseLimit().asSupplier();
+    intakePosSupplier = piviotEncoder.getAbsolutePosition().asSupplier();
   }
 
   public Command setStateCommand(IntakeState stateToSet, boolean waitForSuccess) {
@@ -173,9 +172,9 @@ public class Intake extends SubsystemBase {
   }
 
   public static enum IntakePivotState {
-    EXTENDED(0.1),//0.1
-    AMP(0.1),
-    RETRACTED(-0.15),//-0.15
+    EXTENDED(-0.1),//0.1
+    AMP(-0.05),
+    RETRACTED(0.15),//-0.15
     NEUTRAL(0.0);
     private double motorDutyCycle;
     private IntakePivotState(double motorDutyCycle) {
@@ -202,15 +201,15 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isExtendLimitTriggered() {
-    return forwardLimitSupplier.get() == ForwardLimitValue.ClosedToGround;
+    return intakePosSupplier.get() <= IntakeConstants.PIVIOT_EXTENDED_THRESHOLD;
   }
 
   public boolean isRetractLimitTriggered() {
-    return reverseLimitSupplier.get() == ReverseLimitValue.ClosedToGround;
+    return intakePosSupplier.get() >= IntakeConstants.PIVIOT_RETRACTED_THRESHOLD;
   }
 
   public boolean isAmpLimitTriggered() {
-    return piviotEncoder.getAbsolutePosition().getValue() <= PIVOT_AGAINST_AMP_ANGLE_THRESHOLD;
+    return intakePosSupplier.get() <= PIVOT_AGAINST_AMP_ANGLE_THRESHOLD;
   }
 
 

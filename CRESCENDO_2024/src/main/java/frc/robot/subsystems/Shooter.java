@@ -55,6 +55,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.HolonomicDriveController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -93,7 +94,7 @@ public class Shooter extends SubsystemBase {
     hopper = new WPI_TalonSRX(HOPPER_ID);
     hopper.setNeutralMode(NeutralMode.Brake);
     hopper.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-    pivotEncoder = BreakerCANCoderFactory.createCANCoder(PIVOT_ENCODER_ID, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PITCH_ENCODER_OFFSET, SensorDirectionValue.CounterClockwise_Positive);
+    pivotEncoder = BreakerCANCoderFactory.createCANCoder(PIVOT_ENCODER_ID, GeneralConstants.DRIVE_CANIVORE_NAME, AbsoluteSensorRangeValue.Signed_PlusMinusHalf, PITCH_ENCODER_OFFSET, SensorDirectionValue.Clockwise_Positive);
     configPivot();
     configFlywheel();
     state = ShooterState.STOW;
@@ -102,19 +103,19 @@ public class Shooter extends SubsystemBase {
 
   private void configFlywheel() {
     TalonFXConfiguration config = new TalonFXConfiguration();
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
     config.CurrentLimits.SupplyCurrentLimit = 10;
     config.CurrentLimits.SupplyCurrentThreshold = 100;
     config.CurrentLimits.SupplyTimeThreshold = 3.0;
     config.CurrentLimits.StatorCurrentLimitEnable = false;
     flywheelRight.getConfigurator().apply(config);
-    config.Slot0.kP = 0.006;
+    config.Slot0.kP = 0.015;
     config.Slot0.kI = 0.0;
     config.Slot0.kD = 0.01;
     config.Slot0.kV = 0.1205;
-    config.Slot0.kS = 0.17;
-    config.Slot0.kA = 0.1168;
+    config.Slot0.kS = 0.16;
+    config.Slot0.kA = 0.111;
     flywheelLeft.getConfigurator().apply(config);
     flywheelVelRequest = new VelocityVoltage(0.0);
     flywheelFollowRequest = new Follower(LEFT_FLYWHEEL_ID, true);
@@ -129,7 +130,7 @@ public class Shooter extends SubsystemBase {
     config.Feedback.RotorToSensorRatio = PITCH_RATIO;
     config.Feedback.SensorToMechanismRatio = 1.0;
     config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     config.Slot0.kP = PITCH_KP;
     config.Slot0.kI = PITCH_KI;
     config.Slot0.kD = PITCH_KD;
@@ -149,7 +150,7 @@ public class Shooter extends SubsystemBase {
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PITCH_MIN_ROT;
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    pivotMotionMagicRequest = new MotionMagicVoltage(0.0, true, 0.0, 0, false, false, false);
+    pivotMotionMagicRequest = new MotionMagicVoltage(0.0, false, 0.0, 0, false, false, false);
     piviotMotor.getConfigurator().apply(config);
     pivotPosSup = piviotMotor.getPosition().asSupplier();
     pivotVelSup = piviotMotor.getVelocity().asSupplier();
@@ -172,7 +173,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean hasNote() {
-    return /*beamBreak.isBroken()*/ hopper.isRevLimitSwitchClosed() == 1;
+    return /*beamBreak.isBroken()*/ hopper.isRevLimitSwitchClosed() == 0;
   }
 
   public boolean isAtGoal() {
@@ -180,7 +181,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtAngleGoal() {
-    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.015/*0.006 */) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.01);//0.5, 0.1
+    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.005/*0.006 */) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.01);//0.5, 0.1
   }
 
   public boolean isAtFlywheelGoal() {
@@ -189,7 +190,7 @@ public class Shooter extends SubsystemBase {
 
 
   public static enum ShooterHopperState {
-    FORWARD(-0.7),
+    FORWARD(-1.0),
     REVERSE(1.0),
     NEUTRAL(0.0);
     private double dutyCycle;
