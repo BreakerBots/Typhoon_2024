@@ -32,15 +32,15 @@ public class FUNauto extends SequentialCommandGroup {
     var theFunkYouPath = PathPlannerPath.fromPathFile("TheFunkYouPath");
 
     addCommands(
-      new ConditionalCommand(
-        new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
-        new AutoAngleSnap(Rotation2d.fromDegrees(180.0), drivetrain), () -> {
-          Optional<Alliance> allyOpt = DriverStation.getAlliance();
-          return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
-        }),
-      AutoBuilder.pathfindThenFollowPath(preFUpath, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
+      // new ConditionalCommand(
+      //   new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
+      //   new AutoAngleSnap(Rotation2d.fromDegrees(180.0), drivetrain), () -> {
+      //     Optional<Alliance> allyOpt = DriverStation.getAlliance();
+      //     return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
+      //   }),
+      AutoBuilder.followPath(preFUpath),
       new StationaryShootFromAnywhere(shooter, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(theFunkYouPath, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS)
+      AutoBuilder.followPath(theFunkYouPath)
     );
   }
 }

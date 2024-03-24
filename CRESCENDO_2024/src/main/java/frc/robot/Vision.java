@@ -4,9 +4,14 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.VisionConstants.*;
+import static frc.robot.Constants.VisionConstants.APRIL_TAG_FIELD_LAYOUT;
+import static frc.robot.Constants.VisionConstants.BACK_LEFT_CAMERA_NAME;
+import static frc.robot.Constants.VisionConstants.BACK_LEFT_CAMERA_TRANS;
+import static frc.robot.Constants.VisionConstants.BACK_RIGHT_CAMERA_NAME;
+import static frc.robot.Constants.VisionConstants.BACK_RIGHT_CAMERA_TRANS;
+import static frc.robot.Constants.VisionConstants.LIMELIGHT_NAME;
+import static frc.robot.Constants.VisionConstants.LIMELIGHT_TRANS;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,30 +20,20 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.apriltag.AprilTag;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.numbers.N5;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.BreakerLib.devices.vision.limelight.BreakerLimelight;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera;
 import frc.robot.BreakerLib.devices.vision.photon.BreakerPhotonCamera.BreakerPhotonVisionPoseEstimator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerEstimatedPose;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.BreakerPoseEstimationStandardDeviationCalculator;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
-import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin.PoseOriginType;
-import frc.robot.BreakerLib.util.BreakerTriplet;
-import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
-import frc.robot.BreakerLib.util.math.interpolation.BreakerInterpolatableDoubleArray;
-import frc.robot.BreakerLib.util.math.interpolation.maps.BreakerInterpolatingTreeMap;
 import frc.robot.subsystems.Drive;
 
 /** Add your docs here. */

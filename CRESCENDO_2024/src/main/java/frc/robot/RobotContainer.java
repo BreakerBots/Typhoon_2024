@@ -26,8 +26,13 @@ import frc.robot.commands.AllignToAmp;
 import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ScoreInAmp;
 import frc.robot.commands.StationaryShootFromAnywhere;
+import frc.robot.commands.auto.paths.FUNauto;
+import frc.robot.commands.auto.paths.FiveNoteAuto;
+import frc.robot.commands.auto.paths.ThreeNoteA;
+import frc.robot.commands.auto.paths.ThreeNoteAgainstSpeaker;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.handoffs.HandoffFromShooterToIntake;
+import frc.robot.commands.intake.ExtakeNote;
 import frc.robot.commands.intake.IntakeFromGround;
 import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
@@ -103,9 +108,9 @@ public class RobotContainer {
   private void configureBindings() {
 
     controllerSys.getButtonB()
-      // .and(() -> intakeSys.getState().getPivotState() != IntakePivotState.RETRACTED)
-      // .onTrue(new ExtakeNote(intakeSys, shooterSys));
-      .onTrue(new AllignToAmp(drivetrainSys));
+      .and(() -> intakeSys.getState().getPivotState() != IntakePivotState.RETRACTED)
+      .onTrue(new ExtakeNote(intakeSys, shooterSys));
+      // .onTrue(new AllignToAmp(drivetrainSys));
 
     controllerSys.getLeftBumper()
       .and(() -> intakeSys.getState() != IntakeState.RETRACTED_EXTAKEING)
@@ -218,6 +223,6 @@ public class RobotContainer {
     //return new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys);
     //return new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys);
     //return new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys);
-    return BreakerRobotManager.getSelectedAutoPath();
+    return new ThreeNoteA(shooterSys, drivetrainSys, intakeSys, visionSys);
   }
 }

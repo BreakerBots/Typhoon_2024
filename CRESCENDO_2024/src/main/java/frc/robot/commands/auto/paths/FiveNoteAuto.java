@@ -44,11 +44,11 @@ public class FiveNoteAuto extends SequentialCommandGroup {
         ),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
-      new AutoAngleSnap(Rotation2d.fromDegrees(50), drivetrain), 
+      new AutoAngleSnap(Rotation2d.fromDegrees(40), drivetrain), 
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
-      new AutoAngleSnap(Rotation2d.fromDegrees(90), drivetrain),
+      new AutoAngleSnap(Rotation2d.fromDegrees(70), drivetrain),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 

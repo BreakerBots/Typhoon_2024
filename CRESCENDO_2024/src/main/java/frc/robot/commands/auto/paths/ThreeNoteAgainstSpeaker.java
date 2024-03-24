@@ -7,9 +7,12 @@ package frc.robot.commands.auto.paths;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Vision;
 import frc.robot.commands.StationaryShootFromAnywhere;
+import frc.robot.commands.auto.actions.AutoAngleSnap;
 import frc.robot.commands.auto.actions.PersueAndIntakeNoteForShooter;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.Drive;
@@ -26,11 +29,11 @@ public class ThreeNoteAgainstSpeaker extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     var goToB5 = PathPlannerPath.fromPathFile("A3-B5");
     var goAgainstSpeaker = PathPlannerPath.fromPathFile("B5-AgainstSpeaker");
-    var initalOffset = PathPlannerPath.fromPathFile("Inital Offset Path");
+    // var initalOffset = PathPlannerPath.fromPathFile("Inital Offset Path");
     
     addCommands(
       new SpoolShooterForSpeakerShot(shooter,false),
-      AutoBuilder.followPath(initalOffset),
+      // AutoBuilder.followPath(initalOffset),
       new StationaryShootFromAnywhere(shooter, drivetrain),
       // new ConditionalCommand(
       //   new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
@@ -38,6 +41,7 @@ public class ThreeNoteAgainstSpeaker extends SequentialCommandGroup {
       //     Optional<Alliance> allyOpt = DriverStation.getAlliance();
       //     return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
       //   }),
+      new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
 
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),

@@ -49,7 +49,7 @@ public class LED extends SubsystemBase {
     EXTAKING(FixedPalettePattern.HEARTBEAT_BLUE),
     
     SHOOTING_TO_SPEAKER(FixedPalettePattern.STROBE_BLUE),
-    SCORING_IN_AMP(FixedPalettePattern.STROBE_GOLD),
+    SCORING_IN_AMP(SolidColor.BLUE_VIOLET),
     PERSUING_NOTE(FixedPalettePattern.RAINBOW_GLITTER),
     
     ENABLED_WITH_NOTE(FixedPalettePattern.FIRE_MEDIUM),
