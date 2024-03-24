@@ -5,7 +5,6 @@
 package frc.robot;
 
 import java.util.HashMap;
-import java.util.ResourceBundle.Control;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -13,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
-import frc.robot.BreakerLib.auto.BreakerAutoPath;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalogDeadbandConfig;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
@@ -28,27 +26,20 @@ import frc.robot.commands.AllignToAmp;
 import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ScoreInAmp;
 import frc.robot.commands.StationaryShootFromAnywhere;
-import frc.robot.commands.auto.paths.CenterShoot4InWing;
-import frc.robot.commands.auto.paths.CenterThenGoDeepShoot3;
-import frc.robot.commands.auto.paths.FiveNoteAuto;
-import frc.robot.commands.auto.paths.LeaveShootOneSource;
-import frc.robot.commands.auto.paths.SourceShoot3GoToCenter;
-import frc.robot.commands.auto.paths.ThreeNoteAgainstSpeaker;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.handoffs.HandoffFromShooterToIntake;
 import frc.robot.commands.intake.IntakeFromGround;
 import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.commands.intake.StowIntake;
-import frc.robot.commands.shooter.ShootManualAllign;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.AmpBar;
 import frc.robot.subsystems.ClimbArm;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Intake.IntakePivotState;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LED.LEDState;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -70,7 +61,7 @@ public class RobotContainer {
   private final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
   private final AmpBar ampBarSys = new AmpBar();
 
-  private final LED led = new LED(intakeSys);
+  private final LED led = new LED(shooterSys);
 
 
   public static final ClimbArm leftClimbSys = new ClimbArm(50, "rio", true);

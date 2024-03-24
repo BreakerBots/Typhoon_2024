@@ -1,4 +1,3 @@
-@ -4,23 +4,24 @@
 
 package frc.robot.commands.auto.paths;
 
@@ -16,13 +15,9 @@ import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Shooter;
 
-
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
- import frc.robot.subsystems.Intake.IntakeState;
 public class FiveNoteAuto extends SequentialCommandGroup {
   /** Creates a new FiveNoteAuto. */
   public FiveNoteAuto(Shooter shooter, Drive drivetrain, Intake intake, Vision vision) {
@@ -64,3 +59,4 @@ public class FiveNoteAuto extends SequentialCommandGroup {
       new StationaryShootFromAnywhere(shooter, drivetrain)
     );
   }
+}
