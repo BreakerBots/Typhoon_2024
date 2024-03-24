@@ -40,6 +40,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix6.configs.CustomParamsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.CoastOut;
 import com.ctre.phoenix6.controls.Follower;
@@ -60,7 +61,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShooterTarget.FireingSolution;
+import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
+import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.Constants.DriveConstants;
@@ -99,6 +103,11 @@ public class Shooter extends SubsystemBase {
     configFlywheel();
     state = ShooterState.STOW;
     flywheelCoastRequest = new CoastOut();
+    // defaultTarget = () -> {
+    //   CustomParamsConfigs perams = new CustomParamsConfigs();
+    //   flywheelRight.getConfigurator().refresh(perams);
+    //   return new FireingSolution(RobotContainer.SPEAKER_TARGET.getFireingSolution().yaw(), new BreakerVector2(Rotation2d.fromDegrees(perams.CustomParam0), perams.CustomParam1));
+    // };
   }
 
   private void configFlywheel() {
@@ -150,7 +159,7 @@ public class Shooter extends SubsystemBase {
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
     config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PITCH_MIN_ROT;
     config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    pivotMotionMagicRequest = new MotionMagicVoltage(0.0, false, 0.0, 0, false, false, false);
+    pivotMotionMagicRequest = new MotionMagicVoltage(0.0, true, 0.0, 0, false, false, false);
     piviotMotor.getConfigurator().apply(config);
     pivotPosSup = piviotMotor.getPosition().asSupplier();
     pivotVelSup = piviotMotor.getVelocity().asSupplier();
@@ -181,11 +190,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public boolean isAtAngleGoal() {
-    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.005/*0.006 */) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.01);//0.5, 0.1
+    return MathUtil.isNear(pivotMotionMagicRequest.Position, pivotPosSup.get(), 0.006/*0.006 */) && MathUtil.isNear(0.0, pivotVelSup.get(),  0.5);//0.5, 0.1
   }
 
   public boolean isAtFlywheelGoal() {
-    return MathUtil.isNear(flywheelVelSup.get(), flywheelVelSup.get(), 3.0) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 1.5) ;//5.0, 0.5
+    return MathUtil.isNear(flywheelVelRequest.Velocity, flywheelVelSup.get(), 3.0) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 5.0) ;//5.0, 0.5
   }
 
 
@@ -238,9 +247,9 @@ public class Shooter extends SubsystemBase {
     hopper.overrideLimitSwitchesEnable(respectHopperLimit);
 
     piviotMotor.setControl(pivotMotionMagicRequest.withPosition(piviotPos));
-
+    flywheelVelRequest.withVelocity(flywheelVel);
     if (flywheelVel > 0.0) {
-      flywheelLeft.setControl(flywheelVelRequest.withVelocity(flywheelVel));
+      flywheelLeft.setControl(flywheelVelRequest);
     } else {
       flywheelLeft.setControl(flywheelCoastRequest);
     }
@@ -250,6 +259,8 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     BreakerLog.recordOutput("Shooter Has Note", hasNote());
+    BreakerLog.recordOutput("ShooterAngleGoal", isAtAngleGoal());
+    BreakerLog.recordOutput("ShooterFlywheelGoal", isAtFlywheelGoal());
     if (RobotState.isDisabled()) {
       state = ShooterState.STOW;
     }

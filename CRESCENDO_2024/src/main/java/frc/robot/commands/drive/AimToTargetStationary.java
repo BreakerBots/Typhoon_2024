@@ -75,6 +75,6 @@ public class AimToTargetStationary extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (shooter.isAtGoal() && anglePID.atSetpoint()) || timer.hasElapsed(1.5);
+    return (shooter.isAtGoal() && anglePID.atSetpoint()) || timer.hasElapsed(3.0);
   }
 }

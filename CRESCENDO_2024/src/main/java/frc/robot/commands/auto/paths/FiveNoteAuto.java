@@ -31,7 +31,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
   public FiveNoteAuto(Shooter shooter, Drive drivetrain, Intake intake, Vision vision) {
     var A2ToA1 = PathPlannerPath.fromPathFile("A2ToA1");
     var A1ToA3 = PathPlannerPath.fromPathFile("A1ToA3");
-    var A3ToB4 = PathPlannerPath.fromPathFile("A3ToB4");
+    var A3ToB4 = PathPlannerPath.fromPathFile("A3-B4");
     var B4ToSpeakerHigh = PathPlannerPath.fromPathFile("B4ToSpeakerHigh");
     var SpeakerHighToB3 = PathPlannerPath.fromPathFile("SpeakerHighToB3UnderChain");
     var B3ToSpeakerHigh = PathPlannerPath.fromPathFile("B3ToSpeakerHighUnderChain");

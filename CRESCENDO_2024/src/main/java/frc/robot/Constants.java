@@ -93,9 +93,9 @@ public final class Constants {
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.8;
     public static final double PITCH_KS = 0.025;
-    public static final double PITCH_KA = 0.15;
-    public static final double PITCH_KV = 17.75;
-    public static final double PITCH_KG = 0.453;
+    public static final double PITCH_KA = 0.18;
+    public static final double PITCH_KV = 17.25;
+    public static final double PITCH_KG = 0.35;
     public static final double PITCH_ENCODER_OFFSET = -0.40625+0.125;
 
     public static final double PITCH_MAX_ROT = 0.21;
@@ -112,20 +112,26 @@ public final class Constants {
     private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
        BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fm = new BreakerInterpolatingTreeMap<>();
        fm.put(1.307, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(53.0), 80.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(2.500 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(36.5), 85.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(3.795, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 91.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(3.885 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 92.5), new BreakerInterpolableDouble(0.0)));
-       fm.put(4.228, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(26.5), 93.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(4.712, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(27.0), 95.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(4.775, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(26.5), 95.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(6.18 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.0), 100.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(2.249, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(45.5), 81.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(2.604, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(40.5), 82.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(3.099, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(37.5), 85.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(3.275, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(33.5), 84.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(4.071, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(30.0), 93.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(5.067, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(25.8), 95.0), new BreakerInterpolableDouble(0.0)));
+      //  fm.put(2.500 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(36.5), 85.0), new BreakerInterpolableDouble(0.0)));
+      //  fm.put(3.795, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 91.0), new BreakerInterpolableDouble(0.0)));
+      //  fm.put(3.885 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 92.5), new BreakerInterpolableDouble(0.0)));
+      //  fm.put(4.228, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(26.5), 93.0), new BreakerInterpolableDouble(0.0)));
+      //  fm.put(4.712, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(27.0), 95.0), new BreakerInterpolableDouble(0.0)));
+      //  fm.put(4.775, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(26.5), 95.0), new BreakerInterpolableDouble(0.0)));
+      //  fm.put(6.18 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.0), 100.0), new BreakerInterpolableDouble(0.0)));
       return fm;
     } 
   }
 
   public static class VisionConstants {
-    public static final String FRONT_CAMERA_NAME = "FrontCam";
-    public static final Transform3d FRONT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(5.459), Units.inchesToMeters(-0.238), Units.inchesToMeters(37.836), new Rotation3d(0.0, Math.toRadians(10.0), 0.0));
+    public static final String BACK_RIGHT_CAMERA_NAME = "BackRightCam";
+    public static final Transform3d BACK_RIGHT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-12.728*2), Units.inchesToMeters(-11.09), Units.inchesToMeters(8.722+1.094), new Rotation3d(0.0, Math.toRadians(30.0), Math.toRadians(180-(18.0/2))));
 
     public static final String LEFT_CAMERA_NAME = "LeftCam";
     public static final Transform3d LEFT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(1.968), Units.inchesToMeters(11.241), Units.inchesToMeters(35.564), new Rotation3d(0.0, Math.toRadians(10.0), 0.5*Math.PI));

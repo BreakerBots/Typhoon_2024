@@ -40,6 +40,7 @@ import frc.robot.commands.intake.IntakeFromGround;
 import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.commands.intake.StowIntake;
+import frc.robot.commands.shooter.ShootManualAllign;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.AmpBar;
 import frc.robot.subsystems.ClimbArm;
@@ -63,7 +64,7 @@ public class RobotContainer {
   public static final BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private static final Trigger globalOverride = controllerSys.getStartButton() ;
-  private final Vision visionSys = new Vision(drivetrainSys, false);
+  private final Vision visionSys = new Vision(drivetrainSys, true);
 
   private final Intake intakeSys = new Intake();
   private final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
@@ -161,6 +162,7 @@ public class RobotContainer {
       .onTrue(new SequentialCommandGroup(
         led.returnToRestState(), // shooting is typically the end of a state
         new StationaryShootFromAnywhere(shooterSys, drivetrainSys)));
+        //new ShootManualAllign(shooterSys)));
     controllerSys.getButtonX()
       .and(()-> {return !intakeSys.hasNote();})
       .and(()-> {return !shooterSys.hasNote();})
@@ -201,14 +203,14 @@ public class RobotContainer {
         )
       );
       robotConfig.setLogFilePaths("/U/logs", "");
-      robotConfig.setAutoPaths(
-        new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("FiveNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys))
-      );
+      //robotConfig.setAutoPaths(
+        // new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("FiveNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys))
+      //);
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
