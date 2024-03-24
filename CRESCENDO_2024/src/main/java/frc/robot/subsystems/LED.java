@@ -133,7 +133,7 @@ public class LED extends SubsystemBase {
   }
 
   public void setState(LEDState state) {
-    if (!isErrored) return; // allow error colors to always take priority
+    if (isErrored) return; // allow error colors to always take priority
 
     currentState = state;
     updateBlinkin();
