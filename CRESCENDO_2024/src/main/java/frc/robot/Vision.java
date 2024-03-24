@@ -44,8 +44,8 @@ import frc.robot.subsystems.Drive;
 /** Add your docs here. */
 public class Vision extends SubsystemBase {
     public BreakerLimelight limelight;
-    public BreakerPhotonCamera backRightCam, leftCam, rightCam, backCam;
-    private BreakerPhotonVisionPoseEstimator backRightPosSrc, leftPosSrc, rightPosSrc, backPosSrc;
+    public BreakerPhotonCamera backRightCam, backLeftCam, rightCam, backCam;
+    private BreakerPhotonVisionPoseEstimator backRightPosSrc, backLeftPosSrc, rightPosSrc, backPosSrc;
     private Drive drivetrain;
     private boolean odometryHasBeenSeededCashed;
     private BreakerPhotonVisionPoseEstimator[] poseSources;
@@ -55,15 +55,15 @@ public class Vision extends SubsystemBase {
     public Vision(Drive drivetrain, boolean enable) {
         limelight = new BreakerLimelight(LIMELIGHT_NAME, LIMELIGHT_TRANS);
         backRightCam = new BreakerPhotonCamera(BACK_RIGHT_CAMERA_NAME, BACK_RIGHT_CAMERA_TRANS);
-        // leftCam = new BreakerPhotonCamera(LEFT_CAMERA_NAME, LEFT_CAMERA_TRANS);
+        backLeftCam = new BreakerPhotonCamera(BACK_LEFT_CAMERA_NAME, BACK_LEFT_CAMERA_TRANS);
         // rightCam = new BreakerPhotonCamera(RIGHT_CAMERA_NAME, RIGHT_CAMERA_TRANS);
         // backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
 
         backRightPosSrc = backRightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        // leftPosSrc = leftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        backLeftPosSrc= backLeftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
         // rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
         // backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        poseSources = new BreakerPhotonVisionPoseEstimator[]{backRightPosSrc};
+        poseSources = new BreakerPhotonVisionPoseEstimator[]{backRightPosSrc, backLeftPosSrc};
         estimatedPoses = new ArrayList<>();
         this.drivetrain = drivetrain;
         odometryHasBeenSeededCashed = false;

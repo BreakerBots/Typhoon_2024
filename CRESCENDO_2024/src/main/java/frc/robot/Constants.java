@@ -89,7 +89,7 @@ public final class Constants {
     public static final double PITCH_PINION_TEETH = 20;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 1.75;
+    public static final double PITCH_KP = 2.0;
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.8;
     public static final double PITCH_KS = 0.025;
@@ -133,8 +133,8 @@ public final class Constants {
     public static final String BACK_RIGHT_CAMERA_NAME = "BackRightCam";
     public static final Transform3d BACK_RIGHT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-12.728*2), Units.inchesToMeters(-11.09), Units.inchesToMeters(8.722+1.094), new Rotation3d(0.0, Math.toRadians(30.0), Math.toRadians(180-(18.0/2))));
 
-    public static final String LEFT_CAMERA_NAME = "LeftCam";
-    public static final Transform3d LEFT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(1.968), Units.inchesToMeters(11.241), Units.inchesToMeters(35.564), new Rotation3d(0.0, Math.toRadians(10.0), 0.5*Math.PI));
+    public static final String BACK_LEFT_CAMERA_NAME = "BackLeftCam";
+    public static final Transform3d BACK_LEFT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-12.728*2), Units.inchesToMeters(11.09), Units.inchesToMeters(8.722+1.094), new Rotation3d(0.0, Math.toRadians(30.0), Math.toRadians(180+(18.0/2))));
 
 
     public static final String RIGHT_CAMERA_NAME = "RightCam";
