@@ -30,7 +30,7 @@ public class PersueNote extends Command {
   private double persuitVel;
   private boolean lock = false;
   public PersueNote(Vision vision, Intake intake, Drive drivetrain) {
-    anglePID = new PIDController(0.08, 0.0, 0.01);
+    anglePID = new PIDController(0.1, 0.0, 0.01);
     velocityRequest = new BreakerSwerveVelocityRequest(new ChassisSpeeds(), SwerveMovementRefrenceFrame.ROBOT_RELATIVE, SlowModeValue.DISABLED, new Translation2d(), 0.02, false, false);
     this.drivetrain = drivetrain;
     this.intake = intake;
@@ -56,11 +56,11 @@ public class PersueNote extends Command {
     speeds.vxMetersPerSecond = persuitVel;
     if (bestNoteTarget.isPresent() && !lock) {
       LimelightTarget_Detector tgt = bestNoteTarget.get();
-      if (!(tgt.ty <= -17.0) || Math.abs(tgt.tx) >= 4.0) {
+      if (!(tgt.ty <= -22.0) || Math.abs(tgt.tx) >= 3.0) {
         speeds.omegaRadiansPerSecond = MathUtil.clamp(anglePID.calculate(tgt.tx, 0.0), -2.0, 2.0);
         velocityRequest.withHeadingCorrectionEnabled(false);
       } else {
-        if (tgt.ty <= -17.0) {
+        if (tgt.ty <= -22.0) {
           lock = true;
         }
         speeds.omegaRadiansPerSecond = 0.0;

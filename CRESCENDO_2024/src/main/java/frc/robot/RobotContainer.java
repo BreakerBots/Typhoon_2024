@@ -8,10 +8,12 @@ import java.util.HashMap;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
+import frc.robot.BreakerLib.auto.BreakerAutoPath;
 import frc.robot.BreakerLib.devices.sensors.imu.ctre.BreakerPigeon2;
 import frc.robot.BreakerLib.driverstation.gamepad.components.BreakerGamepadAnalogDeadbandConfig;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
@@ -26,8 +28,12 @@ import frc.robot.commands.AllignToAmp;
 import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ScoreInAmp;
 import frc.robot.commands.StationaryShootFromAnywhere;
+import frc.robot.commands.auto.paths.CenterShoot4InWing;
+import frc.robot.commands.auto.paths.CenterThenGoDeepShoot3;
 import frc.robot.commands.auto.paths.FUNauto;
 import frc.robot.commands.auto.paths.FiveNoteAuto;
+import frc.robot.commands.auto.paths.LeaveShootOneSource;
+import frc.robot.commands.auto.paths.SourceShoot3GoToCenter;
 import frc.robot.commands.auto.paths.ThreeNoteA;
 import frc.robot.commands.auto.paths.ThreeNoteAgainstSpeaker;
 import frc.robot.commands.handoffs.HandoffFromIntakeToShooter;
@@ -37,6 +43,7 @@ import frc.robot.commands.intake.IntakeFromGround;
 import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.commands.intake.StowIntake;
+import frc.robot.commands.shooter.ShootManualAllign;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.AmpBar;
 import frc.robot.subsystems.ClimbArm;
@@ -83,7 +90,7 @@ public class RobotContainer {
   }
 
   private void configureDriveControls() {
-    BreakerLinearizedConstrainedExponential linearMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.3, 3.0);
+    BreakerLinearizedConstrainedExponential linearMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.075, 3.0);
     BreakerLinearizedConstrainedExponential angularMotionTeleopControlCurve = new BreakerLinearizedConstrainedExponential(0.0, 3.0);
     controllerSys.configDeadbands(new BreakerGamepadAnalogDeadbandConfig(0.1, 0.1));
     teleopDriveCommand.addSpeedCurves(linearMotionTeleopControlCurve, angularMotionTeleopControlCurve, AppliedModifierUnits.PERCENT_OF_MAX);
@@ -114,7 +121,7 @@ public class RobotContainer {
 
     controllerSys.getLeftBumper()
       .and(() -> intakeSys.getState() != IntakeState.RETRACTED_EXTAKEING)
-      .onTrue(new StowIntake(intakeSys, shooterSys));
+      .onTrue(new StowIntake(intakeSys, ampBarSys, shooterSys));
 
     controllerSys.getButtonA()
       .and(() -> !intakeSys.hasNote())
@@ -157,8 +164,12 @@ public class RobotContainer {
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
       .onTrue(new SequentialCommandGroup(
         led.returnToRestState(), // shooting is typically the end of a state
-        new StationaryShootFromAnywhere(shooterSys, drivetrainSys)));
-        //new ShootManualAllign(shooterSys)));
+        new ConditionalCommand(
+          new ShootManualAllign(shooterSys),  
+          new StationaryShootFromAnywhere(shooterSys, drivetrainSys), 
+          globalOverride)
+       ));
+
     controllerSys.getButtonX()
       .and(()-> {return !intakeSys.hasNote();})
       .and(()-> {return !shooterSys.hasNote();})
@@ -166,6 +177,7 @@ public class RobotContainer {
       .onTrue(new SequentialCommandGroup(
         led.setStateCommand(LEDState.INTAKING_FOR_SHOOTER),
         new IntakeFromGroundForShooter(intakeSys, shooterSys)));
+
 
     controllerSys.getRightThumbstick().getJoystickButton()
       .and(() -> shooterSys.hasNote())
@@ -199,14 +211,14 @@ public class RobotContainer {
         )
       );
       robotConfig.setLogFilePaths("/U/logs", "");
-      //robotConfig.setAutoPaths(
-        // new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        // new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        // new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        // new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        // new BreakerAutoPath("FiveNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        // new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys))
-      //);
+      robotConfig.setAutoPaths(
+        new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("FiveNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys))
+      );
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }
 
@@ -220,9 +232,6 @@ public class RobotContainer {
     // PathPlannerPath path = PathPlannerPath.fromPathFile("Example Path");
     // return AutoBuilder.followPath(path).beforeStarting(() -> {drivetrainSys.setOdometryPosition(path.getPreviewStartingHolonomicPose());});
 
-    //return new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys);
-    //return new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys);
-    //return new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys);
-    return new ThreeNoteA(shooterSys, drivetrainSys, intakeSys, visionSys);
+    return BreakerRobotManager.getSelectedAutoPath();
   }
 }

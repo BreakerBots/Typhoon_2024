@@ -6,9 +6,11 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.subsystems.AmpBar;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.AmpBar.AmpBarState;
 import frc.robot.subsystems.Shooter.ShooterState;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -16,12 +18,14 @@ import frc.robot.subsystems.Shooter.ShooterState;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class StowIntake extends SequentialCommandGroup {
   /** Creates a new StowIntake. */
-   public StowIntake(Intake intake, Shooter shooter) {
+   public StowIntake(Intake intake, AmpBar ampBar, Shooter shooter) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       intake.setStateCommand(IntakeState.RETRACTED_NEUTRAL, false),
-      new InstantCommand(() -> shooter.setState(ShooterState.STOW), shooter)
+      new InstantCommand(() -> shooter.setState(ShooterState.STOW), shooter),
+      ampBar.setStateCommand(AmpBarState.RETRACTED, false)
+
     );
   }
 }

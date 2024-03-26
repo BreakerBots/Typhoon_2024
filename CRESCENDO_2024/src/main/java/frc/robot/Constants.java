@@ -1,3 +1,4 @@
+
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
@@ -89,7 +90,7 @@ public final class Constants {
     public static final double PITCH_PINION_TEETH = 20;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 2.0;
+    public static final double PITCH_KP = 3.5;
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.8;
     public static final double PITCH_KS = 0.025;
@@ -115,16 +116,12 @@ public final class Constants {
        fm.put(2.249, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(45.5), 81.0), new BreakerInterpolableDouble(0.0)));
        fm.put(2.604, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(40.5), 82.0), new BreakerInterpolableDouble(0.0)));
        fm.put(3.099, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(37.5), 85.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(3.625, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(34.0), 84.5), new BreakerInterpolableDouble(0.0)));
        fm.put(3.275, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(33.5), 84.0), new BreakerInterpolableDouble(0.0)));
        fm.put(4.071, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(30.0), 93.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(4.505, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(27.5), 94.0), new BreakerInterpolableDouble(0.0)));
        fm.put(5.067, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(25.8), 95.0), new BreakerInterpolableDouble(0.0)));
-      //  fm.put(2.500 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(36.5), 85.0), new BreakerInterpolableDouble(0.0)));
-      //  fm.put(3.795, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 91.0), new BreakerInterpolableDouble(0.0)));
-      //  fm.put(3.885 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(28.0), 92.5), new BreakerInterpolableDouble(0.0)));
-      //  fm.put(4.228, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(26.5), 93.0), new BreakerInterpolableDouble(0.0)));
-      //  fm.put(4.712, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(27.0), 95.0), new BreakerInterpolableDouble(0.0)));
-      //  fm.put(4.775, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(26.5), 95.0), new BreakerInterpolableDouble(0.0)));
-      //  fm.put(6.18 + 0.0564, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.0), 100.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(6.260, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.5), 100.0), new BreakerInterpolableDouble(0.0)));
       return fm;
     } 
   }
@@ -193,7 +190,7 @@ public final class Constants {
 
     //Azimuth encoder angle offets
     public static final double FL_ENCODER_OFFSET = -0.223388671875;
-    public static final double FR_ENCODER_OFFSET = -0.181640625;
+    public static final double FR_ENCODER_OFFSET = -0.12060546875;
     public static final double BL_ENCODER_OFFSET = -0.318359375;
     public static final double BR_ENCODER_OFFSET = 0.3876953125;
 
@@ -204,14 +201,14 @@ public final class Constants {
     public static final Translation2d BR_TRANSLATION = new Translation2d(-0.314325, -0.314325);
 
     //Module Azimuth PIDF constants
-    public static final double MODULE_AZIMUTH_KP = 35.0;//20
+    public static final double MODULE_AZIMUTH_KP = 45.0;//20
     public static final double MODULE_AZIMUTH_KI = 0.0;
-    public static final double MODULE_AZIMUTH_KD = 0.25;//0.3
+    public static final double MODULE_AZIMUTH_KD = 0.35;//0.3
     public static final double MODULE_AZIMUTH_KF = 0.0;
     public static final BreakerSwerveMotorPIDConfig MODULE_ANGLE_PID_CONFIG = new BreakerSwerveMotorPIDConfig(MODULE_AZIMUTH_KP, MODULE_AZIMUTH_KI, MODULE_AZIMUTH_KD, MODULE_AZIMUTH_KF);
 
     //Module Drive Velocity PIDF constants
-    public static final double MODULE_VELOCITY_KP = 0.16 * 12;//65, 0.10810557184750733
+    public static final double MODULE_VELOCITY_KP = 0.17 * 12;//65, 0.10810557184750733
     public static final double MODULE_VELOCITY_KI = 0.0;
     public static final double MODULE_VELOCITY_KD = 0.0;
     public static final double MODULE_VELOCITY_KF = 0.0;
@@ -222,7 +219,7 @@ public final class Constants {
     public static final double FF_VELOCITY_COEFFICIENT = 0.145 * 12;//0.0, 2.82
     public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT);
 
-    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.3;
+    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.4;
     public static final double DRIVE_MOTOR_GEAR_RATIO_TO_ONE = 5.76;
     public static final double AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE = 21.4285714286;
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);
@@ -263,7 +260,7 @@ public final class Constants {
 
     //Physical Robot Constants
     public static final double MAX_ANGULAR_VEL = ((FL_TRANSLATION.getNorm() * 2.0 * Math.PI) / MAX_ATTAINABLE_MODULE_WHEEL_SPEED) * (2.0 * Math.PI); 
-    public static final double MAX_LINEAR_VEL = 5.35;//5.35
+    public static final double MAX_LINEAR_VEL = 5.0;//5.35
     public static final double HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND = 0.001;
     public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.05;
     public static final BreakerSwerveDriveConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveConfig(
@@ -273,17 +270,17 @@ public final class Constants {
 
     public static final BreakerSwerveOdometryConfig ODOMETRY_CONFIG = new BreakerSwerveOdometryConfig(1.0/200.0,  VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.9, 0.9, 0.9), PoseOrigin.ofGlobal(), new Pose2d(), 5);
 
-    public static final double X_PID_KP = 0.0009;//0.000001
+    public static final double X_PID_KP = 0.25;//0.000001
     public static final double X_PID_KI = 0.0;
     public static final double X_PID_KD = 0.008;
 
     //Y-axis positional PID
-    public static final double Y_PID_KP = 0.0009;
+    public static final double Y_PID_KP = 0.25;
     public static final double Y_PID_KI = 0.0;
     public static final double Y_PID_KD = 0.008;
 
     //Theta-axis positional PID
-    public static final double THETA_PID_KP = 1.3;
+    public static final double THETA_PID_KP = 5.5;
     public static final double THETA_PID_KI = 0.0;
     public static final double THETA_PID_KD = 0.0;
 

@@ -50,15 +50,15 @@ public class Vision extends SubsystemBase {
     public Vision(Drive drivetrain, boolean enable) {
         limelight = new BreakerLimelight(LIMELIGHT_NAME, LIMELIGHT_TRANS);
         backRightCam = new BreakerPhotonCamera(BACK_RIGHT_CAMERA_NAME, BACK_RIGHT_CAMERA_TRANS);
-        backLeftCam = new BreakerPhotonCamera(BACK_LEFT_CAMERA_NAME, BACK_LEFT_CAMERA_TRANS);
+        //backLeftCam = new BreakerPhotonCamera(BACK_LEFT_CAMERA_NAME, BACK_LEFT_CAMERA_TRANS);
         // rightCam = new BreakerPhotonCamera(RIGHT_CAMERA_NAME, RIGHT_CAMERA_TRANS);
         // backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
 
         backRightPosSrc = backRightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        backLeftPosSrc= backLeftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        //backLeftPosSrc= backLeftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
         // rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
         // backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        poseSources = new BreakerPhotonVisionPoseEstimator[]{backRightPosSrc, backLeftPosSrc};
+        poseSources = new BreakerPhotonVisionPoseEstimator[]{backRightPosSrc};
         estimatedPoses = new ArrayList<>();
         this.drivetrain = drivetrain;
         odometryHasBeenSeededCashed = false;
