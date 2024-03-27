@@ -23,6 +23,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
@@ -50,15 +51,15 @@ public class Vision extends SubsystemBase {
     public Vision(Drive drivetrain, boolean enable) {
         limelight = new BreakerLimelight(LIMELIGHT_NAME, LIMELIGHT_TRANS);
         backRightCam = new BreakerPhotonCamera(BACK_RIGHT_CAMERA_NAME, BACK_RIGHT_CAMERA_TRANS);
-        //backLeftCam = new BreakerPhotonCamera(BACK_LEFT_CAMERA_NAME, BACK_LEFT_CAMERA_TRANS);
+        backLeftCam = new BreakerPhotonCamera(BACK_LEFT_CAMERA_NAME, BACK_LEFT_CAMERA_TRANS);
         // rightCam = new BreakerPhotonCamera(RIGHT_CAMERA_NAME, RIGHT_CAMERA_TRANS);
         // backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
 
         backRightPosSrc = backRightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        //backLeftPosSrc= backLeftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        backLeftPosSrc = backLeftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
         // rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
         // backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        poseSources = new BreakerPhotonVisionPoseEstimator[]{backRightPosSrc};
+        poseSources = new BreakerPhotonVisionPoseEstimator[]{backLeftPosSrc, backRightPosSrc};
         estimatedPoses = new ArrayList<>();
         this.drivetrain = drivetrain;
         odometryHasBeenSeededCashed = false;
@@ -67,8 +68,6 @@ public class Vision extends SubsystemBase {
 
     @Override
     public void periodic() {
-
-        if (enable) {
             Pose2d odometryRefPos = drivetrain.getOdometryPoseMeters();
             estimatedPoses.clear();
 
@@ -122,7 +121,6 @@ public class Vision extends SubsystemBase {
             for (BreakerEstimatedPose estPos: estimatedPoses) {
                 drivetrain.getOdometryThread().addVisionPoseEstimate(estPos);
             }
-        }
     }
 
     private void sortByStandardDeviation(ArrayList<BreakerEstimatedPose> poses) {

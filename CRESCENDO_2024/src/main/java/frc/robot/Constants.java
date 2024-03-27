@@ -67,7 +67,7 @@ public final class Constants {
     public static final int PIVOT_RIGHT_ID = 42;
     public static final int PIVOT_ENCODER_ID = 43;
     
-    public static final double PIVOT_ENCODER_OFFSET = 0.448974609375;
+    public static final double PIVOT_ENCODER_OFFSET = 0.287353515625;
 
     /*0deg is 15 deg behind fully retracted*/
     public static final double PIVIOT_RETRACTED_THRESHOLD = 0.30;
@@ -116,8 +116,8 @@ public final class Constants {
        fm.put(2.249, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(45.5), 81.0), new BreakerInterpolableDouble(0.0)));
        fm.put(2.604, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(40.5), 82.0), new BreakerInterpolableDouble(0.0)));
        fm.put(3.099, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(37.5), 85.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(3.625, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(34.0), 84.5), new BreakerInterpolableDouble(0.0)));
        fm.put(3.275, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(33.5), 84.0), new BreakerInterpolableDouble(0.0)));
+       //fm.put(3.625, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(34.0), 84.5), new BreakerInterpolableDouble(0.0)));
        fm.put(4.071, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(30.0), 93.0), new BreakerInterpolableDouble(0.0)));
        fm.put(4.505, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(27.5), 94.0), new BreakerInterpolableDouble(0.0)));
        fm.put(5.067, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(25.8), 95.0), new BreakerInterpolableDouble(0.0)));
@@ -131,7 +131,7 @@ public final class Constants {
     public static final Transform3d BACK_RIGHT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-12.728*2), Units.inchesToMeters(-11.09), Units.inchesToMeters(8.722+1.094), new Rotation3d(0.0, Math.toRadians(30.0), Math.toRadians(180-(18.0/2))));
 
     public static final String BACK_LEFT_CAMERA_NAME = "BackLeftCam";
-    public static final Transform3d BACK_LEFT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-12.728*2), Units.inchesToMeters(11.09), Units.inchesToMeters(8.722+1.094), new Rotation3d(0.0, Math.toRadians(30.0), Math.toRadians(180+(18.0/2))));
+    public static final Transform3d BACK_LEFT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-12.728*2), Units.inchesToMeters(11.09), Units.inchesToMeters(8.722+1.094), new Rotation3d(0.0, Math.toRadians(30.0),(2*Math.PI -(2.78+(0.37/2)) )));
 
 
     public static final String RIGHT_CAMERA_NAME = "RightCam";
@@ -270,12 +270,12 @@ public final class Constants {
 
     public static final BreakerSwerveOdometryConfig ODOMETRY_CONFIG = new BreakerSwerveOdometryConfig(1.0/200.0,  VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.9, 0.9, 0.9), PoseOrigin.ofGlobal(), new Pose2d(), 5);
 
-    public static final double X_PID_KP = 0.25;//0.000001
+    public static final double X_PID_KP = 1.25;//0.000001
     public static final double X_PID_KI = 0.0;
     public static final double X_PID_KD = 0.008;
 
     //Y-axis positional PID
-    public static final double Y_PID_KP = 0.25;
+    public static final double Y_PID_KP = 1.25;
     public static final double Y_PID_KI = 0.0;
     public static final double Y_PID_KD = 0.008;
 
