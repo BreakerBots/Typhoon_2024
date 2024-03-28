@@ -32,16 +32,16 @@ public class ThreeNoteAgainstSpeaker extends SequentialCommandGroup {
     // var initalOffset = PathPlannerPath.fromPathFile("Inital Offset Path");
     
     addCommands(
-      new SpoolShooterForSpeakerShot(shooter,false),
+      //new SpoolShooterForSpeakerShot(shooter,false),
       // AutoBuilder.followPath(initalOffset),
-      new StationaryShootFromAnywhere(shooter, drivetrain),
+     // new StationaryShootFromAnywhere(shooter, drivetrain),
       // new ConditionalCommand(
       //   new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
       //   new AutoAngleSnap(Rotation2d.fromDegrees(180.0), drivetrain), () -> {
       //     Optional<Alliance> allyOpt = DriverStation.getAlliance();
       //     return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
       //   }),
-      new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
+     // new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
 
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),

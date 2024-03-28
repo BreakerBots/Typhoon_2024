@@ -28,7 +28,7 @@ public class AimToTargetStationary extends Command {
   private BreakerSwerveVelocityRequest velocityRequest;
   private final Timer timer = new Timer();
   public AimToTargetStationary(Shooter shooter, Drive drive) {
-    anglePID = new ProfiledPIDController(3.0, 0.0, 0.1, new TrapezoidProfile.Constraints(6.0, 6.0));
+    anglePID = new ProfiledPIDController(2.25, 0.0, 0.1, new TrapezoidProfile.Constraints(6.0, 6.0));
     anglePID.setTolerance(Math.toRadians(0.3), Math.toRadians(10.0));
     anglePID.enableContinuousInput(-Math.PI, Math.PI);
     this.drive = drive;

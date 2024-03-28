@@ -159,7 +159,7 @@ public class RobotContainer {
       .onTrue(new HandoffFromIntakeToShooter(shooterSys, intakeSys, false));
     controllerSys.getButtonX()
       .debounce(0.1, DebounceType.kBoth)
-      .and(()-> {return !intakeSys.hasNote();})
+      //.and(()-> {return !intakeSys.hasNote();})
       .and(shooterSys::hasNote)
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
       .onTrue(new SequentialCommandGroup(
@@ -171,7 +171,7 @@ public class RobotContainer {
        ));
 
     controllerSys.getButtonX()
-      .and(()-> {return !intakeSys.hasNote();})
+      //.and(()-> {return !intakeSys.hasNote();})
       .and(()-> {return !shooterSys.hasNote();})
       .and(() -> {return shooterSys.getState() != ShooterState.TRACK_TARGET;})
       .onTrue(new SequentialCommandGroup(

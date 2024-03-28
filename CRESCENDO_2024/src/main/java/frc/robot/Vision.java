@@ -9,6 +9,10 @@ import static frc.robot.Constants.VisionConstants.BACK_LEFT_CAMERA_NAME;
 import static frc.robot.Constants.VisionConstants.BACK_LEFT_CAMERA_TRANS;
 import static frc.robot.Constants.VisionConstants.BACK_RIGHT_CAMERA_NAME;
 import static frc.robot.Constants.VisionConstants.BACK_RIGHT_CAMERA_TRANS;
+import static frc.robot.Constants.VisionConstants.FRONT_LEFT_CAMERA_NAME;
+import static frc.robot.Constants.VisionConstants.FRONT_LEFT_CAMERA_TRANS;
+import static frc.robot.Constants.VisionConstants.FRONT_RIGHT_CAMERA_NAME;
+import static frc.robot.Constants.VisionConstants.FRONT_RIGHT_CAMERA_TRANS;
 import static frc.robot.Constants.VisionConstants.LIMELIGHT_NAME;
 import static frc.robot.Constants.VisionConstants.LIMELIGHT_TRANS;
 
@@ -40,8 +44,8 @@ import frc.robot.subsystems.Drive;
 /** Add your docs here. */
 public class Vision extends SubsystemBase {
     public BreakerLimelight limelight;
-    public BreakerPhotonCamera backRightCam, backLeftCam, rightCam, backCam;
-    private BreakerPhotonVisionPoseEstimator backRightPosSrc, backLeftPosSrc, rightPosSrc, backPosSrc;
+    public BreakerPhotonCamera backRightCam, backLeftCam, frontRightCam, frontLeftCam;
+    private BreakerPhotonVisionPoseEstimator backRightPosSrc, backLeftPosSrc, frontRightPosSrc, frontLeftPosSrc;
     private Drive drivetrain;
     private boolean odometryHasBeenSeededCashed;
     private BreakerPhotonVisionPoseEstimator[] poseSources;
@@ -52,14 +56,14 @@ public class Vision extends SubsystemBase {
         limelight = new BreakerLimelight(LIMELIGHT_NAME, LIMELIGHT_TRANS);
         backRightCam = new BreakerPhotonCamera(BACK_RIGHT_CAMERA_NAME, BACK_RIGHT_CAMERA_TRANS);
         backLeftCam = new BreakerPhotonCamera(BACK_LEFT_CAMERA_NAME, BACK_LEFT_CAMERA_TRANS);
-        // rightCam = new BreakerPhotonCamera(RIGHT_CAMERA_NAME, RIGHT_CAMERA_TRANS);
-        // backCam = new BreakerPhotonCamera(BACK_CAMERA_NAME, BACK_CAMERA_TRANS);
+        frontRightCam = new BreakerPhotonCamera(FRONT_RIGHT_CAMERA_NAME, FRONT_RIGHT_CAMERA_TRANS);
+        frontLeftCam = new BreakerPhotonCamera(FRONT_LEFT_CAMERA_NAME, FRONT_LEFT_CAMERA_TRANS);
 
         backRightPosSrc = backRightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
         backLeftPosSrc = backLeftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        // rightPosSrc = rightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        // backPosSrc = backCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
-        poseSources = new BreakerPhotonVisionPoseEstimator[]{backLeftPosSrc, backRightPosSrc};
+        frontRightPosSrc = frontRightCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        frontLeftPosSrc = frontLeftCam.getEstimatedPoseSource(APRIL_TAG_FIELD_LAYOUT, new BreakerPoseEstimationStandardDeviationCalculator());
+        poseSources = new BreakerPhotonVisionPoseEstimator[]{backLeftPosSrc, backRightPosSrc, frontRightPosSrc, frontLeftPosSrc};
         estimatedPoses = new ArrayList<>();
         this.drivetrain = drivetrain;
         odometryHasBeenSeededCashed = false;

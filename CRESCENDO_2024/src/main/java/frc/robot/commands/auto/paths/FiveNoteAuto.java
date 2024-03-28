@@ -1,10 +1,15 @@
 
 package frc.robot.commands.auto.paths;
 
+import java.util.Optional;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Vision;
 import frc.robot.commands.StationaryShootFromAnywhere;
@@ -43,12 +48,23 @@ public class FiveNoteAuto extends SequentialCommandGroup {
           )
         ),
       new StationaryShootFromAnywhere(shooter, drivetrain),
-
+     new ConditionalCommand(
       new AutoAngleSnap(Rotation2d.fromDegrees(40), drivetrain), 
+      new AutoAngleSnap(Rotation2d.fromDegrees(180 - 40), drivetrain), 
+      () -> {
+          Optional<Alliance> allyOpt = DriverStation.getAlliance();
+          return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
+      }),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
-      new AutoAngleSnap(Rotation2d.fromDegrees(70), drivetrain),
+      new ConditionalCommand(
+      new AutoAngleSnap(Rotation2d.fromDegrees(70), drivetrain), 
+      new AutoAngleSnap(Rotation2d.fromDegrees(180 - 70), drivetrain), 
+      () -> {
+          Optional<Alliance> allyOpt = DriverStation.getAlliance();
+          return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
+      }),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 

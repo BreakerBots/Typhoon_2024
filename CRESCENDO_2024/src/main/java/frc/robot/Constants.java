@@ -67,12 +67,12 @@ public final class Constants {
     public static final int PIVOT_RIGHT_ID = 42;
     public static final int PIVOT_ENCODER_ID = 43;
     
-    public static final double PIVOT_ENCODER_OFFSET = 0.287353515625;
+    public static final double PIVOT_ENCODER_OFFSET = 0.280029296875;
 
     /*0deg is 15 deg behind fully retracted*/
-    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.30;
+    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.32;//0.30;
     /*0deg is 20 deg behind fully retracted*/
-    public static final double PIVIOT_EXTENDED_THRESHOLD = 0.008;
+    public static final double PIVIOT_EXTENDED_THRESHOLD = 0.008;//0.008;
 
     public static final double PIVOT_AGAINST_AMP_ANGLE_THRESHOLD = 0.31; // temporary
 
@@ -90,12 +90,12 @@ public final class Constants {
     public static final double PITCH_PINION_TEETH = 20;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 3.5;
+    public static final double PITCH_KP = 4.5;
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.8;
     public static final double PITCH_KS = 0.025;
     public static final double PITCH_KA = 0.18;
-    public static final double PITCH_KV = 17.25;
+    public static final double PITCH_KV = 17.5;
     public static final double PITCH_KG = 0.35;
     public static final double PITCH_ENCODER_OFFSET = -0.40625+0.125;
 
@@ -112,16 +112,16 @@ public final class Constants {
 
     private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
        BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fm = new BreakerInterpolatingTreeMap<>();
-       fm.put(1.307, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(53.0), 80.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(2.249, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(45.5), 81.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(2.604, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(40.5), 82.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(3.099, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(37.5), 85.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(3.275, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(33.5), 84.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(1.307, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(53.0), 95.0/*80.0*/), new BreakerInterpolableDouble(0.0)));
+       fm.put(2.249, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(45.5), 95.0/*81.0*/), new BreakerInterpolableDouble(0.0)));
+       fm.put(2.604, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(40.5), 95.0/*82.0*/), new BreakerInterpolableDouble(0.0)));
+       fm.put(3.099, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(37.5), 95.0/*85.0*/), new BreakerInterpolableDouble(0.0)));
+       fm.put(3.275, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(33.5), 95.0/*84.0*/), new BreakerInterpolableDouble(0.0)));
        //fm.put(3.625, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(34.0), 84.5), new BreakerInterpolableDouble(0.0)));
-       fm.put(4.071, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(30.0), 93.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(4.505, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(27.5), 94.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(4.071, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(30.0), 95.0/*93.0*/), new BreakerInterpolableDouble(0.0)));
+       fm.put(4.505, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(27.5), 95.0/*94.0*/), new BreakerInterpolableDouble(0.0)));
        fm.put(5.067, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(25.8), 95.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(6.260, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.5), 100.0), new BreakerInterpolableDouble(0.0)));
+       fm.put(6.260, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.5), 95.0/*100.0*/), new BreakerInterpolableDouble(0.0)));
       return fm;
     } 
   }
@@ -134,12 +134,12 @@ public final class Constants {
     public static final Transform3d BACK_LEFT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-12.728*2), Units.inchesToMeters(11.09), Units.inchesToMeters(8.722+1.094), new Rotation3d(0.0, Math.toRadians(30.0),(2*Math.PI -(2.78+(0.37/2)) )));
 
 
-    public static final String RIGHT_CAMERA_NAME = "RightCam";
-    public static final Transform3d RIGHT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(1.929), Units.inchesToMeters(-11.718), Units.inchesToMeters(35.564), new Rotation3d(0.0, Math.toRadians(10.0), -0.5*Math.PI));
+    public static final String FRONT_LEFT_CAMERA_NAME = "FrontLeftCam";
+    public static final Transform3d FRONT_LEFT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(3.436), Units.inchesToMeters(10.789), Units.inchesToMeters(17.47+1.094), new Rotation3d(0.0, Math.toRadians(10.5), Math.toRadians(45.0 - 1.4)));
 
 
-    public static final String BACK_CAMERA_NAME = "BackCam";
-    public static final Transform3d BACK_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(-1.578), Units.inchesToMeters(-0.238), Units.inchesToMeters(37.836), new Rotation3d(0.0, Math.toRadians(10.0), -Math.PI));
+    public static final String FRONT_RIGHT_CAMERA_NAME = "FrontRightCam";
+    public static final Transform3d FRONT_RIGHT_CAMERA_TRANS = new Transform3d(Units.inchesToMeters(3.436), Units.inchesToMeters(-10.789), Units.inchesToMeters(17.47+1.094), new Rotation3d(0.0, Math.toRadians(10.5), Math.toRadians(-45.0+4.5)));
 
     public static final String LIMELIGHT_NAME = "limelight";
     public static final Transform3d LIMELIGHT_TRANS = new Transform3d();

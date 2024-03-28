@@ -57,7 +57,8 @@ public class LED extends SubsystemBase {
     
     SPOOLING_FLYWHEEL(FixedPalettePattern.CONFETTI),
 
-    ERROR(FixedPalettePattern.HEARBEAT_RED);
+    ERROR(FixedPalettePattern.HEARBEAT_RED),
+    FLASH_ON_INTAKE(FixedPalettePattern.STROBE_GOLD);
 
     private Patterns pattern;
 
@@ -141,7 +142,6 @@ public class LED extends SubsystemBase {
 
   private void updateBlinkin() {
     Patterns pattern = currentState.getPattern();
-
     if (pattern.isFixedPalettePattern()) {
       blinkin.setFixedPalettePattern(pattern.getFixedPalettePattern());
     } else {
