@@ -33,11 +33,16 @@ import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
+import frc.robot.BreakerLib.driverstation.gamepad.BreakerGamepadTimedRumbleCommand;
+import frc.robot.BreakerLib.util.BreakerRoboRIO;
 import frc.robot.BreakerLib.util.factory.BreakerCANCoderFactory;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.subsystems.LED.LEDState;
 
 public class Intake extends SubsystemBase {
   private TalonFX rollerMotor;  
@@ -172,7 +177,7 @@ public class Intake extends SubsystemBase {
   }
 
   public static enum IntakePivotState {
-    EXTENDED(-0.1),//0.1
+    EXTENDED(-0.05),//0.1
     AMP(-0.05),
     RETRACTED(0.15),//-0.15
     NEUTRAL(0.0);
@@ -222,6 +227,16 @@ public class Intake extends SubsystemBase {
         setState(IntakeState.RETRACTED_NEUTRAL);
       }
     }
+
+    if (RobotState.isTeleop() && beamBreak.hasChanged() && beamBreak.isBroken()) {
+      new BreakerGamepadTimedRumbleCommand(RobotContainer.controllerSys, 1.5, 0.75, 0.75).schedule();;
+
+    } 
+    
+    //else if (!RobotState.isTeleop()) {
+    //   RobotContainer.controllerSys.setMixedRumble(0.0,0.0);
+    // }
+
 
     if (!isPivotAmpCurrentLimited && targetState.isInAmpState() && isAmpLimitTriggered()) {
       pivotLeft.getConfigurator().apply(ampCurrentPivotConfig);

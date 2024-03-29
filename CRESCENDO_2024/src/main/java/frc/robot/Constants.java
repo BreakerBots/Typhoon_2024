@@ -67,12 +67,12 @@ public final class Constants {
     public static final int PIVOT_RIGHT_ID = 42;
     public static final int PIVOT_ENCODER_ID = 43;
     
-    public static final double PIVOT_ENCODER_OFFSET = 0.280029296875;
+    public static final double PIVOT_ENCODER_OFFSET = 0.2822265625;
 
     /*0deg is 15 deg behind fully retracted*/
-    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.32;//0.30;
+    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.32;//0.32;
     /*0deg is 20 deg behind fully retracted*/
-    public static final double PIVIOT_EXTENDED_THRESHOLD = 0.008;//0.008;
+    public static final double PIVIOT_EXTENDED_THRESHOLD = 0.02;//0.008;
 
     public static final double PIVOT_AGAINST_AMP_ANGLE_THRESHOLD = 0.31; // temporary
 

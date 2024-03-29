@@ -64,16 +64,18 @@ import frc.robot.subsystems.Shooter.ShooterState;
 public class RobotContainer {
   private static final BreakerPigeon2 imuSys = new BreakerPigeon2(5, GeneralConstants.DRIVE_CANIVORE_NAME);
   private static final Drive drivetrainSys = new Drive(imuSys);
-  public static final BreakerXboxController controllerSys = new BreakerXboxController(0);
+  public static BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private static final Trigger globalOverride = controllerSys.getStartButton() ;
   private final Vision visionSys = new Vision(drivetrainSys, true);
 
-  private final Intake intakeSys = new Intake();
+ 
   private final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
+  private final Intake intakeSys = new Intake();
   private final AmpBar ampBarSys = new AmpBar();
+  private final LED led = new LED(shooterSys, intakeSys);
 
-  private final LED led = new LED(shooterSys);
+  
 
 
   public static final ClimbArm leftClimbSys = new ClimbArm(50, "rio", true);
@@ -146,11 +148,11 @@ public class RobotContainer {
       .and(() -> intakeSys.hasNote())
       .and(() -> !shooterSys.hasNote())
       .and(() -> intakeSys.getState().getPivotState() == IntakePivotState.RETRACTED)
-      .onTrue(new ScoreInAmp(intakeSys, ampBarSys));
+      .onTrue(new ScoreInAmp(intakeSys, ampBarSys).andThen(led.returnToRestState()));
     controllerSys.getButtonY()
       .and(() -> !intakeSys.hasNote())
       .and(() -> !shooterSys.hasNote())
-      .onTrue(new IntakeFromGroundForPastaRoller(intakeSys));
+      .onTrue(led.returnToRestState().andThen(new IntakeFromGroundForPastaRoller(intakeSys), led.returnToRestState()));
 
     controllerSys.getButtonX()
       .and(intakeSys::hasNote)
@@ -159,7 +161,7 @@ public class RobotContainer {
       .onTrue(new HandoffFromIntakeToShooter(shooterSys, intakeSys, false));
     controllerSys.getButtonX()
       .debounce(0.1, DebounceType.kBoth)
-      //.and(()-> {return !intakeSys.hasNote();})
+      .and(()-> {return !intakeSys.hasNote();})
       .and(shooterSys::hasNote)
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
       .onTrue(new SequentialCommandGroup(
@@ -167,16 +169,19 @@ public class RobotContainer {
         new ConditionalCommand(
           new ShootManualAllign(shooterSys),  
           new StationaryShootFromAnywhere(shooterSys, drivetrainSys), 
-          globalOverride)
+          globalOverride),
+        led.returnToRestState()
        ));
 
     controllerSys.getButtonX()
-      //.and(()-> {return !intakeSys.hasNote();})
+      .and(()-> {return !intakeSys.hasNote();})
       .and(()-> {return !shooterSys.hasNote();})
       .and(() -> {return shooterSys.getState() != ShooterState.TRACK_TARGET;})
       .onTrue(new SequentialCommandGroup(
         led.setStateCommand(LEDState.INTAKING_FOR_SHOOTER),
-        new IntakeFromGroundForShooter(intakeSys, shooterSys)));
+        new IntakeFromGroundForShooter(intakeSys, shooterSys, led),
+        led.returnToRestState()
+        ));
 
 
     controllerSys.getRightThumbstick().getJoystickButton()
@@ -193,7 +198,7 @@ public class RobotContainer {
 
   private void registerNamedCommands() {
     HashMap<String, Command> namedCommands = new HashMap<>();
-    namedCommands.put("IntakeFromGroundForShooter", new IntakeFromGroundForShooter(intakeSys, shooterSys));
+    namedCommands.put("IntakeFromGroundForShooter", new IntakeFromGroundForShooter(intakeSys, shooterSys, led));
     namedCommands.put("SpoolShooter", new SpoolShooterForSpeakerShot(shooterSys, false));
   }
 
@@ -215,8 +220,8 @@ public class RobotContainer {
         new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("SourceShoot2GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("FiveNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("SourceShoot3GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("FiveishNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys))
       );
     BreakerRobotManager.setup(drivetrainSys, robotConfig);

@@ -6,11 +6,13 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.devices.cosmetic.led.BreakerRevBlinkin;
 import frc.robot.BreakerLib.devices.cosmetic.led.BreakerRevBlinkin.FixedPalettePattern;
 import frc.robot.BreakerLib.devices.cosmetic.led.BreakerRevBlinkin.SolidColor;
+import frc.robot.BreakerLib.driverstation.dashboard.BreakerDashboard;
 
 
 public class LED extends SubsystemBase {
@@ -52,7 +54,7 @@ public class LED extends SubsystemBase {
     SCORING_IN_AMP(SolidColor.BLUE_VIOLET),
     PERSUING_NOTE(FixedPalettePattern.RAINBOW_GLITTER),
     
-    ENABLED_WITH_NOTE(FixedPalettePattern.FIRE_MEDIUM),
+    ENABLED_WITH_NOTE(FixedPalettePattern.STROBE_GOLD),
     ENABLED(FixedPalettePattern.BREATH_BLUE), // should be 'default' state
     
     SPOOLING_FLYWHEEL(FixedPalettePattern.CONFETTI),
@@ -82,14 +84,17 @@ public class LED extends SubsystemBase {
   private boolean isErrored = false;
 
   private Shooter shooter;
+  private Intake intake;
 
   /** Subsystem for managing LED lights on the robot using a state machine. */
-  public LED(Shooter shooter) {
+  public LED(Shooter shooter, Intake intake) {
+    this.intake = intake;
     blinkin = new BreakerRevBlinkin(0);
     currentState = LEDState.ENABLED;
     this.shooter = shooter; // does not need requirement
     blinkin.setSolidColor(SolidColor.WHITE);
     updateBlinkin();
+    BreakerDashboard.getMainTab().addBoolean("Has Note", this::hasNote);
   }
 
   public Command setErroringCommand() {
@@ -126,11 +131,15 @@ public class LED extends SubsystemBase {
   }
 
   public void setRestState() {
-    if (shooter.hasNote()) {
+    if (hasNote()) {
         setState(LEDState.ENABLED_WITH_NOTE);
       } else {
         setState(LEDState.ENABLED);
       }
+  }
+
+  public boolean hasNote() {
+    return intake.hasNote() || shooter.hasNote();
   }
 
   public void setState(LEDState state) {
@@ -152,9 +161,10 @@ public class LED extends SubsystemBase {
   public LEDState getCurrentState() {
     return currentState;
   }
-
   @Override
   public void periodic() {
+    
+    //BreakerDashboard.getMainTab().addBoolean("HAS NOTE", this::hasNote);
     // This method will be called once per scheduler run
   }
 }

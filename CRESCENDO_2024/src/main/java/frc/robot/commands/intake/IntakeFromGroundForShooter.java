@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -17,7 +18,7 @@ import frc.robot.subsystems.Shooter.ShooterState;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class IntakeFromGroundForShooter extends SequentialCommandGroup {
   /** Creates a new IntakeForShooter. */
-  public IntakeFromGroundForShooter(Intake intake, Shooter shooter) {
+  public IntakeFromGroundForShooter(Intake intake, Shooter shooter, LED led) {
     addCommands(
       intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true),
       // new ParallelCommandGroup(
@@ -32,6 +33,8 @@ public class IntakeFromGroundForShooter extends SequentialCommandGroup {
       // ),
       new InstantCommand(() -> shooter.setState(ShooterState.INTAKE_TO_SHOOTER_HANDOFF), shooter),
       intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
+      new WaitUntilCommand(intake::hasNote),
+      led.returnToRestState(),
       new WaitUntilCommand(shooter::hasNote),
       new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE)),
       intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false)
