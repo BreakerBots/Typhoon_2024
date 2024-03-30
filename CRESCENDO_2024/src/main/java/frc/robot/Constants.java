@@ -90,13 +90,13 @@ public final class Constants {
     public static final double PITCH_PINION_TEETH = 20;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
-    public static final double PITCH_KP = 4.5;
+    public static final double PITCH_KP = 7.5;
     public static final double PITCH_KI = 0.0;
     public static final double PITCH_KD = 0.8;
     public static final double PITCH_KS = 0.025;
     public static final double PITCH_KA = 0.18;
-    public static final double PITCH_KV = 17.5;
-    public static final double PITCH_KG = 0.35;
+    public static final double PITCH_KV = 17.25;
+    public static final double PITCH_KG = 0.43;
     public static final double PITCH_ENCODER_OFFSET = -0.40625+0.125;
 
     public static final double PITCH_MAX_ROT = 0.21;

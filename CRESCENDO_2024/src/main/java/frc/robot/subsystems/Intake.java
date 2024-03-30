@@ -99,9 +99,9 @@ public class Intake extends SubsystemBase {
     
 
     TalonFXConfiguration rollerConfig = new TalonFXConfiguration();
-    rollerConfig.CurrentLimits.SupplyCurrentLimit = 60;
-    rollerConfig.CurrentLimits.SupplyCurrentThreshold = 180;
-    rollerConfig.CurrentLimits.SupplyTimeThreshold = 1.0;
+    rollerConfig.CurrentLimits.SupplyCurrentLimit = 40;
+    rollerConfig.CurrentLimits.SupplyCurrentThreshold = 80;
+    rollerConfig.CurrentLimits.SupplyTimeThreshold = 0.05;
 
     rollerConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
     rollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
@@ -111,7 +111,7 @@ public class Intake extends SubsystemBase {
     piviotDutyCycleControlRequest = new DutyCycleOut(0.0);
     pivotFollowerRequest = new Follower(PIVOT_LEFT_ID, true);
 
-    beamBreak = new BreakerBeamBreak(1, false);
+    beamBreak = new BreakerBeamBreak(3, false);
 
     intakePosSupplier = piviotEncoder.getAbsolutePosition().asSupplier();
   }
