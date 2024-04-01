@@ -54,6 +54,7 @@ import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LED.LEDState;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Shooter.ShooterState;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a

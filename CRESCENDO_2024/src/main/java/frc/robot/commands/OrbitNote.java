@@ -10,7 +10,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Vision;
 import frc.robot.BreakerLib.driverstation.gamepad.controllers.BreakerXboxController;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
@@ -19,6 +18,7 @@ import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSw
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.vendorutil.LimelightHelpers.LimelightTarget_Detector;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Vision;
 
 public class OrbitNote extends Command {
   /** Creates a new OrbitNote. */

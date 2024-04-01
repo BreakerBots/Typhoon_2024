@@ -8,13 +8,13 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Vision;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.actions.PersueAndIntakeNoteForShooter;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 import frc.robot.subsystems.Intake.IntakePivotState;
 import frc.robot.subsystems.Intake.IntakeState;
 
