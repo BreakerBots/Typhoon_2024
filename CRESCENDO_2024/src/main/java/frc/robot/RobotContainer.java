@@ -10,6 +10,7 @@ import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GeneralConstants;
@@ -44,6 +45,7 @@ import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.commands.intake.StowIntake;
 import frc.robot.commands.shooter.ShootManualAllign;
+import frc.robot.commands.shooter.ShootManualFloat;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.AmpBar;
 import frc.robot.subsystems.ClimbArm;
@@ -126,18 +128,28 @@ public class RobotContainer {
       .onTrue(new StowIntake(intakeSys, ampBarSys, shooterSys));
 
     controllerSys.getButtonA()
-      .and(() -> !intakeSys.hasNote())
-      .and(() -> !shooterSys.hasNote())
-      .and(() -> intakeSys.getState() != IntakeState.EXTENDED_INTAKEING)
-      .onTrue(new IntakeFromGround(intakeSys));
-    controllerSys.getButtonA()
-      .and(() -> !intakeSys.hasNote())
-      .and(() -> !shooterSys.hasNote())
-      .and(() -> intakeSys.getState() == IntakeState.EXTENDED_INTAKEING)
-      .toggleOnTrue(
-        new OrbitNote(drivetrainSys, visionSys, controllerSys)
-        .onlyWhile(() -> !(intakeSys.hasNote() || shooterSys.hasNote()) && (intakeSys.getState() == IntakeState.EXTENDED_EXTAKEING))
-      );
+      .debounce(0.1, DebounceType.kBoth)
+      .and(()-> {return !intakeSys.hasNote();})
+      .and(shooterSys::hasNote)
+      .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
+      .onTrue(new SequentialCommandGroup(
+        led.returnToRestState(), // shooting is typically the end of a state
+        new ShootManualFloat(shooterSys),
+        led.returnToRestState()
+       ));
+     
+    //   .and(() -> !intakeSys.hasNote())
+    //   .and(() -> !shooterSys.hasNote())
+    //   .and(() -> intakeSys.getState() != IntakeState.EXTENDED_INTAKEING)
+    //   .onTrue(new IntakeFromGround(intakeSys));
+    // controllerSys.getButtonA()
+    //   .and(() -> !intakeSys.hasNote())
+    //   .and(() -> !shooterSys.hasNote())
+    //   .and(() -> intakeSys.getState() == IntakeState.EXTENDED_INTAKEING)
+    //   .toggleOnTrue(
+    //     new OrbitNote(drivetrainSys, visionSys, controllerSys)
+    //     .onlyWhile(() -> !(intakeSys.hasNote() || shooterSys.hasNote()) && (intakeSys.getState() == IntakeState.EXTENDED_EXTAKEING))
+    //   );
 
     controllerSys.getButtonY()
       .and(() -> shooterSys.hasNote())
@@ -222,7 +234,8 @@ public class RobotContainer {
         new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("SourceShoot3GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("FiveishNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys))
+        new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys)),
+        new BreakerAutoPath("ShootFromAnywhereAndStop", new WaitCommand(2.0).andThen(new StationaryShootFromAnywhere(shooterSys, drivetrainSys)))
       );
     BreakerRobotManager.setup(drivetrainSys, robotConfig);
   }

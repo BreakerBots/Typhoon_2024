@@ -108,6 +108,8 @@ public final class Constants {
 
     public static final double SHOOTER_IDLE = 0.0;//1500.0 / 60.0;
     public static final FireingSolution MANUAL_SPEAKER_SHOT_FIREING_SOLUTION = new FireingSolution(new Rotation2d(), new BreakerVector2(Rotation2d.fromRotations(0.145), 90.0));
+    public static final FireingSolution FLOAT_SHOT = new FireingSolution(new Rotation2d(), new BreakerVector2(Rotation2d.fromRotations(0.175), 95.0));
+    public static final Supplier<FireingSolution> FLOAT_SHOT_SUPPLIER = () -> {return MANUAL_SPEAKER_SHOT_FIREING_SOLUTION;};
     public static final Supplier<FireingSolution> MANUAL_SPEAKER_SHOT_FIREING_SOLUTION_SUPPLIER = () -> {return MANUAL_SPEAKER_SHOT_FIREING_SOLUTION;};
 
     private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
@@ -190,9 +192,9 @@ public final class Constants {
 
     //Azimuth encoder angle offets
     public static final double FL_ENCODER_OFFSET = -0.223388671875;
-    public static final double FR_ENCODER_OFFSET = -0.12060546875;
-    public static final double BL_ENCODER_OFFSET = -0.318359375;
-    public static final double BR_ENCODER_OFFSET = 0.3876953125;
+    public static final double FR_ENCODER_OFFSET = -0.06591796875;
+    public static final double BL_ENCODER_OFFSET = -0.325439453125;
+    public static final double BR_ENCODER_OFFSET = 0.412353515625;
 
     //Module wheel centerpoint locations relative to robot origin (center)
     public static final Translation2d FL_TRANSLATION = new Translation2d(0.314325, 0.314325);
