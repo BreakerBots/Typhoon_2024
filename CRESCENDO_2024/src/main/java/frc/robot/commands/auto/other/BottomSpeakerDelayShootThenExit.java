@@ -15,13 +15,13 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Vision;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.actions.AutoAngleSnap;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 
 // This autopath delays scoring into the speaker, so that it can yield way for other more active teams who are scoring in the autonomous period
 

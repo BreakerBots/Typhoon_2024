@@ -5,12 +5,12 @@
 package frc.robot.commands.auto.paths;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Vision;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.actions.PersueAndIntakeNoteForShooter;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
