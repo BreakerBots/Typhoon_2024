@@ -5,6 +5,10 @@
 
 package frc.robot;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Supplier;
 
 import com.pathplanner.lib.path.PathConstraints;
@@ -26,6 +30,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import frc.robot.ShooterTarget.FireingSolution;
+import frc.robot.ShooterTarget.FireingTableValue;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread.BreakerSwerveOdometryConfig;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
@@ -104,28 +109,23 @@ public final class Constants {
 
     public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.016);
 
-    public static final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> FIREING_MAP = getFireingMap();
+    public static final List<Entry<Double, FireingTableValue>> FIREING_MAP = Arrays.asList(
+      Map.entry(1.307, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(53.0), 95.0/*80.0*/), 0.0)),
+      Map.entry(2.249, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(45.5), 95.0/*81.0*/), 0.0)),
+      Map.entry(2.604, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(40.5), 95.0/*82.0*/), 0.0)),
+      Map.entry(3.099, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(37.5), 95.0/*85.0*/), 0.0)),
+      Map.entry(3.275, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(33.5), 95.0/*84.0*/), 0.0)),
+      Map.entry(4.071, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(30.0), 95.0/*93.0*/), 0.0)),
+      Map.entry(4.505, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(27.5), 95.0/*94.0*/), 0.0)),
+      Map.entry(5.067, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(25.8), 95.0), 0.0)),
+      Map.entry(6.260, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(23.5), 95.0/*100.0*/), 0.0))
+    );
 
     public static final double SHOOTER_IDLE = 0.0;//1500.0 / 60.0;
     public static final FireingSolution MANUAL_SPEAKER_SHOT_FIREING_SOLUTION = new FireingSolution(new Rotation2d(), new BreakerVector2(Rotation2d.fromRotations(0.145), 90.0));
     public static final FireingSolution FLOAT_SHOT = new FireingSolution(new Rotation2d(), new BreakerVector2(Rotation2d.fromRotations(0.175), 95.0));
     public static final Supplier<FireingSolution> FLOAT_SHOT_SUPPLIER = () -> {return MANUAL_SPEAKER_SHOT_FIREING_SOLUTION;};
     public static final Supplier<FireingSolution> MANUAL_SPEAKER_SHOT_FIREING_SOLUTION_SUPPLIER = () -> {return MANUAL_SPEAKER_SHOT_FIREING_SOLUTION;};
-
-    private static  BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> getFireingMap() {
-       BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fm = new BreakerInterpolatingTreeMap<>();
-       fm.put(1.307, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(53.0), 95.0/*80.0*/), new BreakerInterpolableDouble(0.0)));
-       fm.put(2.249, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(45.5), 95.0/*81.0*/), new BreakerInterpolableDouble(0.0)));
-       fm.put(2.604, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(40.5), 95.0/*82.0*/), new BreakerInterpolableDouble(0.0)));
-       fm.put(3.099, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(37.5), 95.0/*85.0*/), new BreakerInterpolableDouble(0.0)));
-       fm.put(3.275, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(33.5), 95.0/*84.0*/), new BreakerInterpolableDouble(0.0)));
-       //fm.put(3.625, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(34.0), 84.5), new BreakerInterpolableDouble(0.0)));
-       fm.put(4.071, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(30.0), 95.0/*93.0*/), new BreakerInterpolableDouble(0.0)));
-       fm.put(4.505, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(27.5), 95.0/*94.0*/), new BreakerInterpolableDouble(0.0)));
-       fm.put(5.067, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(25.8), 95.0), new BreakerInterpolableDouble(0.0)));
-       fm.put(6.260, new BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>(new BreakerVector2(Rotation2d.fromDegrees(23.5), 95.0/*100.0*/), new BreakerInterpolableDouble(0.0)));
-      return fm;
-    } 
   }
 
   public static class VisionConstants {
