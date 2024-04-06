@@ -8,8 +8,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
 
+import org.apache.commons.math3.filter.MeasurementModel;
+
 import com.ctre.phoenix6.BaseStatusSignal;
 import com.ctre.phoenix6.StatusCode;
+import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -20,6 +23,8 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.fasterxml.jackson.databind.JsonSerializable.Base;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Unit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.BreakerLib.util.logging.advantagekit.BreakerLog;
 import frc.robot.BreakerLib.util.test.selftest.DeviceHealth;
@@ -173,51 +178,51 @@ public class BreakerPhoenix6Util {
     }
   }
 
-  public static class TalonFXRemoteLimitController extends SubsystemBase {
-    private BooleanSupplier limitTriggeredSupplier;
-    private LimitDirection limitDirection;
-    private double limitTriggeredRotorPosition;
-    private TalonFX motor;
-    private boolean prevState, limitEnabled;
-    public TalonFXRemoteLimitController(TalonFX motor, BooleanSupplier limitTriggeredSupplier, LimitDirection limitDirection, double limitTriggeredRotorPosition) {
-        configMotor(motor, limitDirection, limitTriggeredRotorPosition, false);
-        prevState = false;
-        limitEnabled = false;
+  public static class MeasuredStatusSignal<U extends Unit<U>> {
+    private StatusSignal<Double> statusSignal;
+    private Unit<U> units;
+
+    public MeasuredStatusSignal(StatusSignal<Double> valueStatusSignal, Unit<U> valueUnits) {
+      this.statusSignal = valueStatusSignal;
+      this.units = units;
+
     }
 
-    private static void configMotor(TalonFX motor, LimitDirection limitDirection, double limitTriggeredRotorPosition, boolean enableLimit) {
-        SoftwareLimitSwitchConfigs softLimitConfig = new SoftwareLimitSwitchConfigs();
-        motor.getConfigurator().refresh(softLimitConfig);
-        if (limitDirection == LimitDirection.FORWARD) {
-            softLimitConfig.ForwardSoftLimitThreshold = limitTriggeredRotorPosition;
-            softLimitConfig.ForwardSoftLimitEnable = enableLimit;
-        } else {
-            softLimitConfig.ReverseSoftLimitThreshold = limitTriggeredRotorPosition;
-            softLimitConfig.ReverseSoftLimitEnable = enableLimit;
-        }
+    public Unit<U> getValueUnits() {
+      return units;
     }
 
-    public boolean isLimitTriggered() {
-        return limitTriggeredSupplier.getAsBoolean();
+    public StatusSignal<Double> getValueStatusSignal() {
+      return statusSignal;
+    }
+
+    public Measure<U> getValue() {
+      return units.of(statusSignal.getValueAsDouble());
+    }
+
+    
+  }
+
+  public static class LatencyCompensatedStatusSignal<U extends Unit<U>> extends MeasuredStatusSignal<U> {
+    private StatusSignal<Double> derivitiveStatusSignal;
+    public LatencyCompensatedStatusSignal(StatusSignal<Double> valueStatusSignal, StatusSignal<Double> derivitiveStatusSignal, Unit<U> valueUnits) {
+      super(valueStatusSignal, valueUnits);
+      this.derivitiveStatusSignal = derivitiveStatusSignal;
+    }
+
+    public StatusSignal<Double> getDerivitiveStatusSignal() {
+      return derivitiveStatusSignal;
+    }
+
+    public Measure<U> getRawValue() {
+      return super.getValue();
     }
 
     @Override
-    public void periodic() {
-        boolean curState = isLimitTriggered();
-        if (curState && !prevState) {
-            if (!limitEnabled) {
-                configMotor(motor, limitDirection, limitTriggeredRotorPosition, true);
-            }
-            motor.setPosition(limitTriggeredRotorPosition);
-        }
-        prevState = curState;
+    public Measure<U> getValue() {
+      double mag = BaseStatusSignal.getLatencyCompensatedValue(getValueStatusSignal(), derivitiveStatusSignal);
+      return getValueUnits().of(mag);
     }
-
-    public static enum LimitDirection {
-        FORWARD,
-        REVERSE
-    }
-}
-
+  }
   
 }
