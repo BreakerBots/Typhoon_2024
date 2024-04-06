@@ -272,10 +272,9 @@ public class Shooter extends SubsystemBase {
       case SMART_SPOOL:
         boolean trackWithPivot = latestFireingSolution.distanceToTarget() <= latestFireingSolution.smartSpoolConfig().pitchTrackThreshold();
         boolean spoolFlywheel = latestFireingSolution.distanceToTarget() <= latestFireingSolution.smartSpoolConfig().flywheelSpoolThreshold();
-        boolean hasNote = hasNote();
         double spoolSpeed = spoolFlywheel ? latestFireingSolution.fireingVec().getMagnitude() * 0.75 : SHOOTER_IDLE;
         double pivotPos = trackWithPivot ? latestFireingSolution.fireingVec().getVectorRotation().getRotations() : STOW_ANGLE.getRotations();
-        if (!hasNote) {
+        if (!hasNote()) {
           pushControlRequests(state.hopperState.getDutyCycle(), pivotPos, spoolSpeed, false);
         } else {
           setState(ShooterState.STOW);
