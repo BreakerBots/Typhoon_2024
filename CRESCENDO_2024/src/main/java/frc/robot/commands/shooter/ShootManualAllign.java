@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.commands.util.WaitUntilCommndWithFallingEdgeDelayAndTimeout;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Shooter.ShooterState;
@@ -21,12 +22,12 @@ public class ShootManualAllign extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> shooter.setActiveTarget(Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_SOLUTION_SUPPLIER), shooter),
+      new InstantCommand(() -> shooter.setActiveTarget(RobotContainer.SPEAKER_MANUAL_TARGET::getFireingSolution), shooter),
       new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET)),
       new WaitUntilCommand(shooter::isAtGoal),
       new InstantCommand(() -> shooter.setState(ShooterState.SHOOT_TO_TARGET)),
       new WaitUntilCommndWithFallingEdgeDelayAndTimeout(() -> {return !shooter.hasNote();}, 0.5, 3.0),
-      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE))
+      new InstantCommand(() -> shooter.setState(ShooterState.STOW))
     );
     
   }

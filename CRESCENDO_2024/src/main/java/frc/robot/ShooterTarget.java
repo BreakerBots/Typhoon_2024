@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Map.Entry;
+import java.util.function.DoubleSupplier;
+import java.util.function.Function;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -30,35 +33,59 @@ import org.apache.commons.math3.util.Precision;
 public class ShooterTarget {
     private Translation3d blueTargetPoint;
     private final Drive drivetrain;
-    //private final BreakerInterpolatingTreeMap<Double, BreakerInterpolablePair<BreakerVector2, BreakerInterpolableDouble>> fireingTable;
     public static final SplineInterpolator SPLINE_INTERPOLATOR = new SplineInterpolator();
-    private PolynomialSplineFunction angleCurve;
-    private PolynomialSplineFunction speedCurve;
-    public ShooterTarget(Drive drivetrain, Translation3d blueTargetPoint, List<Entry<Double, FireingTableValue>> fireingTable) {
+    private Function<Double, Double> angleFunction;
+    private Function<Double, Double> speedFunction;
+    private SmartSpoolConfig smartSpoolConfig;
+    public ShooterTarget(Drive drivetrain, Translation3d blueTargetPoint, SmartSpoolConfig smartSpoolConfig, List<Entry<Double, FireingTableValue>> fireingTable) {
         this.blueTargetPoint = blueTargetPoint;
         this.drivetrain = drivetrain;
+        this.smartSpoolConfig = smartSpoolConfig;
         initCurves(fireingTable);
+    }
 
+    public ShooterTarget(Drive drivetrain, Translation3d blueTargetPoint, SmartSpoolConfig smartSpoolConfig, BreakerVector2 fixedFireingVec) {
+        this.blueTargetPoint = blueTargetPoint;
+        this.drivetrain = drivetrain;
+        this.smartSpoolConfig = smartSpoolConfig;
+        angleFunction = (Double distance) -> fixedFireingVec.getVectorRotation().getRadians();
+        speedFunction = (Double distance) -> fixedFireingVec.getMagnitude();
     }
 
      private void initCurves(List<Entry<Double, FireingTableValue>> fireingTable) {
         double[] distances = new double[fireingTable.size()];
         double[] flywheelSpeeds = new double[fireingTable.size()];
         double[] angles = new double[fireingTable.size()];
+        double constantSpeed = 0.0;
+        boolean isFlySpeedConstant = true;
 
         for (int i = 0; i < fireingTable.size(); i++) {
-        distances[i] = fireingTable.get(i).getKey();
-        flywheelSpeeds[i] = fireingTable.get(i).getValue().fireingVector.getMagnitude();
-        angles[i] = fireingTable.get(i).getValue().fireingVector.getVectorRotation().getRadians();
+            distances[i] = fireingTable.get(i).getKey();
+            flywheelSpeeds[i] = fireingTable.get(i).getValue().fireingVector.getMagnitude();
+            angles[i] = fireingTable.get(i).getValue().fireingVector.getVectorRotation().getRadians();
+            
+            if (i < 1) {
+                constantSpeed = flywheelSpeeds[0];
+            } else if (isFlySpeedConstant) {
+                isFlySpeedConstant = MathUtil.isNear(constantSpeed, flywheelSpeeds[i], 1e-5);
+            }
         }
 
-        angleCurve = SPLINE_INTERPOLATOR.interpolate(distances, flywheelSpeeds);
-        speedCurve = SPLINE_INTERPOLATOR.interpolate(distances, angles);
+        PolynomialSplineFunction angleCurve = SPLINE_INTERPOLATOR.interpolate(distances, flywheelSpeeds);
+        angleFunction = (Double distance) -> angleCurve.value(distance);
+        final double constantSpeedFinal = constantSpeed;
+        if (isFlySpeedConstant) {
+            speedFunction = (Double distance) -> constantSpeedFinal;
+        } else {
+            PolynomialSplineFunction speedCurve = SPLINE_INTERPOLATOR.interpolate(distances, angles);
+            speedFunction = (Double distance) -> speedCurve.value(distance);
+        }
     }
 
     
 
     public static record FireingTableValue(BreakerVector2 fireingVector, double time) {}
+    public static record SmartSpoolConfig(double flywheelSpoolThreshold, double pitchTrackThreshold) {}
 
 
 
@@ -86,15 +113,15 @@ public class ShooterTarget {
         Rotation2d deltaTransVecAng = deltaTrans.getAngle();
         double distance = drivetrainTrans.getDistance(targetTrans);
 
-        double targetSpeed = speedCurve.value(distance);
-        double targetPivotAng = angleCurve.value(distance);
+        double targetSpeed = speedFunction.apply(distance);
+        double targetPivotAng = angleFunction.apply(distance);
 
         BreakerVector2 fireingVec = new BreakerVector2(Rotation2d.fromRadians(targetPivotAng), targetSpeed);
         BreakerLog.recordOutput("Distance To Target", distance);
-        return new FireingSolution(deltaTransVecAng, fireingVec);
+        return new FireingSolution(deltaTransVecAng, distance, smartSpoolConfig, fireingVec);
     }
 
-    public static record FireingSolution(Rotation2d yaw, BreakerVector2 fireingVec){}
+    public static record FireingSolution(Rotation2d yaw, double distanceToTarget, SmartSpoolConfig smartSpoolConfig, BreakerVector2 fireingVec){}
 
 
 }

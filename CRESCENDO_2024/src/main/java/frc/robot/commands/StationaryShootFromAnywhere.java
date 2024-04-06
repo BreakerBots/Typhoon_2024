@@ -26,7 +26,7 @@ public class StationaryShootFromAnywhere extends SequentialCommandGroup {
       new AimToTargetStationary(shooter, drive).onlyWhile(RobotContainer.getGlobalOverride().negate()),
       new InstantCommand(() -> shooter.setState(ShooterState.SHOOT_TO_TARGET)),
       new WaitUntilCommndWithFallingEdgeDelayAndTimeout(() -> {return !shooter.hasNote();}, 0.0, 3.0),
-      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE))
+      new InstantCommand(() -> shooter.setState(ShooterState.STOW))
     );
   }
 }

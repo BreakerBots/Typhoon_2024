@@ -21,22 +21,12 @@ public class IntakeFromGroundForShooter extends SequentialCommandGroup {
   public IntakeFromGroundForShooter(Intake intake, Shooter shooter, LED led) {
     addCommands(
       intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true),
-      // new ParallelCommandGroup(
-      //   intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, true).andThen(
-      //     intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
-      //     new WaitUntilCommand(intake::hasNote)
-      //       .andThen(intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false))
-      //       .onlyWhile(()->{return !shooter.isAtAngleGoal();})
-      //   ),
-      //   new InstantCommand(() -> shooter.setState(ShooterState.STOW))
-      //   .andThen(new WaitUntilCommand(shooter::isAtAngleGoal))
-      // ),
       new InstantCommand(() -> shooter.setState(ShooterState.INTAKE_TO_SHOOTER_HANDOFF), shooter),
       intake.setStateCommand(IntakeState.EXTENDED_INTAKEING, false),
       new WaitUntilCommand(intake::hasNote),
       led.returnToRestState(),
       new WaitUntilCommand(shooter::hasNote),
-      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE)),
+      new InstantCommand(() -> shooter.setState(ShooterState.SMART_SPOOL)),
       intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false)
     );
   }

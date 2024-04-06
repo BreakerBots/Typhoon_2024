@@ -31,7 +31,7 @@ public class HandoffFromIntakeToShooter extends SequentialCommandGroup {
         new InstantCommand(() -> shooter.setState(ShooterState.INTAKE_TO_SHOOTER_HANDOFF), shooter),
         new WaitUntilCommand(shooter::hasNote),
         intake.setStateCommand(retractAtEnd ? IntakeState.RETRACTED_NEUTRAL : IntakeState.EXTENDED_NEUTRAL, false),
-        new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE), shooter)
+        new InstantCommand(() -> shooter.setState(ShooterState.SMART_SPOOL), shooter)
     );
   }
 }

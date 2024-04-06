@@ -31,6 +31,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 import edu.wpi.first.math.util.Units;
 import frc.robot.ShooterTarget.FireingSolution;
 import frc.robot.ShooterTarget.FireingTableValue;
+import frc.robot.ShooterTarget.SmartSpoolConfig;
 import frc.robot.BreakerLib.physics.vector.BreakerVector2;
 import frc.robot.BreakerLib.position.odometry.swerve.BreakerSwerveOdometryThread.BreakerSwerveOdometryConfig;
 import frc.robot.BreakerLib.position.odometry.vision.BreakerEstimatedPoseSourceProvider.PoseOrigin;
@@ -109,7 +110,9 @@ public final class Constants {
 
     public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.016);
 
-    public static final List<Entry<Double, FireingTableValue>> FIREING_MAP = Arrays.asList(
+    public static final SmartSpoolConfig SPEAKER_SMART_SPOOL_CONFIG = new SmartSpoolConfig(6.5, 8.0);
+
+    public static final List<Entry<Double, FireingTableValue>> SPEAKER_FIREING_TABLE = Arrays.asList(
       Map.entry(1.307, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(53.0), 95.0/*80.0*/), 0.0)),
       Map.entry(2.249, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(45.5), 95.0/*81.0*/), 0.0)),
       Map.entry(2.604, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(40.5), 95.0/*82.0*/), 0.0)),
@@ -121,11 +124,24 @@ public final class Constants {
       Map.entry(6.260, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(23.5), 95.0/*100.0*/), 0.0))
     );
 
+    public static final SmartSpoolConfig NOTE_PASS_SMART_SPOOL_CONFIG = new SmartSpoolConfig(10.0, 12.0);
+
+    public static final List<Entry<Double, FireingTableValue>> PASS_FIREING_TABLE = Arrays.asList(
+      Map.entry(1.307, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(53.0), 95.0/*80.0*/), 0.0)),
+      Map.entry(2.249, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(45.5), 95.0/*81.0*/), 0.0)),
+      Map.entry(2.604, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(40.5), 95.0/*82.0*/), 0.0)),
+      Map.entry(3.099, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(37.5), 95.0/*85.0*/), 0.0)),
+      Map.entry(3.275, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(33.5), 95.0/*84.0*/), 0.0)),
+      Map.entry(4.071, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(30.0), 95.0/*93.0*/), 0.0)),
+      Map.entry(4.505, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(27.5), 95.0/*94.0*/), 0.0)),
+      Map.entry(5.067, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(25.8), 95.0), 0.0)),
+      Map.entry(6.260, new FireingTableValue(new BreakerVector2(Rotation2d.fromDegrees(23.5), 95.0/*100.0*/), 0.0))
+    );
+
+    public static final SmartSpoolConfig SPEAKER_MANUAL_SMART_SPOOL_CONFIG = new SmartSpoolConfig(2.0, 3.0);
+
     public static final double SHOOTER_IDLE = 0.0;//1500.0 / 60.0;
-    public static final FireingSolution MANUAL_SPEAKER_SHOT_FIREING_SOLUTION = new FireingSolution(new Rotation2d(), new BreakerVector2(Rotation2d.fromRotations(0.145), 90.0));
-    public static final FireingSolution FLOAT_SHOT = new FireingSolution(new Rotation2d(), new BreakerVector2(Rotation2d.fromRotations(0.175), 95.0));
-    public static final Supplier<FireingSolution> FLOAT_SHOT_SUPPLIER = () -> {return MANUAL_SPEAKER_SHOT_FIREING_SOLUTION;};
-    public static final Supplier<FireingSolution> MANUAL_SPEAKER_SHOT_FIREING_SOLUTION_SUPPLIER = () -> {return MANUAL_SPEAKER_SHOT_FIREING_SOLUTION;};
+    public static final BreakerVector2 MANUAL_SPEAKER_SHOT_FIREING_VECTOR = new BreakerVector2(Rotation2d.fromRotations(0.145), 90.0);
   }
 
   public static class VisionConstants {
@@ -261,7 +277,7 @@ public final class Constants {
     public static final double SLOW_MODE_TURN_MULTIPLIER = 0.5;
 
     //Physical Robot Constants
-    public static final double MAX_ANGULAR_VEL = ((FL_TRANSLATION.getNorm() * 2.0 * Math.PI) / MAX_ATTAINABLE_MODULE_WHEEL_SPEED) * (2.0 * Math.PI); 
+    public static final double MAX_ANGULAR_VEL = (2.0 * Math.PI) / ((0.4445 * 2.0 * Math.PI) / (MAX_ATTAINABLE_MODULE_WHEEL_SPEED - 0.2)); 
     public static final double MAX_LINEAR_VEL = 5.0;//5.35
     public static final double HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND = 0.001;
     public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.05;

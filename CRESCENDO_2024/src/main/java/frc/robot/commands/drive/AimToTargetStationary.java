@@ -4,6 +4,8 @@
 
 package frc.robot.commands.drive;
 
+import org.apache.commons.math3.analysis.function.Constant;
+
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -11,6 +13,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.ShooterTarget.FireingSolution;
+import frc.robot.Constants;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.BreakerGenericDrivetrain.SlowModeValue;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.BreakerSwerveDrive.SwerveMovementRefrenceFrame;
 import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.requests.BreakerSwerveVelocityRequest;
@@ -28,7 +31,7 @@ public class AimToTargetStationary extends Command {
   private BreakerSwerveVelocityRequest velocityRequest;
   private final Timer timer = new Timer();
   public AimToTargetStationary(Shooter shooter, Drive drive) {
-    anglePID = new ProfiledPIDController(2.25, 0.0, 0.1, new TrapezoidProfile.Constraints(6.0, 6.0));
+    anglePID = new ProfiledPIDController(2.25, 0.0, 0.1, new TrapezoidProfile.Constraints(/*6.0*/Constants.DriveConstants.MAX_ANGULAR_VEL, /*6.0*/Constants.DriveConstants.MAX_ANGULAR_VEL * Constants.DriveConstants.MAX_ANGULAR_VEL));
     anglePID.setTolerance(Math.toRadians(0.3), Math.toRadians(10.0));
     anglePID.enableContinuousInput(-Math.PI, Math.PI);
     this.drive = drive;

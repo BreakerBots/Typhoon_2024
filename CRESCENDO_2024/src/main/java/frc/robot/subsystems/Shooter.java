@@ -61,6 +61,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.ShooterTarget.FireingSolution;
+import frc.robot.commands.intake.StowIntake;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
 import frc.robot.BreakerLib.devices.sensors.BreakerBeamBreak;
@@ -214,7 +215,8 @@ public class Shooter extends SubsystemBase {
 
   public static enum ShooterState {
     TRACK_TARGET(ShooterHopperState.NEUTRAL),
-    TRACK_TARGET_IDLE(ShooterHopperState.NEUTRAL),
+    //TRACK_TARGET_IDLE(ShooterHopperState.NEUTRAL),
+    SMART_SPOOL(ShooterHopperState.NEUTRAL),
     SHOOT_TO_TARGET(ShooterHopperState.FORWARD),
     INTAKE_TO_SHOOTER_HANDOFF(ShooterHopperState.FORWARD),
     SHOOTER_TO_INTAKE_HANDOFF(ShooterHopperState.REVERSE),
@@ -267,10 +269,21 @@ public class Shooter extends SubsystemBase {
 
     latestFireingSolution = target.get();
     switch (state) {
+      case SMART_SPOOL:
+        boolean trackWithPivot = latestFireingSolution.distanceToTarget() <= latestFireingSolution.smartSpoolConfig().pitchTrackThreshold();
+        boolean spoolFlywheel = latestFireingSolution.distanceToTarget() <= latestFireingSolution.smartSpoolConfig().flywheelSpoolThreshold();
+        boolean hasNote = hasNote();
+        double spoolSpeed = spoolFlywheel ? latestFireingSolution.fireingVec().getMagnitude() * 0.75 : SHOOTER_IDLE;
+        double pivotPos = trackWithPivot ? latestFireingSolution.fireingVec().getVectorRotation().getRotations() : STOW_ANGLE.getRotations();
+        if (!hasNote) {
+          pushControlRequests(state.hopperState.getDutyCycle(), pivotPos, spoolSpeed, false);
+        } else {
+          setState(ShooterState.STOW);
+        }
+        break;
       case SHOOT_TO_TARGET:
       case TRACK_TARGET:
-      case TRACK_TARGET_IDLE:
-        pushControlRequests(state.getHopperState().getDutyCycle(), latestFireingSolution.fireingVec().getVectorRotation().getRotations(), state == ShooterState.TRACK_TARGET_IDLE ? SHOOTER_IDLE : latestFireingSolution.fireingVec().getMagnitude(), false);
+        pushControlRequests(state.getHopperState().getDutyCycle(), latestFireingSolution.fireingVec().getVectorRotation().getRotations(), latestFireingSolution.fireingVec().getMagnitude(), false);
         break;
       case STOW:
       case INTAKE_TO_SHOOTER_HANDOFF:

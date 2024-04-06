@@ -28,6 +28,7 @@ import frc.robot.BreakerLib.util.robot.BreakerRobotStartConfig.BreakerRobotNameC
 import frc.robot.commands.AllignToAmp;
 import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ScoreInAmp;
+import frc.robot.commands.StationaryPassNoteFromAnywhere;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.paths.CenterShoot4InWing;
 import frc.robot.commands.auto.paths.CenterThenGoDeepShoot3;
@@ -45,7 +46,6 @@ import frc.robot.commands.intake.IntakeFromGroundForPastaRoller;
 import frc.robot.commands.intake.IntakeFromGroundForShooter;
 import frc.robot.commands.intake.StowIntake;
 import frc.robot.commands.shooter.ShootManualAllign;
-import frc.robot.commands.shooter.ShootManualFloat;
 import frc.robot.commands.shooter.SpoolShooterForSpeakerShot;
 import frc.robot.subsystems.AmpBar;
 import frc.robot.subsystems.ClimbArm;
@@ -84,7 +84,9 @@ public class RobotContainer {
   public static final ClimbArm leftClimbSys = new ClimbArm(50, "rio", true);
   public static final ClimbArm rigtClimbSys = new ClimbArm(51, "rio", true);
 
-  public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.FIREING_MAP);
+  public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_SMART_SPOOL_CONFIG, Constants.ShooterConstants.SPEAKER_FIREING_TABLE);
+  public static final ShooterTarget SPEAKER_MANUAL_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_MANUAL_SMART_SPOOL_CONFIG, Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_VECTOR);
+  public static final ShooterTarget PASS_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.NOTE_PASS_SMART_SPOOL_CONFIG, Constants.ShooterConstants.PASS_FIREING_TABLE);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -135,7 +137,7 @@ public class RobotContainer {
       .and(() -> {return intakeSys.getState() != IntakeState.EXTENDED_EXTAKEING;})
       .onTrue(new SequentialCommandGroup(
         led.returnToRestState(), // shooting is typically the end of a state
-        new ShootManualFloat(shooterSys),
+        new StationaryPassNoteFromAnywhere(shooterSys, drivetrainSys),
         led.returnToRestState()
        ));
      

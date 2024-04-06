@@ -26,7 +26,7 @@ public class SpoolShooterForSpeakerShot extends SequentialCommandGroup {
     if (enableBlockingTimeout) {
       addCommands(
         new WaitCommand(10.0),
-        new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE), shooter)
+        new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET), shooter)
       );
     }
   }

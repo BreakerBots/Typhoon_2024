@@ -28,7 +28,7 @@ public class PersueAndIntakeNoteForShooter extends SequentialCommandGroup {
       //new WaitUntilCommand(shooter::isAtAngleGoal),
       new PersueNote(vision, intake, drivetrain),
       new WaitUntilCommand(shooter::hasNote),
-      new InstantCommand(() -> shooter.setState(ShooterState.TRACK_TARGET_IDLE)),
+      new InstantCommand(() -> shooter.setState(ShooterState.SMART_SPOOL)),
       intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false)
       
 
