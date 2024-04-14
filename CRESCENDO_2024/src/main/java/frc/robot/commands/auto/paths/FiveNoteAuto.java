@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.actions.AutoAngleSnap;
 import frc.robot.commands.auto.actions.PersueAndIntakeNote;
@@ -38,9 +39,9 @@ public class FiveNoteAuto extends SequentialCommandGroup {
     addCommands(
       new StationaryShootFromAnywhere(shooter, drivetrain),
       intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false),
-      AutoBuilder.followPath(centerToBottomNote),
+      AutoBuilder.pathfindThenFollowPath(centerToBottomNote, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
       new PersueAndIntakeNote(vision, shooter, intake, drivetrain),
-      AutoBuilder.followPath(bottomNoteBackup)
+      AutoBuilder.pathfindThenFollowPath(bottomNoteBackup, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS)
         .alongWith(
           new HandoffFromIntakeToShooter(shooter, intake, false)
           .andThen(
@@ -68,10 +69,10 @@ public class FiveNoteAuto extends SequentialCommandGroup {
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
 
-      AutoBuilder.followPath(a3_b5),
+      AutoBuilder.pathfindThenFollowPath(a3_b5, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new SpoolShooterForSpeakerShot(shooter, false),
-      AutoBuilder.followPath(b5_speaker),
+      AutoBuilder.pathfindThenFollowPath(b5_speaker, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
       new StationaryShootFromAnywhere(shooter, drivetrain)
     );
   }

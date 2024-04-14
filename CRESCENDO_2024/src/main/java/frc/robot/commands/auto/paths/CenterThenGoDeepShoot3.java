@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.StationaryShootFromAnywhere;
 import frc.robot.commands.auto.actions.PersueAndIntakeNoteForShooter;
 import frc.robot.subsystems.Drive;
@@ -37,9 +38,9 @@ public class CenterThenGoDeepShoot3 extends SequentialCommandGroup {
       new StationaryShootFromAnywhere(shooter, drivetrain),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
-      AutoBuilder.followPath(firstNoteToB4),
+      AutoBuilder.pathfindThenFollowPath(firstNoteToB4, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      AutoBuilder.followPath(b4ToShoot),
+      AutoBuilder.pathfindThenFollowPath(b4ToShoot, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
       new StationaryShootFromAnywhere(shooter, drivetrain)
     );
   }

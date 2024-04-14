@@ -6,7 +6,18 @@ package frc.robot.BreakerLib.devices;
 
 /** Add your docs here. */
 public class CANDeviceID {
+    private String busName;
+    private int deviceID;
     public CANDeviceID(String busName, int deviceID) {
+        this.busName = busName;
+        this.deviceID = deviceID;
+    }
 
+    public String getBusName() {
+        return busName;
+    }
+
+    public int getDeviceID() {
+        return deviceID;
     }
 }

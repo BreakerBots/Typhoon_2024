@@ -30,7 +30,7 @@ import frc.robot.commands.OrbitNote;
 import frc.robot.commands.ScoreInAmp;
 import frc.robot.commands.StationaryPassNoteFromAnywhere;
 import frc.robot.commands.StationaryShootFromAnywhere;
-import frc.robot.commands.auto.paths.CenterShoot4InWing;
+import frc.robot.commands.auto.paths.CenterShoot3InWing;
 import frc.robot.commands.auto.paths.CenterThenGoDeepShoot3;
 import frc.robot.commands.auto.paths.FUNauto;
 import frc.robot.commands.auto.paths.FiveNoteAuto;
@@ -233,7 +233,7 @@ public class RobotContainer {
       robotConfig.setLogFilePaths("/U/logs", "");
       robotConfig.setAutoPaths(
         new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("CenterShoot3", new CenterShoot4InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        new BreakerAutoPath("CenterShoot3", new CenterShoot3InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("SourceShoot3GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("FiveishNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),

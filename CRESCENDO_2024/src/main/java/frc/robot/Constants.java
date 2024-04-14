@@ -75,10 +75,14 @@ public final class Constants {
     
     public static final double PIVOT_ENCODER_OFFSET = 0.2822265625;
 
-    /*0deg is 15 deg behind fully retracted*/
-    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.32;//0.32;
-    /*0deg is 20 deg behind fully retracted*/
-    public static final double PIVIOT_EXTENDED_THRESHOLD = 0.02;//0.008;
+
+    public static final Rotation2d PIVIOT_RETRACTED_THRESHOLD = Rotation2d.fromRotations(0.32);//0.32;
+    public static final Rotation2d PIVOT_RETRACTED_TARGET = Rotation2d.fromRotations(0.325);
+    
+    public static final Rotation2d PIVIOT_EXTENDED_THRESHOLD = Rotation2d.fromRotations(0.01);//0.008;
+    public static final Rotation2d PIVOT_EXTENDED_TARGET = Rotation2d.fromRotations(0.0);
+    
+    public static final Rotation2d SETPOINT_CONTROL_TOLERENCE = Rotation2d.fromDegrees(8.0);
 
     public static final double PIVOT_AGAINST_AMP_ANGLE_THRESHOLD = 0.31; // temporary
 
@@ -262,7 +266,7 @@ public final class Constants {
     //heading snap constants
     public static final double HEADING_SNAP_VEL_RAD_PER_SEC = 2*Math.PI;
     public static final double HEADING_SNAP_ACCEL_RAD_PER_SEC_SQ = 10.0;
-    public static final double HEADING_SNAP_POSITIONAL_TOLERENCE_RAD = Math.toRadians(1.0);
+    public static final double HEADING_SNAP_POSITIONAL_TOLERENCE_RAD = Math.toRadians(2.5);
     public static final double HEADING_SNAP_VELOCITY_TOLERENCE_RAD_PER_SEC = Math.toRadians(9999);
     public static final double HEADING_SNAP_TIMEOUT_SEC = 5.0;
     public static final double HEADING_SNAP_PID_KP = 3.5;
@@ -288,12 +292,12 @@ public final class Constants {
 
     public static final BreakerSwerveOdometryConfig ODOMETRY_CONFIG = new BreakerSwerveOdometryConfig(1.0/200.0,  VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.9, 0.9, 0.9), PoseOrigin.ofGlobal(), new Pose2d(), 5);
 
-    public static final double X_PID_KP = 1.25;//0.000001
+    public static final double X_PID_KP = 2.5;//0.000001
     public static final double X_PID_KI = 0.0;
     public static final double X_PID_KD = 0.008;
 
     //Y-axis positional PID
-    public static final double Y_PID_KP = 1.25;
+    public static final double Y_PID_KP = 2.5;
     public static final double Y_PID_KI = 0.0;
     public static final double Y_PID_KD = 0.008;
 
@@ -316,7 +320,7 @@ public final class Constants {
   }
 
   public static class AutoConstants {
-    public static final PathConstraints PATHFIND_TO_AUTOPATH_START_CONSTRAINTS = new PathConstraints(1.5, 2.5, DriveConstants.MAX_ANGULAR_VEL, 5.0);
+    public static final PathConstraints PATHFIND_TO_AUTOPATH_START_CONSTRAINTS = new PathConstraints(3.5, 6.0, DriveConstants.MAX_ANGULAR_VEL, 25.0);
   }
 
   public static class AmpBarConstants {

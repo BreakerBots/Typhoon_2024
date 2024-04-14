@@ -178,51 +178,50 @@ public class BreakerPhoenix6Util {
     }
   }
 
-  public static class MeasuredStatusSignal<U extends Unit<U>> {
-    private StatusSignal<Double> statusSignal;
-    private Unit<U> units;
+  // public static class MeasuredStatusSignal<U extends Unit<U>> {
+  //   private StatusSignal<Double> statusSignal;
+  //   private Unit<U> units;
 
-    public MeasuredStatusSignal(StatusSignal<Double> valueStatusSignal, Unit<U> valueUnits) {
-      this.statusSignal = valueStatusSignal;
-      this.units = units;
+  //   public MeasuredStatusSignal(StatusSignal<Double> valueStatusSignal, Unit<U> valueUnits) {
+  //     this.statusSignal = valueStatusSignal;
+  //     this.units = valueUnits;
+  //   }
 
-    }
+  //   public Unit<U> getValueUnits() {
+  //     return units;
+  //   }
 
-    public Unit<U> getValueUnits() {
-      return units;
-    }
+  //   public StatusSignal<Double> getValueStatusSignal() {
+  //     return statusSignal;
+  //   }
 
-    public StatusSignal<Double> getValueStatusSignal() {
-      return statusSignal;
-    }
-
-    public Measure<U> getValue() {
-      return units.of(statusSignal.getValueAsDouble());
-    }
+  //   public Measure<U> getValue() {
+  //     return units.of(statusSignal.getValueAsDouble());
+  //   }
 
     
-  }
+  // }
 
-  public static class LatencyCompensatedStatusSignal<U extends Unit<U>> extends MeasuredStatusSignal<U> {
-    private StatusSignal<Double> derivitiveStatusSignal;
-    public LatencyCompensatedStatusSignal(StatusSignal<Double> valueStatusSignal, StatusSignal<Double> derivitiveStatusSignal, Unit<U> valueUnits) {
-      super(valueStatusSignal, valueUnits);
-      this.derivitiveStatusSignal = derivitiveStatusSignal;
-    }
+  // public static class LatencyCompensatedMeasuredStatusSignal<U extends Unit<U>> extends MeasuredStatusSignal<U> {
+  //   private StatusSignal<Double> derivitiveStatusSignal;
+  //   public LatencyCompensatedMeasuredStatusSignal(StatusSignal<Double> valueStatusSignal, StatusSignal<Double> derivitiveStatusSignal, Unit<U> valueUnits) {
+  //     super(valueStatusSignal, valueUnits);
+  //     this.derivitiveStatusSignal = derivitiveStatusSignal;
+  //   }
 
-    public StatusSignal<Double> getDerivitiveStatusSignal() {
-      return derivitiveStatusSignal;
-    }
+  //   public StatusSignal<Double> getDerivitiveStatusSignal() {
+  //     return derivitiveStatusSignal;
+  //   }
 
-    public Measure<U> getRawValue() {
-      return super.getValue();
-    }
+  //   public Measure<U> getRawValue() {
+  //     return super.getValue();
+  //   }
 
-    @Override
-    public Measure<U> getValue() {
-      double mag = BaseStatusSignal.getLatencyCompensatedValue(getValueStatusSignal(), derivitiveStatusSignal);
-      return getValueUnits().of(mag);
-    }
-  }
+  //   @Override
+  //   public Measure<U> getValue() {
+  //     double mag = BaseStatusSignal.getLatencyCompensatedValue(getValueStatusSignal(), derivitiveStatusSignal);
+  //     return getValueUnits().of(mag);
+  //   }
+  // }
   
 }

@@ -26,34 +26,35 @@ import frc.robot.subsystems.Vision;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class MiddleSpeakerScoreThreeNotes extends SequentialCommandGroup {
-  /** Creates a new MiddleSpeakerScoreThreeNotes. */
-  public MiddleSpeakerScoreThreeNotes(Shooter shooter, Drive drivetrain, Intake intake, Vision vision){
-    var A2ToB5 = PathPlannerPath.fromPathFile("A2-B5"); //2.54
-    var B5ToMidSpeaker = PathPlannerPath.fromPathFile("B5-SpeakerHigh"); //3.1
-    var A2ToB4 = PathPlannerPath.fromPathFile("A2-B4"); //2.62
-    var B4ToSpeaker = PathPlannerPath.fromPathFile("B4ToSpeakerShoot"); //2.83
-    
+public class CenterShoot3InWing extends SequentialCommandGroup {
+  /** Creates a new CenterShoot4InWing. */
+  public CenterShoot3InWing(Shooter shooter, Drive drivetrain, Intake intake, Vision vision) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
+    
+    var centerToFirstNote = PathPlannerPath.fromPathFile("Center_To_Top_Note");
     addCommands(
       new StationaryShootFromAnywhere(shooter, drivetrain),
+      AutoBuilder.pathfindThenFollowPath(centerToFirstNote, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
+      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
+      new StationaryShootFromAnywhere(shooter, drivetrain),
       new ConditionalCommand(
-        new AutoAngleSnap(Rotation2d.fromDegrees(0.0), drivetrain),
-        new AutoAngleSnap(Rotation2d.fromDegrees(180.0), drivetrain), () -> {
-        Optional<Alliance> allyOpt = DriverStation.getAlliance();
+        new AutoAngleSnap(Rotation2d.fromDegrees(-90.0), drivetrain),
+        new AutoAngleSnap(Rotation2d.fromDegrees(-90.0), drivetrain), () -> {
+          Optional<Alliance> allyOpt = DriverStation.getAlliance();
           return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
-      }),
+        }),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      new StationaryShootFromAnywhere(shooter, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(A2ToB5, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
-      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(B5ToMidSpeaker, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
-      new StationaryShootFromAnywhere(shooter, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(A2ToB4, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
-      new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(B4ToSpeaker, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
-      new StationaryShootFromAnywhere(shooter, drivetrain)
+      new StationaryShootFromAnywhere(shooter, drivetrain) //,
     );
+    //    new ConditionalCommand(
+    //     new AutoAngleSnap(Rotation2d.fromDegrees(-90.0), drivetrain),
+    //     new AutoAngleSnap(Rotation2d.fromDegrees(-90.0), drivetrain), () -> {
+    //       Optional<Alliance> allyOpt = DriverStation.getAlliance();
+    //       return allyOpt.isPresent() && allyOpt.get() == Alliance.Blue;
+    //     }),
+    //   new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
+    //   new StationaryShootFromAnywhere(shooter, drivetrain)
+    // );
   }
 }

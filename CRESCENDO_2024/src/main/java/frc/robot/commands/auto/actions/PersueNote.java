@@ -36,7 +36,7 @@ public class PersueNote extends Command {
     this.intake = intake;
     this.vision = vision;
     bestNoteTarget = Optional.empty();
-    persuitVel = 1.5;
+    persuitVel = 2.0;
     addRequirements(intake, drivetrain);
   }
 
@@ -57,7 +57,7 @@ public class PersueNote extends Command {
     if (bestNoteTarget.isPresent() && !lock) {
       LimelightTarget_Detector tgt = bestNoteTarget.get();
       if (!(tgt.ty <= -22.0) || Math.abs(tgt.tx) >= 3.0) {
-        speeds.omegaRadiansPerSecond = MathUtil.clamp(anglePID.calculate(tgt.tx, 0.0), -2.0, 2.0);
+        speeds.omegaRadiansPerSecond = MathUtil.clamp(anglePID.calculate(tgt.tx, 0.0), -3.0, 3.0);
         velocityRequest.withHeadingCorrectionEnabled(false);
       } else {
         if (tgt.ty <= -22.0) {
