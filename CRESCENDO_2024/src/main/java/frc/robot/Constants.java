@@ -241,7 +241,7 @@ public final class Constants {
     public static final double FF_VELOCITY_COEFFICIENT = 0.145 * 12;//0.0, 2.82
     public static final BreakerArbitraryFeedforwardProvider MODULE_VELOCITY_FF = new BreakerArbitraryFeedforwardProvider(FF_STATIC_FRICTION_COEFFICIENT, FF_VELOCITY_COEFFICIENT);
 
-    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 5.4;
+    public static final double MAX_ATTAINABLE_MODULE_WHEEL_SPEED = 4.3;
     public static final double DRIVE_MOTOR_GEAR_RATIO_TO_ONE = 5.76;
     public static final double AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE = 21.4285714286;
     public static final double WHEEL_DIAMETER = Units.inchesToMeters(4.0);
@@ -281,8 +281,8 @@ public final class Constants {
     public static final double SLOW_MODE_TURN_MULTIPLIER = 0.5;
 
     //Physical Robot Constants
-    public static final double MAX_ANGULAR_VEL = (2.0 * Math.PI) / ((0.4445 * 2.0 * Math.PI) / (MAX_ATTAINABLE_MODULE_WHEEL_SPEED - 0.2)); 
-    public static final double MAX_LINEAR_VEL = 5.0;//5.35
+    public static final double MAX_ANGULAR_VEL = (2.0 * Math.PI) / ((0.4445 * 2.0 * Math.PI) / (MAX_ATTAINABLE_MODULE_WHEEL_SPEED)); 
+    public static final double MAX_LINEAR_VEL = 4.1;
     public static final double HEADING_COMPENSATION_ANGULAR_VEL_DEADBAND = 0.001;
     public static final double HEADING_COMPENSATION_MIN_ACTIVE_LINEAR_VEL = 0.05;
     public static final BreakerSwerveDriveConfig DRIVE_BASE_CONFIG = new BreakerSwerveDriveConfig(
@@ -310,7 +310,7 @@ public final class Constants {
     public static final double LINEAR_PID_KI = Math.hypot(X_PID_KP, Y_PID_KP);
     public static final double LINEAR_PID_KD = Math.hypot(X_PID_KP, Y_PID_KP);
 
-    public static final ReplanningConfig AUTO_REPLANNING_CONFIG = new ReplanningConfig(true, false) ;
+    public static final ReplanningConfig AUTO_REPLANNING_CONFIG = new ReplanningConfig(true, true) ;
     public static final BreakerPathplannerStandardSwerveAutoConfig AUTO_CONFIG = new BreakerPathplannerStandardSwerveAutoConfig(new PIDConstants(LINEAR_PID_KP, LINEAR_PID_KI, LINEAR_PID_KD), new PIDConstants(THETA_PID_KP, THETA_PID_KI, THETA_PID_KD), AUTO_REPLANNING_CONFIG, AZIMUTH_MOTOR_GEAR_RATIO_TO_ONE, true);
 
     public static final ProfiledPIDController SPEAKER_ALLIGN_ANGLE_PID = new ProfiledPIDController(1.4, 0.0, 0.1, new Constraints(1.0, 3.0));

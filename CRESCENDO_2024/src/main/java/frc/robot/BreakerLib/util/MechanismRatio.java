@@ -10,6 +10,10 @@ import edu.wpi.first.units.Measure;
 public class MechanismRatio {
     private final double ratioToOne;
 
+    public MechanismRatio() {
+        ratioToOne = 1.0;
+    }
+
     public MechanismRatio(double from, double to) {
         ratioToOne = to / from;
     }
@@ -18,7 +22,7 @@ public class MechanismRatio {
         this.ratioToOne = ratioToOne;
     }
 
-    public MechanismRatio add(MechanismRatio ratio) {
+    public MechanismRatio plus(MechanismRatio ratio) {
         return new MechanismRatio(ratioToOne * ratio.getRatioToOne());
     }
 

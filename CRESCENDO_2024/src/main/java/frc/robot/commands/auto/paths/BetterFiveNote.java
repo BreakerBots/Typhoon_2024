@@ -34,16 +34,16 @@ public class BetterFiveNote extends SequentialCommandGroup {
       new StationaryShootFromAnywhere(shooter, drivetrain).alongWith(intake.setStateCommand(IntakeState.EXTENDED_NEUTRAL, false)),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(a2ToA3, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
+      AutoBuilder.followPath(a2ToA3),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
       new StationaryShootFromAnywhere(shooter, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(a3ToB4, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
+      AutoBuilder.followPath(a3ToB4),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(b4ToShoot, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
+      AutoBuilder.followPath(b4ToShoot),
       new StationaryShootFromAnywhere(shooter, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(shootToB5, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS),
+      AutoBuilder.followPath(shootToB5),
       new PersueAndIntakeNoteForShooter(vision, shooter, intake, drivetrain),
-      AutoBuilder.pathfindThenFollowPath(b5ToShoot, AutoConstants.PATHFIND_TO_AUTOPATH_START_CONSTRAINTS)
+      AutoBuilder.followPath(b5ToShoot)
 
     );
   }

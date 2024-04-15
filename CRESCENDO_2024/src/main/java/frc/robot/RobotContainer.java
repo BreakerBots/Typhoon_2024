@@ -73,10 +73,12 @@ public class RobotContainer {
   private final Vision visionSys = new Vision(drivetrainSys, true);
 
  
-  private final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
+  private static final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
   private final Intake intakeSys = new Intake();
   private final AmpBar ampBarSys = new AmpBar();
   private final LED led = new LED(shooterSys, intakeSys);
+
+  public static final AutoRotationOverrideManager AutoRotationOverrideManager = new AutoRotationOverrideManager(shooterSys);
 
   
 

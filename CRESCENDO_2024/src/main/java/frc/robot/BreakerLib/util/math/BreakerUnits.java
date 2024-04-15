@@ -1,6 +1,15 @@
 package frc.robot.BreakerLib.util.math;
 
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Mass;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Mult;
+import edu.wpi.first.units.Unit;
+import edu.wpi.first.units.Units;
+
 public class BreakerUnits {
+
+    public static final Unit<Mult<Mass, Mult<Distance, Distance>>> KilogramSquareMetre = Units.Kilogram.mult(Units.Meters.mult(Units.Meters));
     public static final double MICROSECONDS_PER_SECOND = 1000000;
     public static final double METERS_PER_SECOND_SQUARED_IN_G = 9.80665;
     /** Roh at sea level */

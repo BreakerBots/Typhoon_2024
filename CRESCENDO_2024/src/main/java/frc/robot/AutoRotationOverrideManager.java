@@ -5,6 +5,7 @@
 package frc.robot;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
@@ -17,6 +18,14 @@ public class AutoRotationOverrideManager {
     private Shooter shooter;
     public AutoRotationOverrideManager(Shooter shooter) {
         this.shooter = shooter;
+        restoreDefaultOverrde();
+    }
+
+    public void overrideDefault(Supplier<Optional<Rotation2d>> rotationTargetOverride) {
+        PPHolonomicDriveController.setRotationTargetOverride(rotationTargetOverride);
+    }
+
+    public void restoreDefaultOverrde() {
         PPHolonomicDriveController.setRotationTargetOverride(this::getRotationOverride);
     }
 

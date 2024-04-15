@@ -16,8 +16,11 @@ import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.configs.TorqueCurrentConfigs;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.MotionMagicExpoDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicExpoVoltage;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -26,6 +29,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -42,14 +46,14 @@ import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Mult;
 import edu.wpi.first.units.Per;
 import frc.robot.BreakerLib.devices.CANDeviceID;
-// import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util.LatencyCompensatedMeasuredStatusSignal;
-// import frc.robot.BreakerLib.util.vendorutil.BreakerPhoenix6Util.MeasuredStatusSignal;
+import frc.robot.BreakerLib.subsystem.cores.drivetrain.swerve.modules.newSwerve.config.BreakerSwerveModuleConfig;
 
 /** Add your docs here. */
 public class BreakerSwerveModule2 {
     private TalonFX driveMotor, azimuthMotor;
     private CANcoder azimuthEncoder;
-    private SwerveModuleConfig config;
+    private BreakerSwerveModuleConfig config;
+
     private StatusSignal<Double> drivePositionSignal, driveVelocitySignal;
     private StatusSignal<Double> azimuthPositionSignal, azimuthVelocitySignal;
     private BaseStatusSignal[] signals = new BaseStatusSignal[]{drivePositionSignal, driveVelocitySignal, azimuthPositionSignal, azimuthVelocitySignal};
@@ -64,36 +68,23 @@ public class BreakerSwerveModule2 {
     private final MotionMagicVoltage motionMagicVoltageRequest;
     private final MotionMagicTorqueCurrentFOC motionMagicTorqueCurrentRequest;
 
-    public BreakerSwerveModule2(CANDeviceID driveMotorID, CANDeviceID azimuthMotorID, CANDeviceID azimuthEncoderID, SwerveModuleConfig config)  {
+    private final MotionMagicExpoDutyCycle motionMagicExpoDutyCycleRequest;
+    private final MotionMagicExpoVoltage motionMagicExpoVoltageRequest;
+    private final MotionMagicExpoTorqueCurrentFOC motionMagicExpoTorqueCurrentRequest;
+
+    public final NeutralOut neutralOutputRequest;
+
+    private final double driveRotorRotationsPerMeter;
+
+    public BreakerSwerveModule2(CANDeviceID driveMotorID, CANDeviceID azimuthMotorID, CANDeviceID azimuthEncoderID, BreakerSwerveModuleConfig config)  {
         this.config = config;
-       driveMotor = new TalonFX(driveMotorID.getDeviceID(), driveMotorID.getBusName());
-       azimuthMotor = new TalonFX(azimuthMotorID.getDeviceID(), azimuthMotorID.getBusName());
-       azimuthEncoder = new CANcoder(azimuthEncoderID.getDeviceID(), azimuthEncoderID.getBusName());
-        
-
+        driveMotor = new TalonFX(driveMotorID.getDeviceID(), driveMotorID.getBusName());
+        azimuthMotor = new TalonFX(azimuthMotorID.getDeviceID(), azimuthMotorID.getBusName());
+        azimuthEncoder = new CANcoder(azimuthEncoderID.getDeviceID(), azimuthEncoderID.getBusName());
+        driveRotorRotationsPerMeter = config.getDriveMotorConfig().getRotorToWheelRatio().getRatioToOne() / (2.0 * Math.PI *  config.getDriveMotorConfig().getWheelRadius().in(Units.Meters));
     }
 
-    private void createControlRequests() {
-        motionMagicDutyCycleRequest = new 
-    }
-
-    private void configDriveMotor() {
-        TalonFXConfiguration driveConfig = new TalonFXConfiguration();
-            driveConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RotorSensor;
-            driveConfig.Feedback.SensorToMechanismRatio = config.getDriveMotorConfig().gearRatio();
-            driveConfig.Slot0.kP = config.getDriveMotorConfig().controlGains().kP;
-            driveConfig.Slot0.kI = config.getDriveMotorConfig().controlGains().kI;
-            driveConfig.Slot0.kD = config.getDriveMotorConfig().controlGains().kD;
-            driveConfig.Slot0.kA = config.getDriveMotorConfig().controlGains().kA;
-            driveConfig.Slot0.kS = config.getDriveMotorConfig().controlGains().kS;
-            driveConfig.Slot0.kV = config.getDriveMotorConfig().controlGains().kV;
-            driveConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-            driveConfig.CurrentLimits = config.getDriveMotorConfig().currentLimits().getLimitsConfig();
-            driveConfig.TorqueCurrent = config.getDriveMotorConfig().currentLimits().getTorqueCurrentConfig();
-            
-    }
-
-    public SwerveModulePosition getPosition(boolean refresh, boolean compensateForLatency) {
+    public BreakerSwerveModuleState getState(boolean refresh, boolean compensateForLatency) {
         if (refresh) {
             refreshAllSignals();
         }
@@ -103,19 +94,22 @@ public class BreakerSwerveModule2 {
             drivePos =  BaseStatusSignal.getLatencyCompensatedValue(drivePositionSignal, driveVelocitySignal);
             azimuthPos = BaseStatusSignal.getLatencyCompensatedValue(azimuthPositionSignal, azimuthVelocitySignal);
         }
-        return new SwerveModulePosition(drivePos / config.getDriveRotorRotationsPerMeter(), Rotation2d.fromRotations(azimuthPos));
+        return new BreakerSwerveModuleState(
+            Units.Meters.of(drivePos / driveRotorRotationsPerMeter), 
+            Units.MetersPerSecond.of(driveVelocitySignal.getValueAsDouble() / driveRotorRotationsPerMeter), 
+            Rotation2d.fromRotations(azimuthPos), 
+            Units.RotationsPerSecond.of(azimuthVelocitySignal.getValueAsDouble())
+        );
     } 
 
-    public SwerveModuleState getState(boolean refresh, boolean compensateForLatency) {
-        if (refresh) {
-            refreshAllSignals();
-        }
-        double driveVel = driveVelocitySignal.getValueAsDouble();
-        double azimuthPos = azimuthPositionSignal.getValueAsDouble();
-        if (compensateForLatency) {
-            azimuthPos = BaseStatusSignal.getLatencyCompensatedValue(azimuthPositionSignal, azimuthVelocitySignal);
-        }
-        return new SwerveModuleState(driveVel / config.getDriveRotorRotationsPerMeter(), Rotation2d.fromDegrees(azimuthPos));
+    private void configDriveMotor() {
+        TalonFXConfiguration driveConfig = new TalonFXConfiguration();
+        driveConfig.Slot0.kP = config.getDriveMotorConfig().getClosedLoopControlConfig().getP();
+        driveConfig.Slot0.kI = config.getDriveMotorConfig().getClosedLoopControlConfig().getI();
+        driveConfig.Slot0.kD = config.getDriveMotorConfig().getClosedLoopControlConfig().getD();
+        driveConfig.Slot0.kV = config.getDriveMotorConfig().getClosedLoopControlConfig().getV();
+        driveConfig.Slot0.kA = config.getDriveMotorConfig().getClosedLoopControlConfig().getA();
+        driveConfig.Slot0.kS = config.getDriveMotorConfig().getClosedLoopControlConfig().getS();
     }
 
     public BaseStatusSignal[] getSignals() {
@@ -127,121 +121,45 @@ public class BreakerSwerveModule2 {
     }
 
     public void setTargetState(SwerveModuleState state, boolean isDriveOpenLoop, boolean optimize, boolean refreshRefrencePosition) {
-        Rotation2d curAzimuthAng = getPosition(refreshRefrencePosition, true).angle;
+        BreakerSwerveModuleState curState = getState(refreshRefrencePosition, true);
         targetState = state;
         if (optimize) {
-            targetState = SwerveModuleState.optimize(targetState, curAzimuthAng); 
+            targetState = SwerveModuleState.optimize(targetState, curState.azimuthAngle); 
         }
         double angleToSet = targetState.angle.getRotations();
 
-        switch (config.getAzimuthMotorConfig().controlGains().controlOutputUnits()) {
-            case DUTY_CYCLE:
-                break;
-            case TORQUE_CURRENT:
-                break;
-            case VOLTAGE:
-            default:
-                break;
-            
-        }
 
 
 
-        double velocityToSet = targetState.speedMetersPerSecond * config.getDriveRotorRotationsPerMeter();
-        double steerMotorError = angleToSet - curAzimuthAng.getRotations();
+
+        double velocityToSet = targetState.speedMetersPerSecond * driveRotorRotationsPerMeter;
+        double steerMotorError = angleToSet - curState.azimuthAngle.getRotations();
         double cosineScalar = Math.cos(steerMotorError * 2.0 * Math.PI);
         if (cosineScalar < 0.0) {
             cosineScalar = 0.0;
         }
         velocityToSet *= cosineScalar;
         double azimuthTurnRps = azimuthVelocitySignal.getValue();
-        double driveRateBackOut = azimuthTurnRps * config.getCouplingGearRatio();
+        double driveRateBackOut = azimuthTurnRps * config.getCouplingRatio().getRatioToOne();
         velocityToSet += driveRateBackOut;
 
-
-
-    }
-
-
-    public static record SwerveModuleDriveKinimaticLimits(Measure<Velocity<Distance>> maxLinearVelocity, Measure<Velocity<Velocity<Distance>>> maxLinearAcceleration) {};
-    public static record SwerveModuleAzimuthMotionProfileConstraints(Measure<Velocity<Angle>> goalAngularVelocity, Measure<Velocity<Velocity<Distance>>> goalAngularAcceleration, double expoKv, double expoKa) {};
-    public static class SwerveModuleAzimuthMotionProfile {
-
-    }
-    public static record SwerveMotorControlGainConfig(double kP, double kI, double kD, double kA, double kS, double kV, SwerveMotorControlOutputUnits controlOutputUnits) {}
-    public static class SwerveMotorCurrentLimits {
-        private CurrentLimitsConfigs limitsConfig;
-        private TorqueCurrentConfigs torqueCurrentConfig;
-        public SwerveMotorCurrentLimits(CurrentLimitsConfigs limitConfig) {
-            this.limitsConfig = limitConfig;
-            torqueCurrentConfig = new TorqueCurrentConfigs();
-            torqueCurrentConfig.PeakForwardTorqueCurrent = limitConfig.SupplyCurrentLimit;
-            torqueCurrentConfig.PeakReverseTorqueCurrent = -limitConfig.SupplyCurrentLimit;
-        }
-
-        public SwerveMotorCurrentLimits(double limit) {
-            limitsConfig = new CurrentLimitsConfigs();
-            limitsConfig.StatorCurrentLimit = limit;
-            limitsConfig.StatorCurrentLimitEnable = true;
-            torqueCurrentConfig = new TorqueCurrentConfigs();
-            torqueCurrentConfig.PeakForwardTorqueCurrent = limit;
-            torqueCurrentConfig.PeakReverseTorqueCurrent = -limit;
-        }
-
-        public CurrentLimitsConfigs getLimitsConfig() {
-            return limitsConfig;
-        }
-
-        public TorqueCurrentConfigs getTorqueCurrentConfig() {
-            return torqueCurrentConfig;
-        }
-    }
-
-
-
-
-
-    public static record SwerveMotorConfig(SwerveMotorControlGainConfig controlGains, SwerveMotorCurrentLimits currentLimits, double gearRatio, Measure<Mult<Mass, Mult<Distance, Distance>>> intertia, boolean invert) {}
-    public static class SwerveModuleConfig {
-        private SwerveMotorConfig driveMotorConfig, azimuthMotorConfig;
-        private Rotation2d azimuthEncoderOffset;
-        private Measure<Distance> wheelRadius;
-        private double couplingGearRatio;
-        private Translation2d modulePosition;
-
-        public Rotation2d getAzimuthEncoderOffset() {
-            return azimuthEncoderOffset;
-        }
-
-        public SwerveMotorConfig getAzimuthMotorConfig() {
-            return azimuthMotorConfig;
-        }
-
-        public double getCouplingGearRatio() {
-            return couplingGearRatio;
-        }
-
-        public SwerveMotorConfig getDriveMotorConfig() {
-            return driveMotorConfig;
-        }
+        switch (config.getDriveMotorConfig().getClosedLoopControlConfig().getControlType()) {
+            case DUTY_CYCLE:
+                break;
+            case TORQUE_CURRENT:
+                if (!MathUtil.isNear(0.0, velocityToSet, 1E-9)) {
+                } else {
+                    driveMotor.setControl(neutralOutputRequest);
+                }
+                break;
+            case VOLTAGE:
+                break;
+            default:
+                break;
+        } 
         
-        public Translation2d getModulePosition() {
-            return modulePosition;
-        }
+     
 
-        public Measure<Distance> getWheelRadius() {
-            return wheelRadius;
-        }
-
-        public double getDriveRotorRotationsPerMeter() {
-            return driveMotorConfig.gearRatio() / (2.0 * Math.PI * wheelRadius.in(Units.Meters));
-        }
-    } 
-
-    public static enum SwerveMotorControlOutputUnits {
-        TORQUE_CURRENT,
-        VOLTAGE,
-        DUTY_CYCLE
     }
 
     

@@ -9,96 +9,94 @@ import com.revrobotics.CANSparkBase.ControlType;
 
 import edu.wpi.first.units.Angle;
 import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Mass;
 import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Mult;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.units.Velocity;
 import frc.robot.BreakerLib.util.MechanismRatio;
 
 /** Add your docs here. */
 public class BreakerSwerveAzimuthMotorConfig2 {
-    private final BreakerSwerveDriveMotorClosedLoopControlConfig closedLoopControlConfig;
+    private final BreakerSwerveAzimuthMotorClosedLoopControlConfig closedLoopControlConfig;
     private final BreakerSwerveMotorCurrentLimitConfig currentLimitConfig;
-    private final MechanismRatio rotorToWheelRatio;
-    private final Measure<Distance> wheelRadius;
-    private final Measure<Velocity<Distance>> maxVelocity;
-    private final Measure<Velocity<Velocity<Distance>>> maxAcceleration;
+    private final MechanismRatio rotorToEncoderRatio, encoderToAzimuthRatio;
+    private final Measure<Mult<Mass, Mult<Distance, Distance>>> intertia;
+    private final Measure<Velocity<Angle>> maxVelocity;
     private final boolean invert;
-    public BreakerSwerveAzimuthMotorConfig2(BreakerSwerveDriveMotorClosedLoopControlConfig closedLoopControlConfig, BreakerSwerveMotorCurrentLimitConfig currentLimitConfig, MechanismRatio rotorToWheelRatio, Measure<Distance> wheelRadius, Measure<Velocity<Distance>> maxVelocity, Measure<Velocity<Velocity<Distance>>> maxAcceleration, boolean invert) {
+    public BreakerSwerveAzimuthMotorConfig2(BreakerSwerveAzimuthMotorClosedLoopControlConfig closedLoopControlConfig, BreakerSwerveMotorCurrentLimitConfig currentLimitConfig, MechanismRatio rotorToEncoderRatio, MechanismRatio encoderToAzimuthRatio, Measure<Mult<Mass, Mult<Distance, Distance>>> intertia, Measure<Velocity<Angle>> maxVelocity, boolean invert) {
         this.closedLoopControlConfig = closedLoopControlConfig;
         this.currentLimitConfig = currentLimitConfig;
-        this.rotorToWheelRatio = rotorToWheelRatio;
-        this.wheelRadius = wheelRadius;
+        this.rotorToEncoderRatio = rotorToEncoderRatio;
+        this.encoderToAzimuthRatio = encoderToAzimuthRatio;
+        this.intertia = intertia;
         this.maxVelocity = maxVelocity;
-        this.maxAcceleration = maxAcceleration;
         this.invert = invert;
     }
 
-    public BreakerSwerveAzimuthMotorConfig2() {
-        this(new BreakerSwerveDriveMotorClosedLoopControlConfig(), new BreakerSwerveMotorCurrentLimitConfig(80.0), new MechanismRatio(1.0), Units.Meters.of(0.0), Units.MetersPerSecond.of(0.0), Units.MetersPerSecondPerSecond.of(Double.MAX_VALUE), false);
-    }
-
-    public BreakerSwerveAzimuthMotorConfig2 withClosedLoopControlConfig(BreakerSwerveDriveMotorClosedLoopControlConfig closedLoopControlConfig) {
-        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToWheelRatio, wheelRadius, maxVelocity, maxAcceleration, invert);
+    public BreakerSwerveAzimuthMotorConfig2 withClosedLoopControlConfig(BreakerSwerveAzimuthMotorClosedLoopControlConfig closedLoopControlConfig) {
+        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToEncoderRatio, encoderToAzimuthRatio, intertia, maxVelocity, invert);
     }
 
     public BreakerSwerveAzimuthMotorConfig2 withCurrentLimitConfig(BreakerSwerveMotorCurrentLimitConfig currentLimitConfig) {
-        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToWheelRatio, wheelRadius, maxVelocity, maxAcceleration, invert);
+        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToEncoderRatio, encoderToAzimuthRatio, intertia, maxVelocity, invert);
     }
 
-    public BreakerSwerveAzimuthMotorConfig2 withRotorToWheelRatio(MechanismRatio rotorToWheelRatio) {
-        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToWheelRatio, wheelRadius, maxVelocity, maxAcceleration, invert);
+    public BreakerSwerveAzimuthMotorConfig2 withRotorToEncoderRatio(MechanismRatio rotorToEncoderRatio) {
+        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToEncoderRatio, encoderToAzimuthRatio, intertia, maxVelocity, invert);
     }
 
-    public BreakerSwerveAzimuthMotorConfig2 withWheelRadius(Measure<Distance> wheelRadius) {
-        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToWheelRatio, wheelRadius, maxVelocity, maxAcceleration, invert);
+    public BreakerSwerveAzimuthMotorConfig2 withEncoderToAzimuthRatio(MechanismRatio encoderToAzimuthRatio) {
+        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToEncoderRatio, encoderToAzimuthRatio, intertia, maxVelocity, invert);
     }
 
-    public BreakerSwerveAzimuthMotorConfig2 withMaxVelocity(Measure<Velocity<Distance>> maxVelocity) {
-        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToWheelRatio, wheelRadius, maxVelocity, maxAcceleration, invert);
+    public BreakerSwerveAzimuthMotorConfig2 withIntertia(Measure<Mult<Mass, Mult<Distance, Distance>>> intertia) {
+        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToEncoderRatio, encoderToAzimuthRatio, intertia, maxVelocity, invert);
     }
 
-    public BreakerSwerveAzimuthMotorConfig2 withMaxAcceleration(Measure<Velocity<Velocity<Distance>>> maxAcceleration) {
-        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToWheelRatio, wheelRadius, maxVelocity, maxAcceleration, invert);
+    public BreakerSwerveAzimuthMotorConfig2 withMaxVelocity(Measure<Velocity<Angle>> maxVelocity) {
+        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToEncoderRatio, encoderToAzimuthRatio, intertia, maxVelocity, invert);
     }
 
     public BreakerSwerveAzimuthMotorConfig2 withInvert(boolean invert) {
-        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToWheelRatio, wheelRadius, maxVelocity, maxAcceleration, invert);
-    }
-
-    public BreakerSwerveDriveMotorClosedLoopControlConfig getClosedLoopControlConfig() {
-        return closedLoopControlConfig;
+        return new BreakerSwerveAzimuthMotorConfig2(closedLoopControlConfig, currentLimitConfig, rotorToEncoderRatio, encoderToAzimuthRatio, intertia, maxVelocity, invert);
     }
 
     public BreakerSwerveMotorCurrentLimitConfig getCurrentLimitConfig() {
         return currentLimitConfig;
     }
 
-    public Measure<Velocity<Velocity<Distance>>> getMaxAcceleration() {
-        return maxAcceleration;
+    public BreakerSwerveAzimuthMotorClosedLoopControlConfig getClosedLoopControlConfig() {
+        return closedLoopControlConfig;
     }
 
-    public Measure<Velocity<Distance>> getMaxVelocity() {
+    public MechanismRatio getEncoderToAzimuthRatio() {
+        return encoderToAzimuthRatio;
+    }
+
+    public Measure<Mult<Mass, Mult<Distance, Distance>>> getIntertia() {
+        return intertia;
+    }
+
+    public Measure<Velocity<Angle>> getMaxVelocity() {
         return maxVelocity;
     }
 
-    public MechanismRatio getRotorToWheelRatio() {
-        return rotorToWheelRatio;
+    public MechanismRatio getRotorToEncoderRatio() {
+        return rotorToEncoderRatio;
     }
 
-    public Measure<Distance> getWheelRadius() {
-        return wheelRadius;
+    public boolean getInvert() {
+        return invert;
     }
-
-    
-
  
-    public static class BreakerSwerveDriveMotorClosedLoopControlConfig {
+    public static class BreakerSwerveAzimuthMotorClosedLoopControlConfig {
         private final double kP, kI, kD, kV, kA, kS, kExpoV, kExpoA;
         private final Measure<Velocity<Angle>> motionMagicCruiseVelocity;
         private final Measure<Velocity<Velocity<Angle>>> motionMagicAcceleration;
         private final Measure<Velocity<Velocity<Velocity<Angle>>>> motionMagicJerk;
-        private final BreakerSwerveDriveMotorClosedLoopControlType controlType;
-        public BreakerSwerveDriveMotorClosedLoopControlConfig(double kP, double kI, double kD, double kV, double kA, double kS, double kExpoV, double kExpoA, Measure<Velocity<Angle>> motionMagicCruiseVelocity, Measure<Velocity<Velocity<Angle>>> motionMagicAcceleration, Measure<Velocity<Velocity<Velocity<Angle>>>> motionMagicJerk, BreakerSwerveDriveMotorClosedLoopControlType controlType) {
+        private final BreakerSwerveAzimuthMotorClosedLoopControlType controlType;
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig(double kP, double kI, double kD, double kV, double kA, double kS, double kExpoV, double kExpoA, Measure<Velocity<Angle>> motionMagicCruiseVelocity, Measure<Velocity<Velocity<Angle>>> motionMagicAcceleration, Measure<Velocity<Velocity<Velocity<Angle>>>> motionMagicJerk, BreakerSwerveAzimuthMotorClosedLoopControlType controlType) {
             this.kP = kP;
             this.kI = kI;
             this.kD = kD;
@@ -113,19 +111,11 @@ public class BreakerSwerveAzimuthMotorConfig2 {
             this.controlType = controlType;
         }
 
-        public BreakerSwerveDriveMotorClosedLoopControlConfig() {
-            this(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Units. BreakerSwerveDriveMotorClosedLoopControlType.VOLTAGE);
-        }
-
-        public BreakerSwerveDriveMotorClosedLoopControlConfig withControlType(BreakerSwerveDriveMotorClosedLoopControlType controlType) {
-            return new BreakerSwerveDriveMotorClosedLoopControlConfig(getP(), getI(), getD(), getV(), getA(), getS(), controlType);
-        }
-
-        public BreakerSwerveDriveMotorClosedLoopControlType getControlType() {
+        public BreakerSwerveAzimuthMotorClosedLoopControlType getControlType() {
             return controlType;
         }
 
-        public static enum BreakerSwerveDriveMotorClosedLoopControlType {
+        public static enum BreakerSwerveAzimuthMotorClosedLoopControlType {
             TRAPIZODAL_TORQUE_CURRENT,
             TRAPIZODAL_VOLTAGE,
             TRAPIZODAL_DUTY_CYCLE,
@@ -134,24 +124,43 @@ public class BreakerSwerveAzimuthMotorConfig2 {
             EXPONENTIAL_DUTY_CYCLE
         }
 
-        public BreakerSwerveDriveMotorClosedLoopControlConfig withP(double kP) {
-            return new BreakerSwerveDriveMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, controlType);
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withControlType(BreakerSwerveAzimuthMotorClosedLoopControlType controlType) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(getP(), getI(), getD(), getV(), getA(), getS(), kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
         }
 
-        public BreakerSwerveDriveMotorClosedLoopControlConfig withI(double kI) {
-            return new BreakerSwerveDriveMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, controlType);
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withP(double kP) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
         }
-        public BreakerSwerveDriveMotorClosedLoopControlConfig withD(double kD) {
-            return new BreakerSwerveDriveMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, controlType);
+
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withI(double kI) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
         }
-        public BreakerSwerveDriveMotorClosedLoopControlConfig withV(double kV) {
-            return new BreakerSwerveDriveMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, controlType);
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withD(double kD) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
         }
-        public BreakerSwerveDriveMotorClosedLoopControlConfig withA(double kA) {
-            return new BreakerSwerveDriveMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, controlType);
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withV(double kV) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
         }
-        public BreakerSwerveDriveMotorClosedLoopControlConfig withS(double kS) {
-            return new BreakerSwerveDriveMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, controlType);
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withA(double kA) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
+        }
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withS(double kS) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
+        }
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withExpoV(double kExpoV) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
+        }
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withExpoA(double kExpoA) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
+        }
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withMotionMagicCruiseVelocity(Measure<Velocity<Angle>> motionMagicCruiseVelocity) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
+        }
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withMotionMagicAcceleration(Measure<Velocity<Velocity<Angle>>> motionMagicAcceleration) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
+        }
+        public BreakerSwerveAzimuthMotorClosedLoopControlConfig withMotionMagicJerk(Measure<Velocity<Velocity<Velocity<Angle>>>> motionMagicJerk) {
+            return new BreakerSwerveAzimuthMotorClosedLoopControlConfig(kP, kI, kD, kV, kA, kS, kExpoV, kExpoA, motionMagicCruiseVelocity, motionMagicAcceleration, motionMagicJerk, controlType);
         }
 
         public double getA() {
@@ -176,6 +185,26 @@ public class BreakerSwerveAzimuthMotorConfig2 {
 
         public double getV() {
             return kV;
+        }
+
+        public double getExpoA() {
+            return kExpoA;
+        }
+        
+        public double getExpoV() {
+            return kExpoV;
+        }
+
+        public Measure<Velocity<Angle>> getMotionMagicCruiseVelocity() {
+            return motionMagicCruiseVelocity;
+        }
+
+        public Measure<Velocity<Velocity<Angle>>> getMotionMagicAcceleration() {
+            return motionMagicAcceleration;
+        }
+
+        public Measure<Velocity<Velocity<Velocity<Angle>>>> getMotionMagicJerk() {
+            return motionMagicJerk;
         }
     }
 }
