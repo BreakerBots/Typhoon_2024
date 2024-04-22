@@ -54,6 +54,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Intake.IntakePivotState;
 import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.OakD;
 import frc.robot.subsystems.LED.LEDState;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
@@ -72,7 +73,10 @@ public class RobotContainer {
   private static final Trigger globalOverride = controllerSys.getStartButton() ;
   private final Vision visionSys = new Vision(drivetrainSys, true);
 
- 
+ public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_SMART_SPOOL_CONFIG, Constants.ShooterConstants.SPEAKER_FIREING_TABLE);
+  public static final ShooterTarget SPEAKER_MANUAL_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_MANUAL_SMART_SPOOL_CONFIG, Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_VECTOR);
+  public static final ShooterTarget PASS_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.NOTE_PASS_SMART_SPOOL_CONFIG, Constants.ShooterConstants.PASS_FIREING_TABLE);
+
   private static final Shooter shooterSys = new Shooter(RobotContainer.SPEAKER_TARGET::getFireingSolution);
   private final Intake intakeSys = new Intake();
   private final AmpBar ampBarSys = new AmpBar();
@@ -80,16 +84,16 @@ public class RobotContainer {
 
   public static final AutoRotationOverrideManager AutoRotationOverrideManager = new AutoRotationOverrideManager(shooterSys);
 
+  public final OakD oakD = new OakD();
+  
+
   
 
 
   public static final ClimbArm leftClimbSys = new ClimbArm(50, "rio", true);
   public static final ClimbArm rigtClimbSys = new ClimbArm(51, "rio", true);
 
-  public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_SMART_SPOOL_CONFIG, Constants.ShooterConstants.SPEAKER_FIREING_TABLE);
-  public static final ShooterTarget SPEAKER_MANUAL_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_MANUAL_SMART_SPOOL_CONFIG, Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_VECTOR);
-  public static final ShooterTarget PASS_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.NOTE_PASS_SMART_SPOOL_CONFIG, Constants.ShooterConstants.PASS_FIREING_TABLE);
-
+  
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     configureDriveControls();

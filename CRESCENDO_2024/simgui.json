@@ -1,0 +1,69 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Setup/AUTOPATH SELECTOR": "String Chooser"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "AdvantageKit": {
+        "open": true
+      },
+      "FMSInfo": {
+        "open": true
+      },
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        },
+        "open": true
+      },
+      "OAKD": {
+        "double[]##v_/OAKD/confidence": {
+          "open": true
+        },
+        "double[]##v_/OAKD/spatialX": {
+          "open": true
+        },
+        "double[]##v_/OAKD/spatialY": {
+          "open": true
+        },
+        "double[]##v_/OAKD/spatialZ": {
+          "open": true
+        },
+        "open": true,
+        "string[]##v_/OAKD/class": {
+          "open": true
+        }
+      },
+      "photonvision": {
+        "BackLeftCam": {
+          "open": true
+        },
+        "open": true
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "Clients": {
+      "open": true
+    },
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "open": true
+    },
+    "shuffleboard@1": {
+      "Publishers": {
+        "open": true
+      },
+      "Subscribers": {
+        "open": true
+      },
+      "open": true
+    },
+    "visible": true
+  }
+}
