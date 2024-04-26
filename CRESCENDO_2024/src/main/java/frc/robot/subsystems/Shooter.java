@@ -198,6 +198,10 @@ public class Shooter extends SubsystemBase {
     return MathUtil.isNear(flywheelVelRequest.Velocity, flywheelVelSup.get(), 3.0) && MathUtil.isNear(0.0, flywheelAccelSup.get(), 5.0) ;//5.0, 0.5
   }
 
+  // public BreakerVector2 getGoalFireingVec() {
+  //   return 
+  // }
+
 
   public static enum ShooterHopperState {
     FORWARD(-1.0),
@@ -212,6 +216,31 @@ public class Shooter extends SubsystemBase {
         return dutyCycle;
     }
   }
+
+  // public static enum ShooterState2 {
+  //   TRACK_TARGET(ShooterHopperState.NEUTRAL),
+  //   //TRACK_TARGET_IDLE(ShooterHopperState.NEUTRAL),
+  //   SMART_SPOOL(ShooterHopperState.NEUTRAL),`
+  //   SHOOT_TO_TARGET(ShooterHopperState.FORWARD),
+  //   INTAKE_TO_SHOOTER_HANDOFF(ShooterHopperState.FORWARD),
+  //   SHOOTER_TO_INTAKE_HANDOFF(ShooterHopperState.REVERSE),
+  //   STOW(ShooterHopperState.NEUTRAL);
+
+  //   private ShooterHopperState hopperState;
+  //   private Supplier<BreakerVector2> fireingVecSup;
+  //   private ShooterState2(Supplier<BreakerVector2> fireingVecSup, ShooterHopperState hopperState) {
+  //     this.hopperState = hopperState;
+  //     this.fireingVecSup = fireingVecSup;
+  //   }
+
+  //   public BreakerVector2 getFireingVec() {
+  //     return fireingVecSup.get();
+  //   }
+
+  //   public ShooterHopperState getHopperState() {
+  //       return hopperState;
+  //   }
+  // }
 
   public static enum ShooterState {
     TRACK_TARGET(ShooterHopperState.NEUTRAL),

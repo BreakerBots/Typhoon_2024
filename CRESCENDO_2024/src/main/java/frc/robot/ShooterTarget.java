@@ -71,14 +71,27 @@ public class ShooterTarget {
             }
         }
 
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
+        for (double d : distances) {
+            if (d > max) {
+                max = d;
+            }
+            if (d < min) {
+                min = d;
+            }
+        }
+        final double minF = min;
+        final double maxF = max;
+
         PolynomialSplineFunction angleCurve = SPLINE_INTERPOLATOR.interpolate(distances, flywheelSpeeds);
-        angleFunction = (Double distance) -> angleCurve.value(distance);
+        angleFunction = (Double distance) -> angleCurve.value(MathUtil.clamp(distance, minF, maxF));
         final double constantSpeedFinal = constantSpeed;
         if (isFlySpeedConstant) {
             speedFunction = (Double distance) -> constantSpeedFinal;
         } else {
             PolynomialSplineFunction speedCurve = SPLINE_INTERPOLATOR.interpolate(distances, angles);
-            speedFunction = (Double distance) -> speedCurve.value(distance);
+            speedFunction = (Double distance) -> speedCurve.value(MathUtil.clamp(distance, minF, maxF));
         }
     }
 
@@ -112,7 +125,6 @@ public class ShooterTarget {
         Translation2d deltaTrans = drivetrainTrans.minus(targetTrans);
         Rotation2d deltaTransVecAng = deltaTrans.getAngle();
         double distance = drivetrainTrans.getDistance(targetTrans);
-
         double targetSpeed = speedFunction.apply(distance);
         double targetPivotAng = angleFunction.apply(distance);
 
