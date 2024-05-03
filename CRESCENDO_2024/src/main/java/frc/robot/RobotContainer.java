@@ -71,7 +71,7 @@ public class RobotContainer {
   public static BreakerXboxController controllerSys = new BreakerXboxController(0);
   private final BreakerTeleopSwerveDriveController teleopDriveCommand = new BreakerTeleopSwerveDriveController(drivetrainSys, controllerSys);
   private static final Trigger globalOverride = controllerSys.getStartButton() ;
-  private final Vision visionSys = new Vision(drivetrainSys, true);
+  // private final Vision visionSys = new Vision(drivetrainSys, true);
 
  public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_SMART_SPOOL_CONFIG, Constants.ShooterConstants.SPEAKER_FIREING_TABLE);
   public static final ShooterTarget SPEAKER_MANUAL_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_MANUAL_SMART_SPOOL_CONFIG, Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_VECTOR);
@@ -238,11 +238,11 @@ public class RobotContainer {
       );
       robotConfig.setLogFilePaths("/U/logs", "");
       robotConfig.setAutoPaths(
-        new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("CenterShoot3", new CenterShoot3InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("SourceShoot3GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
-        new BreakerAutoPath("FiveishNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("AmpSideShoot3", new ThreeNoteAgainstSpeaker(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("CenterShoot3", new CenterShoot3InWing(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("CenterThenGoDeepShoot3", new CenterThenGoDeepShoot3(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("SourceShoot3GoToCenter", new SourceShoot3GoToCenter(shooterSys, drivetrainSys, intakeSys, visionSys)),
+        // new BreakerAutoPath("FiveishNoteAuto", new FiveNoteAuto(shooterSys, drivetrainSys, intakeSys, visionSys)),
         new BreakerAutoPath("LeaveShootOneSourceSide", new LeaveShootOneSource(drivetrainSys, shooterSys)),
         new BreakerAutoPath("ShootFromAnywhereAndStop", new WaitCommand(2.0).andThen(new StationaryShootFromAnywhere(shooterSys, drivetrainSys)))
       );

@@ -80,13 +80,15 @@ public class Intake extends SubsystemBase {
     pivotConfig.CurrentLimits.SupplyCurrentLimit = 30;
     pivotConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    pivotConfig.Slot0.kP = 0.0;
+    pivotConfig.Slot0.kP = 0.5;
     pivotConfig.Slot0.kI = 0.0;
     pivotConfig.Slot0.kD = 0.0;
-    pivotConfig.Slot0.kV = 0.0;
-    pivotConfig.Slot0.kS = 0.0;
-    pivotConfig.Slot0.kA = 0.0;
-    pivotConfig.Slot0.kG = 0.0;
+    pivotConfig.Slot0.kV = 3.0;
+    pivotConfig.Slot0.kS = 0.1;
+    pivotConfig.Slot0.kA = 1.5;
+    pivotConfig.Slot0.kG = 0.4;
+    pivotConfig.MotionMagic.MotionMagicAcceleration = 0.5;
+    pivotConfig.MotionMagic.MotionMagicCruiseVelocity = 0.2;
     //pivotConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
     pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
