@@ -73,16 +73,12 @@ public final class Constants {
     public static final int PIVOT_RIGHT_ID = 42;
     public static final int PIVOT_ENCODER_ID = 43;
     
-    public static final double PIVOT_ENCODER_OFFSET = 0.2080078125;
+    public static final double PIVOT_ENCODER_OFFSET = 0.2822265625;
 
-
-    public static final Rotation2d PIVIOT_RETRACTED_THRESHOLD = Rotation2d.fromRotations(0.267);//0.32;
-    public static final Rotation2d PIVOT_RETRACTED_TARGET = Rotation2d.fromRotations(0.267);
-    
-    public static final Rotation2d PIVIOT_EXTENDED_THRESHOLD = Rotation2d.fromRotations(-0.069);//0.008;
-    public static final Rotation2d PIVOT_EXTENDED_TARGET = Rotation2d.fromRotations(-0.069);
-    
-    public static final Rotation2d SETPOINT_CONTROL_TOLERENCE = Rotation2d.fromDegrees(8.0);
+    /*0deg is 15 deg behind fully retracted*/
+    public static final double PIVIOT_RETRACTED_THRESHOLD = 0.32;//0.32;
+    /*0deg is 20 deg behind fully retracted*/
+    public static final double PIVIOT_EXTENDED_THRESHOLD = 0.02;//0.008;
 
     public static final double PIVOT_AGAINST_AMP_ANGLE_THRESHOLD = 0.31; // temporary
 

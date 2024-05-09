@@ -13,16 +13,12 @@ import static frc.robot.Constants.IntakeConstants.PIVOT_LEFT_ID;
 import static frc.robot.Constants.IntakeConstants.PIVOT_RIGHT_ID;
 import static frc.robot.Constants.IntakeConstants.ROLLER_MOTOR_ID;
 
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.NeutralOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -33,8 +29,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.FunctionalCommand;
@@ -55,14 +49,13 @@ public class Intake extends SubsystemBase {
   private TalonFX pivotLeft, pivotRight;
   private IntakeState targetState;
   private CANcoder piviotEncoder;
+  private DutyCycleOut piviotDutyCycleControlRequest;
   private Follower pivotFollowerRequest;
   private BreakerBeamBreak beamBreak;
 
   private boolean isPivotAmpCurrentLimited = false;
-  //private final CurrentLimitsConfigs normalCurrentPivotConfig;
- // private final CurrentLimitsConfigs ampCurrentPivotConfig = new CurrentLimitsConfigs();
-  private final MotionMagicVoltage pivotPositionRequest;
-  private final NeutralOut pivotNeutralRequest;
+  private final CurrentLimitsConfigs normalCurrentPivotConfig;
+  private final CurrentLimitsConfigs ampCurrentPivotConfig = new CurrentLimitsConfigs();
   private Supplier<Double> intakePosSupplier;
  
 
@@ -80,16 +73,7 @@ public class Intake extends SubsystemBase {
     pivotConfig.CurrentLimits.SupplyCurrentLimit = 30;
     pivotConfig.CurrentLimits.SupplyTimeThreshold = 0.5;
     pivotConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
-    pivotConfig.Slot0.kP = 0.5;
-    pivotConfig.Slot0.kI = 0.0;
-    pivotConfig.Slot0.kD = 0.0;
-    pivotConfig.Slot0.kV = 3.0;
-    pivotConfig.Slot0.kS = 0.1;
-    pivotConfig.Slot0.kA = 1.5;
-    pivotConfig.Slot0.kG = 0.4;
-    pivotConfig.MotionMagic.MotionMagicAcceleration = 0.5;
-    pivotConfig.MotionMagic.MotionMagicCruiseVelocity = 0.2;
-    //pivotConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
+    pivotConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
     pivotConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
     pivotConfig.Feedback.FeedbackRemoteSensorID = piviotEncoder.getDeviceID();
@@ -97,20 +81,20 @@ public class Intake extends SubsystemBase {
     pivotConfig.Feedback.RotorToSensorRatio = 8.4375;
     pivotConfig.Feedback.SensorToMechanismRatio = 1.0;
 
-    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =  PIVIOT_RETRACTED_THRESHOLD.getRotations();
+    pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold =  PIVIOT_RETRACTED_THRESHOLD;
     pivotConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVIOT_EXTENDED_THRESHOLD.getRotations();
+    pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = PIVIOT_EXTENDED_THRESHOLD;
     pivotConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
 
     pivotLeft.getConfigurator().apply(pivotConfig);
     pivotRight.getConfigurator().apply(pivotConfig);
 
-    // normalCurrentPivotConfig = pivotConfig.CurrentLimits;
+    normalCurrentPivotConfig = pivotConfig.CurrentLimits;
 
-    // ampCurrentPivotConfig.SupplyCurrentLimit = 5;
-    // ampCurrentPivotConfig.SupplyTimeThreshold = 0.0;
-    // ampCurrentPivotConfig.SupplyCurrentLimitEnable = true;
+    ampCurrentPivotConfig.SupplyCurrentLimit = 5;
+    ampCurrentPivotConfig.SupplyTimeThreshold = 0.0;
+    ampCurrentPivotConfig.SupplyCurrentLimitEnable = true;
 
     
 
@@ -124,10 +108,8 @@ public class Intake extends SubsystemBase {
     rollerConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
     rollerMotor.getConfigurator().apply(rollerConfig);
 
-    pivotPositionRequest = new MotionMagicVoltage(0.0, true, 0.0, 0, false, false, false);
+    piviotDutyCycleControlRequest = new DutyCycleOut(0.0);
     pivotFollowerRequest = new Follower(PIVOT_LEFT_ID, true);
-    pivotNeutralRequest = new NeutralOut();
-    
 
     beamBreak = new BreakerBeamBreak(3, false);
 
@@ -147,16 +129,12 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isAtTargetState() {
-    Optional<Rotation2d> goalPos = targetState.getPivotState().getGoalPosition();
-    if (goalPos.isPresent()) {
-      return switch(targetState.getPivotState().getGoalType()) {
-        case HARD_STOP_EXT -> isExtendLimitTriggered();
-        case HARD_STOP_RET -> isRetractLimitTriggered();
-        case SETPOINT -> MathUtil.isNear(goalPos.get().getRotations(), intakePosSupplier.get(), IntakeConstants.SETPOINT_CONTROL_TOLERENCE.getRotations());
-        default -> true;
-      };
-    }
-    return true;
+    return switch(targetState.getPivotState()) {
+      case EXTENDED -> isExtendLimitTriggered();
+      case RETRACTED -> isRetractLimitTriggered();
+      case AMP -> isAmpLimitTriggered();
+      default -> true;
+    };
   }
 
   public void setState(IntakeState stateToSet) {
@@ -199,35 +177,17 @@ public class Intake extends SubsystemBase {
   }
 
   public static enum IntakePivotState {
-    EXTENDED(Rotation2d.fromRotations(0.0), IntakePivotStateGoalType.HARD_STOP_EXT),
-    AMP(Rotation2d.fromRotations(0.0), IntakePivotStateGoalType.SETPOINT),
-    RETRACTED(Rotation2d.fromRotations(0.33), IntakePivotStateGoalType.HARD_STOP_RET),//-0.15
-    NEUTRAL();
-    private Optional<Rotation2d> goalPosition;
-    private IntakePivotStateGoalType goalType;
-    private IntakePivotState(Rotation2d goalPosition, IntakePivotStateGoalType goalType) {
-      this.goalPosition = Optional.of(goalPosition);
-      this.goalType = goalType;
+    EXTENDED(-0.05),//0.1
+    AMP(-0.05),
+    RETRACTED(0.15),//-0.15
+    NEUTRAL(0.0);
+    private double motorDutyCycle;
+    private IntakePivotState(double motorDutyCycle) {
+      this.motorDutyCycle = motorDutyCycle;
     }
 
-    private IntakePivotState() {
-      this.goalPosition = Optional.empty();
-      this.goalType = IntakePivotStateGoalType.NEUTRAL;
-    }
-
-    public Optional<Rotation2d> getGoalPosition() {
-      return goalPosition;
-    }
-
-    public IntakePivotStateGoalType getGoalType() {
-      return goalType;
-    }
-
-    public static enum IntakePivotStateGoalType {
-      HARD_STOP_EXT,
-      HARD_STOP_RET,
-      SETPOINT,
-      NEUTRAL
+    public double getMotorDutyCycle() {
+        return motorDutyCycle;
     }
   }
 
@@ -246,11 +206,15 @@ public class Intake extends SubsystemBase {
   }
 
   public boolean isExtendLimitTriggered() {
-    return intakePosSupplier.get() <= IntakeConstants.PIVIOT_EXTENDED_THRESHOLD.getRotations();
+    return intakePosSupplier.get() <= IntakeConstants.PIVIOT_EXTENDED_THRESHOLD;
   }
 
   public boolean isRetractLimitTriggered() {
-    return intakePosSupplier.get() >= IntakeConstants.PIVIOT_RETRACTED_THRESHOLD.getRotations();
+    return intakePosSupplier.get() >= IntakeConstants.PIVIOT_RETRACTED_THRESHOLD;
+  }
+
+  public boolean isAmpLimitTriggered() {
+    return intakePosSupplier.get() <= PIVOT_AGAINST_AMP_ANGLE_THRESHOLD;
   }
 
 
@@ -268,32 +232,29 @@ public class Intake extends SubsystemBase {
       new BreakerGamepadTimedRumbleCommand(RobotContainer.controllerSys, 1.5, 0.75, 0.75).schedule();;
 
     } 
-
-    // if (!isPivotAmpCurrentLimited && targetState.isInAmpState() && isAmpLimitTriggered()) {
-    //   pivotLeft.getConfigurator().apply(ampCurrentPivotConfig);
-    //   pivotRight.getConfigurator().apply(ampCurrentPivotConfig);
-    //   isPivotAmpCurrentLimited = true;
-    // } else if (isPivotAmpCurrentLimited && !targetState.isInAmpState()) {
-    //   pivotLeft.getConfigurator().apply(normalCurrentPivotConfig);
-    //   pivotRight.getConfigurator().apply(normalCurrentPivotConfig);
-    //   isPivotAmpCurrentLimited = false;
+    
+    //else if (!RobotState.isTeleop()) {
+    //   RobotContainer.controllerSys.setMixedRumble(0.0,0.0);
     // }
 
-    
+
+    if (!isPivotAmpCurrentLimited && targetState.isInAmpState() && isAmpLimitTriggered()) {
+      pivotLeft.getConfigurator().apply(ampCurrentPivotConfig);
+      pivotRight.getConfigurator().apply(ampCurrentPivotConfig);
+      isPivotAmpCurrentLimited = true;
+    } else if (isPivotAmpCurrentLimited && !targetState.isInAmpState()) {
+      pivotLeft.getConfigurator().apply(normalCurrentPivotConfig);
+      pivotRight.getConfigurator().apply(normalCurrentPivotConfig);
+      isPivotAmpCurrentLimited = false;
+    }
+
+    piviotDutyCycleControlRequest.withOutput(targetState.getPivotState().getMotorDutyCycle());
     BreakerLog.recordOutput("EXT LIM", isExtendLimitTriggered());
     BreakerLog.recordOutput("RET LIM", isRetractLimitTriggered());
     BreakerLog.recordOutput("INTK HAS NOTE", hasNote());
-    
-    rollerMotor.set(targetState.getRollerState().getMotorDutyCycle());
-    Optional<Rotation2d> pivotGoalOpt = targetState.getPivotState().getGoalPosition();
-    if (pivotGoalOpt.isPresent()) {
-      pivotPositionRequest.withPosition(pivotGoalOpt.get().getRotations());
-      pivotLeft.setControl(pivotPositionRequest);
-    }  else {
-      pivotLeft.setControl(pivotNeutralRequest);
-    }
-    
+    pivotLeft.setControl(piviotDutyCycleControlRequest);
     pivotRight.setControl(pivotFollowerRequest);
+    rollerMotor.set(targetState.getRollerState().getMotorDutyCycle());
     
   }
 }
