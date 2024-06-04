@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+import org.photonvision.simulation.SimPhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -120,7 +121,7 @@ public class Vision extends SubsystemBase {
                     List<PhotonTrackedTarget> targets = est.getTrackedTargets();
                     if (targets.size() == 1) {
                         PhotonTrackedTarget tgt = targets.get(0);
-                        if (tgt.getPoseAmbiguity() <= 0.15) {
+                        if (tgt.getPoseAmbiguity() >= 0.15) {
                             continue;
                         }
                         

@@ -81,8 +81,6 @@ public final class Constants {
     public static final double PIVIOT_EXTENDED_THRESHOLD = 0.02;//0.008;
 
     public static final double PIVOT_AGAINST_AMP_ANGLE_THRESHOLD = 0.31; // temporary
-
-
   }
 
   public static class ShooterConstants {

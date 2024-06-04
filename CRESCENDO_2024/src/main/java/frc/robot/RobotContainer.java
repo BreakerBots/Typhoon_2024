@@ -73,7 +73,7 @@ public class RobotContainer {
   private static final Trigger globalOverride = controllerSys.getStartButton() ;
   // private final Vision visionSys = new Vision(drivetrainSys, true);
 
- public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_SMART_SPOOL_CONFIG, Constants.ShooterConstants.SPEAKER_FIREING_TABLE);
+  public static final ShooterTarget SPEAKER_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_SMART_SPOOL_CONFIG, Constants.ShooterConstants.SPEAKER_FIREING_TABLE);
   public static final ShooterTarget SPEAKER_MANUAL_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.SPEAKER_MANUAL_SMART_SPOOL_CONFIG, Constants.ShooterConstants.MANUAL_SPEAKER_SHOT_FIREING_VECTOR);
   public static final ShooterTarget PASS_TARGET = new ShooterTarget(drivetrainSys, Constants.FieldConstants.BLUE_SPEAKER_AIM_POINT, Constants.ShooterConstants.NOTE_PASS_SMART_SPOOL_CONFIG, Constants.ShooterConstants.PASS_FIREING_TABLE);
 

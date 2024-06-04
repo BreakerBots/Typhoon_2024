@@ -238,6 +238,7 @@ public class Intake extends SubsystemBase {
     // }
 
 
+    
     if (!isPivotAmpCurrentLimited && targetState.isInAmpState() && isAmpLimitTriggered()) {
       pivotLeft.getConfigurator().apply(ampCurrentPivotConfig);
       pivotRight.getConfigurator().apply(ampCurrentPivotConfig);
