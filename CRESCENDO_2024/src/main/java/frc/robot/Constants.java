@@ -90,8 +90,8 @@ public final class Constants {
     public static final int HOPPER_ID = 33; 
     public static final int PIVOT_ENCODER_ID = 34;
 
-    public static final double PITCH_RACK_FULL_ROT_TEETH = 440;
-    public static final double PITCH_PINION_TEETH = 20;
+    public static final double PITCH_RACK_FULL_ROT_TEETH = 215;
+    public static final double PITCH_PINION_TEETH = 14;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
     public static final double PITCH_KP = 7.5;
