@@ -253,6 +253,7 @@ public class Intake extends SubsystemBase {
     BreakerLog.recordOutput("EXT LIM", isExtendLimitTriggered());
     BreakerLog.recordOutput("RET LIM", isRetractLimitTriggered());
     BreakerLog.recordOutput("INTK HAS NOTE", hasNote());
+    BreakerLog.recordOutput("Intake/RollerCur", rollerMotor.getStatorCurrent().getValueAsDouble());
     pivotLeft.setControl(piviotDutyCycleControlRequest);
     pivotRight.setControl(pivotFollowerRequest);
     rollerMotor.set(targetState.getRollerState().getMotorDutyCycle());

@@ -91,7 +91,8 @@ public final class Constants {
     public static final int PIVOT_ENCODER_ID = 34;
 
     public static final double PITCH_RACK_FULL_ROT_TEETH = 215;
-    public static final double PITCH_PINION_TEETH = 14;
+    
+    public static final double PITCH_PINION_TEETH = 15;
     public static final double PITCH_PLANITARY_RATIO = 9.0;
     public static final double PITCH_RATIO = (PITCH_RACK_FULL_ROT_TEETH/PITCH_PINION_TEETH) * PITCH_PLANITARY_RATIO;
     public static final double PITCH_KP = 7.5;
@@ -104,9 +105,9 @@ public final class Constants {
     public static final double PITCH_ENCODER_OFFSET = -0.40625+0.125;
 
     public static final double PITCH_MAX_ROT = 0.21;
-    public static final double PITCH_MIN_ROT = 0.01;
+    public static final double PITCH_MIN_ROT = 0.031006;
 
-    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.016);
+    public static final Rotation2d STOW_ANGLE = Rotation2d.fromRotations(0.0315);
 
     public static final SmartSpoolConfig SPEAKER_SMART_SPOOL_CONFIG = new SmartSpoolConfig(6.5, 8.0);
 

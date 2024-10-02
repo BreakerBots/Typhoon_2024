@@ -43,7 +43,7 @@ public class BreakerRobotManager {
     
         // Set up data receivers & replay source
         if (RobotBase.isReal()) {
-           // BreakerLog.addDataReceiver(new WPILOGWriter(robotConfig.getRealLogFilePath()));
+            BreakerLog.addDataReceiver(new WPILOGWriter(robotConfig.getRealLogFilePath()));
             BreakerLog.addDataReceiver(new NT4Publisher());
         } else {
             //BreakerLog.addDataReceiver(new WPILOGWriter(robotConfig.getSimLogFilePath()));

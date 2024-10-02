@@ -292,6 +292,9 @@ public class Shooter extends SubsystemBase {
     BreakerLog.recordOutput("Shooter Has Note", hasNote());
     BreakerLog.recordOutput("ShooterAngleGoal", isAtAngleGoal());
     BreakerLog.recordOutput("ShooterFlywheelGoal", isAtFlywheelGoal());
+    BreakerLog.recordOutput("Shooter/HopCur", hopper.getStatorCurrent());
+    BreakerLog.recordOutput("Shooter/FlyLeftCur", flywheelLeft.getStatorCurrent().getValueAsDouble());
+    BreakerLog.recordOutput("Shooter/FlyRightCur", flywheelRight.getStatorCurrent().getValueAsDouble());
     if (RobotState.isDisabled()) {
       state = ShooterState.STOW;
     }
