@@ -7,7 +7,9 @@ package frc.robot;
 import java.util.HashMap;
 
 import edu.wpi.first.math.filter.Debouncer.DebounceType;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -127,6 +129,9 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
+    //TEST ONLY!!!
+    controllerSys.getRightBumper().onTrue(Commands.runOnce(drivetrainSys::resetOdometryRotation));
+
     controllerSys.getButtonB()
       .and(() -> intakeSys.getState().getPivotState() != IntakePivotState.RETRACTED)
       .onTrue(new ExtakeNote(intakeSys, shooterSys));
@@ -135,6 +140,7 @@ public class RobotContainer {
     controllerSys.getLeftBumper()
       .and(() -> intakeSys.getState() != IntakeState.RETRACTED_EXTAKEING)
       .onTrue(new StowIntake(intakeSys, ampBarSys, shooterSys));
+      
 
     controllerSys.getButtonA()
       .debounce(0.1, DebounceType.kBoth)
