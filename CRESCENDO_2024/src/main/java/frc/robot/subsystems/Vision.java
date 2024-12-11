@@ -17,6 +17,8 @@ import static frc.robot.Constants.VisionConstants.LIMELIGHT_NAME;
 import static frc.robot.Constants.VisionConstants.LIMELIGHT_TRANS;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -150,37 +152,54 @@ public class Vision extends SubsystemBase {
     }
 
     private void sortByStandardDeviation(ArrayList<BreakerEstimatedPose> poses) {
-        int i, j;
-        BreakerEstimatedPose temp;
-        boolean swapped;
+        poses.sort((pos1, pos2) -> {
+            var firstDeviation = pos1.estimationStandardDevations;
+            var secondDeviation = pos2.estimationStandardDevations;
+            if (firstDeviation.isEmpty() && secondDeviation.isEmpty()) return 0;
+            if (firstDeviation.isEmpty() && secondDeviation.isPresent()) return -1;
+            if (firstDeviation.isPresent() && secondDeviation.isEmpty()) return 1;
 
-        for (i = 0; i < poses.size() - 1; i++) {
-            swapped = false;
-            for (j = 0; j < poses.size() - i - 1; j++) {
-                BreakerEstimatedPose jEstpos = poses.get(j);
-                BreakerEstimatedPose j1Estpos = poses.get(j);
+            double firstValue = firstDeviation.get().get(2, 0);
+            double secondValue = secondDeviation.get().get(2, 0);
 
-                if (jEstpos.estimationStandardDevations.isPresent() && j1Estpos.estimationStandardDevations.isPresent()) {
-                    if (jEstpos.estimationStandardDevations.get().get(2, 0) < j1Estpos.estimationStandardDevations.get().get(2, 0)) {
-                        temp = poses.get(j);
-                        poses.set(poses.indexOf(jEstpos), j1Estpos);
-                        poses.set(poses.indexOf(j1Estpos), temp);
-                        swapped = true;
-                    }
-                }
-                // Nones get moved to front of list
-                else if (jEstpos.estimationStandardDevations.isPresent() && !j1Estpos.estimationStandardDevations.isPresent()) {
-                    temp = poses.get(j);
-                    poses.set(poses.indexOf(jEstpos), j1Estpos);
-                    poses.set(poses.indexOf(j1Estpos), temp);
-                    swapped = true;
-                }
-            }
- 
-            if (swapped == false)
-                break;
-        }
+            return firstValue == secondValue 
+                ? 0 
+                : (firstValue < secondValue ? -1 : 1);
+        });
     }
+
+    // private void sortByStandardDeviation(ArrayList<BreakerEstimatedPose> poses) {
+    //     int i, j;
+    //     BreakerEstimatedPose temp;
+    //     boolean swapped;
+
+    //     for (i = 0; i < poses.size() - 1; i++) {
+    //         swapped = false;
+    //         for (j = 0; j < poses.size() - i - 1; j++) {
+    //             BreakerEstimatedPose jEstpos = poses.get(i); // why was this j for so long?
+    //             BreakerEstimatedPose j1Estpos = poses.get(j);
+
+    //             if (jEstpos.estimationStandardDevations.isPresent() && j1Estpos.estimationStandardDevations.isPresent()) {
+    //                 if (jEstpos.estimationStandardDevations.get().get(2, 0) < j1Estpos.estimationStandardDevations.get().get(2, 0)) {
+    //                     temp = poses.get(j);
+    //                     poses.set(poses.indexOf(jEstpos), j1Estpos);
+    //                     poses.set(poses.indexOf(j1Estpos), temp);
+    //                     swapped = true;
+    //                 }
+    //             }
+    //             // Nones get moved to front of list
+    //             else if (jEstpos.estimationStandardDevations.isPresent() && !j1Estpos.estimationStandardDevations.isPresent()) {
+    //                 temp = poses.get(j);
+    //                 poses.set(poses.indexOf(jEstpos), j1Estpos);
+    //                 poses.set(poses.indexOf(j1Estpos), temp);
+    //                 swapped = true;
+    //             }
+    //         }
+ 
+    //         if (swapped == false)
+    //             break;
+    //     }
+    // }
 
     public static record NoteTarget() {
         
